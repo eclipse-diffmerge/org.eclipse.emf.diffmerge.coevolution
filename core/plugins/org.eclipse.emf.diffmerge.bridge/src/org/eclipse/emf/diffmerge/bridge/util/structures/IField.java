@@ -1,0 +1,33 @@
+/**
+ * <copyright>
+ * 
+ * Copyright (c) 2014 Thales Global Services S.A.S.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Thales Global Services S.A.S. - initial API and implementation
+ * 
+ * </copyright>
+ */
+package org.eclipse.emf.diffmerge.bridge.util.structures;
+
+import org.eclipse.emf.diffmerge.bridge.api.ISymbolFunction;
+import org.eclipse.emf.diffmerge.bridge.api.ISymbolProvider;
+
+
+/**
+ * Fields for structs.
+ * @param <T> the type of the possible values for the field
+ * @author Olivier Constant
+ */
+public interface IField<T> extends ISymbolProvider {
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.api.ISymbolProvider#getSymbol(org.eclipse.emf.diffmerge.bridge.api.ISymbolFunction)
+   */
+  String getSymbol(ISymbolFunction function_p);
+  
+}

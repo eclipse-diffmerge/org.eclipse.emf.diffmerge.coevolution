@@ -1,0 +1,35 @@
+/**
+ * <copyright>
+ * 
+ * Copyright (c) 2014 Thales Global Services S.A.S.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Thales Global Services S.A.S. - initial API and implementation
+ * 
+ * </copyright>
+ */
+package org.eclipse.emf.diffmerge.bridge.api;
+
+
+/**
+ * The cause of the presence of target data elements in terms of source data.
+ * @param <S> the type of source data elements
+ * @param <T> the type of target data elements
+ * @author Olivier Constant
+ */
+public interface ICause<S, T> {
+  
+  /**
+   * A cause that can be represented as a symbol.
+   * @param <S> the type of source data elements
+   * @param <T> the type of target data elements
+   */
+  interface Symbolic<S, T> extends ICause<S, T>, ISymbolProvider {
+    // Nothing needed
+  }
+  
+}
