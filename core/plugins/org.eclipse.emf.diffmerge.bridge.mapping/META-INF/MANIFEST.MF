@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.emf.diffmerge.bridge.mapping
+Bundle-Version: 0.1.0.qualifier
+Bundle-Activator: org.eclipse.emf.diffmerge.bridge.mapping.MappingBridgePlugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.diffmerge.bridge;visibility:=reexport
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Export-Package: org.eclipse.emf.diffmerge.bridge.mapping,
+ org.eclipse.emf.diffmerge.bridge.mapping.api,
+ org.eclipse.emf.diffmerge.bridge.mapping.impl,
+ org.eclipse.emf.diffmerge.bridge.mapping.impl.emf,
+ org.eclipse.emf.diffmerge.bridge.mapping.operations
