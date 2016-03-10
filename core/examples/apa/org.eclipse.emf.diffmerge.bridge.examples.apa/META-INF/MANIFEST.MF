@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Bridge APA Example
+Bundle-SymbolicName: org.eclipse.emf.diffmerge.bridge.examples.apa;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-Activator: org.eclipse.emf.diffmerge.bridge.examples.apa.APAExampleActivator
+Bundle-Vendor: Eclipse Modeling Project
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.gef,
+ org.eclipse.gmf.runtime.notation,
+ org.eclipse.sirius,
+ org.polarsys.capella.core.data.gen,
+ org.eclipse.emf.diffmerge.bridge.examples.apa.gen,
+ org.eclipse.emf.diffmerge.bridge.interactive,
+ org.eclipse.emf.diffmerge.bridge.mapping
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy

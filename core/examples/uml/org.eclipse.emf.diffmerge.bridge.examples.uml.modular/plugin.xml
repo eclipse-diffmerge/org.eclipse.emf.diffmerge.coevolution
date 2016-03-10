@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            id="org.eclipse.emf.diffmerge.bridge.examples.abstraction.diagramActions"
+            objectClass="org.eclipse.gef.EditPart">
+         <menu
+               id="org.eclipse.emf.diffmerge.bridge.examples.menu"
+               label="Bridge"
+               path="additions">
+            <groupMarker
+                  name="group">
+            </groupMarker>
+         </menu>
+         <action
+               class="org.eclipse.emf.diffmerge.bridge.examples.uml.modular.actions.UMLBridgeAction"
+               enablesFor="1"
+               id="org.eclipse.emf.diffmerge.bridge.examples.uml.actions.GoUp"
+               label="To UML (demo)"
+               menubarPath="org.eclipse.emf.diffmerge.bridge.examples.menu/group">
+         </action>
+      </objectContribution>
+   </extension>
+
+</plugin>
