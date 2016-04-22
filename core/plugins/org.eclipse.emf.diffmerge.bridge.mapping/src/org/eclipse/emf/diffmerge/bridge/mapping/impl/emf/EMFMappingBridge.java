@@ -14,11 +14,19 @@
  */
 package org.eclipse.emf.diffmerge.bridge.mapping.impl.emf;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
+import org.eclipse.emf.diffmerge.api.scopes.IFragmentedModelScope;
+import org.eclipse.emf.diffmerge.api.scopes.IPersistentModelScope;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingBridge;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.AbstractMappingBridge;
 import org.eclipse.emf.diffmerge.bridge.util.INormalizableModelScope;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 
 /**
@@ -78,13 +86,48 @@ public class EMFMappingBridge<SD, TD extends IEditableModelScope> extends Abstra
   }
   
   /**
+   * Normalize the given persistent scope
+   * @param scope_p a non-null scope
+   */
+   protected void normalizePersistentScope(IPersistentModelScope scope_p) {
+    Collection<Resource> rootResources;
+    if (scope_p instanceof IFragmentedModelScope)
+      rootResources = ((IFragmentedModelScope)scope_p).getRootResources();
+    else
+      rootResources = Collections.singleton(scope_p.getHoldingResource());
+    for (Resource rootResource : rootResources) {
+      normalizeResource(rootResource);
+    }
+  }
+  
+  /**
+   * Normalize the given resource by filtering out unnecessary roots
+   * @param resource_p a non-null resource
+   */
+  protected void normalizeResource(Resource resource_p) {
+    List<EObject> filtered = EcoreUtil.filterDescendants(resource_p.getContents());
+    resource_p.getContents().retainAll(filtered);
+  }
+  
+  /**
+   * Normalize the given scope
+   * @param scope_p a non-null scope
+   */
+  protected void normalizeScope(IEditableModelScope scope_p) {
+    if (scope_p instanceof INormalizableModelScope) {
+      ((INormalizableModelScope)scope_p).normalize();
+    } else if (scope_p instanceof IPersistentModelScope) {
+      normalizePersistentScope((IPersistentModelScope)scope_p);
+    }
+  }
+  
+  /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.impl.AbstractMappingBridge#targetsDefined(java.lang.Object)
    */
   @Override
   public void targetsDefined(TD targetSet_p) {
     super.targetsDefined(targetSet_p);
-    if (targetSet_p instanceof INormalizableModelScope)
-      ((INormalizableModelScope)targetSet_p).normalize();
+    normalizeScope(targetSet_p);
   }
   
 }
