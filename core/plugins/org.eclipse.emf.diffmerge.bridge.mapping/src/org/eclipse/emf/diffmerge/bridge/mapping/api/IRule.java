@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014 Thales Global Services S.A.S.
+ * Copyright (c) 2014-2016 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ IDataFunction<S, T>, ISymbolProvider {
    * @param source_p a non-null object
    * @param target_p a non-null object
    * @param queryExecution_p a non-null object
+   * @param mappingExecution_p a non-null object
    */
   void defineTarget(S source_p, T target_p, IQueryExecution queryExecution_p,
       IMappingExecution mappingExecution_p);

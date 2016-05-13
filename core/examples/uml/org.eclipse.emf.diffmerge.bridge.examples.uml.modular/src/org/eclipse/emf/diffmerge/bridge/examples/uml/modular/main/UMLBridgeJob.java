@@ -18,9 +18,9 @@ import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.examples.uml.modular.Messages;
 import org.eclipse.emf.diffmerge.bridge.interactive.BridgeJob;
 import org.eclipse.emf.diffmerge.bridge.interactive.EMFInteractiveBridge;
+import org.eclipse.emf.diffmerge.bridge.uml.incremental.UMLMergePolicy;
+import org.eclipse.emf.diffmerge.gmf.GMFDiffPolicy;
 import org.eclipse.uml2.uml.UMLPackage;
-import org.polarsys.capella.core.compare.CapellaDiffPolicy;
-import org.polarsys.capella.core.compare.CapellaMergePolicy;
 import org.polarsys.capella.core.data.pa.PhysicalArchitecture;
 
 
@@ -48,7 +48,7 @@ public class UMLBridgeJob extends BridgeJob<PhysicalArchitecture> {
     // Make the mapping bridge incremental
     EMFInteractiveBridge<PhysicalArchitecture, IEditableModelScope> result = 
         new EMFInteractiveBridge<PhysicalArchitecture, IEditableModelScope>(
-            mappingBridge, new CapellaDiffPolicy(), new CapellaMergePolicy(), null);
+            mappingBridge, new GMFDiffPolicy(), new UMLMergePolicy(), null);
     return result;
   }
   

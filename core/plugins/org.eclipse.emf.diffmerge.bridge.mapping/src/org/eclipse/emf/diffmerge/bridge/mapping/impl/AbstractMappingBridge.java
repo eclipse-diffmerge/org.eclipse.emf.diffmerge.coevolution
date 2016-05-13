@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014 Thales Global Services S.A.S.
+ * Copyright (c) 2014-2016 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,21 @@ implements IMappingBridge<SD, TD> {
   }
   
   /**
+   * Create and return an operation for executing the bridge on the given data sets
+   * via the given execution
+   * @param sourceDataSet_p a non-null data set
+   * @param targetDataSet_p a non-null data set
+   * @param execution_p a non-null execution
+   * @return a mapping bridge operation
+   */
+  protected MappingBridgeOperation createMappingOperation(SD sourceDataSet_p, TD targetDataSet_p,
+      MappingExecution execution_p) {
+    MappingBridgeOperation operation = new MappingBridgeOperation(
+        sourceDataSet_p, targetDataSet_p, this, execution_p);
+    return operation;
+  }
+  
+  /**
    * @see org.eclipse.emf.diffmerge.bridge.api.IBridge#executeOn(java.lang.Object, java.lang.Object, org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution, org.eclipse.core.runtime.IProgressMonitor)
    */
   public IMappingExecution executeOn(SD sourceDataSet_p, TD targetDataSet_p,
@@ -80,21 +95,6 @@ implements IMappingBridge<SD, TD> {
     operation.run(monitor_p);
     return operation.getBridgeExecution();
   }
-  
-/**
- * Creates a new mapping bridge operation
- * 
- * @param sourceDataSet_p the source data set
- * @param targetDataSet_p the target data set
- * @param execution the mapping execution
- * @return a mapping bridge operation
- */
-protected MappingBridgeOperation createMappingOperation(SD sourceDataSet_p, TD targetDataSet_p,
-		MappingExecution execution) {
-	MappingBridgeOperation operation =
-        new MappingBridgeOperation(sourceDataSet_p, targetDataSet_p, this, execution);
-	return operation;
-}
   
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingBridge#getNbQueries()

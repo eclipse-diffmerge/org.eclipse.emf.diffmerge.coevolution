@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014 Thales Global Services S.A.S.
+ * Copyright (c) 2014-2016 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,11 +186,8 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
             String.format(
                 "A pending definition is already registered for rule [%1$s] on source [%2$s]: [%3$s] replaced by [%4$s].", //$NON-NLS-1$
                 rule, source, squatter, target_p));
-      // Success
-      super.put(cause_p, target_p);
-    } else {
-      handleWrongCause(cause_p);
     }
+    super.put(cause_p, target_p);
   }
   
   /**
@@ -227,7 +224,7 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
      * Return the query execution
      * @return a non-null object
      */
-    public IQueryExecution getQueryEnvironment() { return _context; }
+    public IQueryExecution getQueryExecution() { return _context; }
     /**
      * Return the target object
      * @return a non-null object
@@ -241,7 +238,7 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
       if (other_p instanceof PendingDefinition) {
         PendingDefinition peer = (PendingDefinition)other_p;
         result =
-          getQueryEnvironment().equals(peer.getQueryEnvironment()) &&
+          getQueryExecution().equals(peer.getQueryExecution()) &&
           getTarget().equals(peer.getTarget());
       }
       return result; 
@@ -250,7 +247,7 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
      * @see java.lang.Object#hashCode()
      */
     @Override public int hashCode() {
-      return getQueryEnvironment().hashCode() + getTarget().hashCode();
+      return getQueryExecution().hashCode() + getTarget().hashCode();
     }
   }
   

@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014 Thales Global Services S.A.S.
+ * Copyright (c) 2014-2016 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,10 +26,13 @@ import org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridge;
 import org.eclipse.emf.diffmerge.bridge.incremental.EMFIncrementalBridge;
 import org.eclipse.emf.diffmerge.diffdata.EComparison;
 import org.eclipse.emf.diffmerge.ui.util.DiffMergeDialog;
+import org.eclipse.emf.diffmerge.ui.viewers.AbstractComparisonViewer;
+import org.eclipse.emf.diffmerge.ui.viewers.ComparisonViewer;
 import org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 
@@ -60,6 +63,15 @@ extends EMFIncrementalBridge<SD, TD> {
   }
   
   /**
+   * Create and return the comparison viewer for interactive merge in the given composite
+   * @param parent_p a non-null composite
+   * @return a non-null viewer
+   */
+  protected AbstractComparisonViewer createComparisonViewer(Composite parent_p) {
+    return new ComparisonViewer(parent_p);
+  }
+  
+  /**
    * Create and return a diff node for the interactive merge
    * @param comparison_p a non-null comparison
    * @param domain_p an optional editing domain 
@@ -71,6 +83,25 @@ extends EMFIncrementalBridge<SD, TD> {
     diffNode.setDefaultShowImpact(false);
     diffNode.setReferenceRole(TARGET_DATA_ROLE);
     return diffNode;
+  }
+  
+  /**
+   * Create and return a dialog for interactive merge on the given diff node
+   * @param diffNode_p a non-null diff node
+   * @return a non-null window
+   */
+  protected Window createMergeDialog(EMFDiffNode diffNode_p) {
+    return new DiffMergeDialog(
+        Display.getDefault().getActiveShell(), getTitle(), diffNode_p) {
+      /**
+       * @see org.eclipse.emf.diffmerge.ui.util.DiffMergeDialog#createComparisonViewer(org.eclipse.swt.widgets.Composite)
+       */
+      @Override
+      protected AbstractComparisonViewer createComparisonViewer(
+          Composite parent_p) {
+        return EMFInteractiveBridge.this.createComparisonViewer(parent_p);
+      }
+    };
   }
   
   /**
@@ -106,8 +137,7 @@ extends EMFIncrementalBridge<SD, TD> {
        * @see java.lang.Runnable#run()
        */
       public void run() {
-        DiffMergeDialog dialog = new DiffMergeDialog(
-            display.getActiveShell(), getTitle(), diffNode);
+        Window dialog = createMergeDialog(diffNode);
         done[0] = dialog.open();
       }
     });
