@@ -221,6 +221,12 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
     if (profileRelatedElement_p instanceof EAnnotation) {
       // The annotation automatically created in Profile applications
       result = "umlAnnotation"; //$NON-NLS-1$
+      EModelElement annotationTarget = ((EAnnotation)profileRelatedElement_p).getEModelElement();
+      if (annotationTarget instanceof ProfileApplication) {
+        Profile profile = ((ProfileApplication)annotationTarget).getAppliedProfile();
+        if (profile != null)
+          result = profile.getName() + '/' + result;
+      }
     } else if (profileRelatedElement_p instanceof ProfileApplication) {
       Profile profile = ((ProfileApplication)profileRelatedElement_p).getAppliedProfile();
       result = profile.getName();
