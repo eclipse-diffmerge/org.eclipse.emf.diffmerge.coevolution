@@ -125,6 +125,23 @@ public class QueryExecution implements IQueryExecution {
   }
   
   /**
+   * Return whether this query execution is an ancestor of the given one, i.e., the
+   * given one originates from this one and includes one or more additional query results
+   * @param peer_p a non-null query execution
+   */
+  public boolean isAncestorOf(IQueryExecution peer_p) {
+    if (peer_p instanceof QueryExecution) {
+      QueryExecution superExec = ((QueryExecution)peer_p).getSuperExecution();
+      while (superExec != null) {
+        if (superExec == this)
+          return true;
+        superExec = superExec.getSuperExecution();
+      }
+    }
+    return false;
+  }
+  
+  /**
    * Create and return a new query execution that extends the given one with the given data
    * @param queryID_p a non-null query ID
    * @param value_p a non-null object

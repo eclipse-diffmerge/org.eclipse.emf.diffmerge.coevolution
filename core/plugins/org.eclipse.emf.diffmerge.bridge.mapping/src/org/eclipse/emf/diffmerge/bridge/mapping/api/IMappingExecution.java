@@ -14,6 +14,7 @@
  */
 package org.eclipse.emf.diffmerge.bridge.mapping.api;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
@@ -56,5 +57,25 @@ public interface IMappingExecution extends IBridgeExecution {
    * @return a potentially null object
    */
   <T> T getOne(Object source_p);
+  
+  /**
+   * Return the source data elements that are inputs of the given rule, restricted to the given
+   * query execution context if any
+   * @param <S> the type of the source data elements
+   * @param rule_p a non-null rule
+   * @param context_p an optional query execution
+   * @return a non-null iterator
+   */
+  <S> Iterator<S> getRuleInputs(IRule<S,?> rule_p, IQueryExecution context_p);
+  
+  /**
+   * Return the source data elements that are inputs of rules of the given identifier,
+   * restricted to the given query execution context if any
+   * @param <S> the type of the source data elements
+   * @param ruleID_p a non-null rule ID
+   * @param context_p an optional query execution
+   * @return a non-null iterator
+   */
+  <S> Iterator<S> getRuleInputs(IRuleIdentifier<S,?> ruleID_p, IQueryExecution context_p);
   
 }

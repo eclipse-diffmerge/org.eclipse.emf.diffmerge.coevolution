@@ -21,6 +21,8 @@ import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 
 /**
  * An executable bridge that is made of queries and rules.
+ * All query instances in the bridge must have different IDs.
+ * All rule instances in the bridge must have different IDs.
  * @param <SD> the type of the source data set
  * @param <TD> the type of the target data set
  * @author Olivier Constant

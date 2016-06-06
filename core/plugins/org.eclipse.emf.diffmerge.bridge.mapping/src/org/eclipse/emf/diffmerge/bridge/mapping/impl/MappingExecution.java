@@ -17,7 +17,9 @@ package org.eclipse.emf.diffmerge.bridge.mapping.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,11 +40,11 @@ import org.eclipse.emf.diffmerge.bridge.mapping.api.IRuleIdentifier;
  */
 public class MappingExecution extends AbstractBridgeTraceExecution implements IMappingExecution {
   
-  /** The content of the rule environment: source data -> rule -> (query env, target data) */
-  private final Map<Object, Map<IRule<?,?>, PendingDefinition>> _content;
+  /** The content of the rule environment: source data -> rule -> (query execution, target data) */
+  protected final Map<Object, Map<IRule<?,?>, PendingDefinition>> _content;
   
   /** The map from (used) rule identifiers to rules */
-  private final Map<IRuleIdentifier<?,?>, IRule<?,?>> _ruleMap;
+  protected final Map<IRuleIdentifier<?,?>, IRule<?,?>> _ruleMap;
   
   /** Whether duplicate pending definitions are tolerated (only one among the duplicates will be processed) */
   private boolean _isTolerantToDuplicates;
@@ -69,6 +71,32 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
       @SuppressWarnings("unchecked")
       IMappingCause<Object, T> cause = (IMappingCause<Object, T>)cause_p;
       result = get(cause.getSource(), cause.getRule());
+    }
+    return result;
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#get(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IRule)
+   */
+  public <S, T> T get(S source_p, IRule<S, T> rule_p) {
+    return get(source_p, rule_p.getID());
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#get(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IRuleIdentifier)
+   */
+  @SuppressWarnings("unchecked")
+  public <S, T> T get(S source_p, IRuleIdentifier<S, T> ruleID_p) {
+    T result = null;
+    IRule<?,?> rule = _ruleMap.get(ruleID_p);
+    if (rule != null) {
+      Map<IRule<?,?>, PendingDefinition> ruleToTarget =
+          _content.get(source_p);
+      if (ruleToTarget != null) {
+        PendingDefinition pendingDef = ruleToTarget.get(rule);
+        if (pendingDef != null)
+          result = (T)pendingDef.getTarget();
+      }
     }
     return result;
   }
@@ -104,32 +132,6 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#get(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IRule)
-   */
-  public <S, T> T get(S source_p, IRule<S, T> rule_p) {
-    return get(source_p, rule_p.getID());
-  }
-  
-  /**
-   * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#get(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IRuleIdentifier)
-   */
-  @SuppressWarnings("unchecked")
-  public <S, T> T get(S source_p, IRuleIdentifier<S, T> ruleID_p) {
-    T result = null;
-    IRule<?,?> rule = _ruleMap.get(ruleID_p);
-    if (rule != null) {
-      Map<IRule<?,?>, PendingDefinition> ruleToTarget =
-          _content.get(source_p);
-      if (ruleToTarget != null) {
-        PendingDefinition pendingDef = ruleToTarget.get(rule);
-        if (pendingDef != null)
-          result = (T)pendingDef.getTarget();
-      }
-    }
-    return result;
-  }
-  
-  /**
    * Return the pending definitions associated with the given source
    * @param source_p a non-null object
    * @return a possibly null object
@@ -144,6 +146,36 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
    */
   public Set<Object> getPendingSources() {
     return _content.keySet();
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#getRuleInputs(org.eclipse.emf.diffmerge.bridge.mapping.api.IRule, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
+   */
+  public <S> Iterator<S> getRuleInputs(IRule<S, ?> rule_p, IQueryExecution context_p) {
+    Iterator<S> result = getRuleInputs(rule_p.getID(), context_p);
+    return result;
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#getRuleInputs(org.eclipse.emf.diffmerge.bridge.mapping.api.IRuleIdentifier, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
+   */
+  public <S> Iterator<S> getRuleInputs(IRuleIdentifier<S, ?> ruleID_p,
+      IQueryExecution context_p) {
+    List<S> result = new LinkedList<S>(); //Content uniqueness guaranteed by construction below
+    IRule<?,?> rule = _ruleMap.get(ruleID_p);
+    if (rule != null) {
+      // Focus is not on performance here since we navigate through map entries
+      QueryExecution context = (context_p instanceof QueryExecution)? (QueryExecution)context_p: null;
+      for (Map.Entry<Object, Map<IRule<?,?>, PendingDefinition>> sourceEntry : _content.entrySet()) {
+        PendingDefinition pendingDef = sourceEntry.getValue().get(rule);
+        if (pendingDef != null && (context == null || context.isAncestorOf(pendingDef.getQueryExecution()))) {
+          @SuppressWarnings("unchecked")
+          S source = (S)sourceEntry.getKey();
+          result.add(source);
+        }
+      }
+    }
+    return result.iterator();
   }
   
   /**
@@ -247,7 +279,11 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
      * @see java.lang.Object#hashCode()
      */
     @Override public int hashCode() {
-      return getQueryExecution().hashCode() + getTarget().hashCode();
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + getQueryExecution().hashCode();
+      result = prime * result + getTarget().hashCode();
+      return result;
     }
   }
   

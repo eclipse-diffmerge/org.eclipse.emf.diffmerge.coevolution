@@ -117,9 +117,13 @@ public class MappingCause<S, T> implements IMappingCause<S, T> {
    */
   @Override
   public int hashCode() {
+    final int prime = 31;
     IQueryExecution qex = getQueryExecution();
-    int qexCode = qex == null? 0: qex.hashCode();
-    return qexCode + getSource().hashCode() + getRule().hashCode();
+    int result = 1;
+    result = prime * result + (qex == null? 0: qex.hashCode());
+    result = prime * result + getSource().hashCode();
+    result = prime * result + getRule().hashCode();
+    return result;
   }
   
 }

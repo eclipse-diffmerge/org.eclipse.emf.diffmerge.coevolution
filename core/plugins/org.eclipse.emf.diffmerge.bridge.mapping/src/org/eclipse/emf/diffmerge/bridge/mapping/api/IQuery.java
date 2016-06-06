@@ -45,12 +45,12 @@ IIdentifiedWithType<IQueryIdentifier<O>>, ISymbolProvider {
   
   /**
    * Return an iterator over the results of the query on the given source data
-   * in the given evaluation environment.
+   * in the context of the given query execution.
    * The iterator is not allowed to yield null values.
-   * @param environment_p a non-null environment
+   * @param queryExecution_p a non-null query execution
    * @return a non-null iterator
    */
-  Iterator<O> evaluate(I input_p, IQueryExecution environment_p);
+  Iterator<O> evaluate(I input_p, IQueryExecution queryExecution_p);
   
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IDataConsumer#getInputProvider()

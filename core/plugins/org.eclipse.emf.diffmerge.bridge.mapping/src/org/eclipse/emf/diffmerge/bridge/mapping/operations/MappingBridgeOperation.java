@@ -119,7 +119,8 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
    * @param queries_p a non-null, potentially empty collection
    * @param source_p a non-null object
    * @param targetDataSet_p a non-null object
-   * @param queryExecution_p a non-null object
+   * @param queryExecution_p a non-null query execution whose last element is source_p if
+   *        source_p is not the source data set
    * @param execution_p a non-null object
    */
   protected void handleQueriesForTargetCreationRec(
@@ -174,7 +175,7 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
    * @param query_p a non-null object
    * @param source_p a non-null object
    * @param targetDataSet_p a non-null object
-   * @param queryExecution_p a non-null object
+   * @param queryExecution_p a non-null query execution whose last element is source_p
    * @param execution_p a non-null object
    */
   protected void handleQueryForTargetCreation(IQuery<?,?> query_p,
@@ -194,7 +195,7 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
    * @param bridge_p a non-null object
    * @param source_p a non-null object
    * @param targetDataSet_p a non-null object
-   * @param queryExecution_p a non-null object
+   * @param queryExecution_p a non-null query execution whose last element is source_p
    * @param execution_p a non-null object
    */
   @SuppressWarnings("unchecked")
