@@ -62,7 +62,7 @@ extends QueryAndRule<AbstractFunction, FunctionalExchange, Association> {
    */
   @SuppressWarnings({ "rawtypes", "unchecked" })
   public Iterator<FunctionalExchange> evaluate(
-      AbstractFunction source_p, IQueryExecution environment_p) {
+      AbstractFunction source_p, IQueryExecution queryExecution_p) {
     return (Iterator)source_p.getOutgoing().iterator();
   }
   
@@ -80,31 +80,31 @@ extends QueryAndRule<AbstractFunction, FunctionalExchange, Association> {
    */
   @Override
   public void defineTarget(FunctionalExchange source_p,
-      Association target_p, IQueryExecution queryEnv_p,
-      IMappingExecution ruleEnv_p) {
+      Association target_p, IQueryExecution queryExecution_p,
+      IMappingExecution mappingExecution_p) {
     // Name
     target_p.setName(source_p.getName());
     // Container
     PhysicalArchitecture archi = (PhysicalArchitecture)source_p.eContainer().eContainer().eContainer();
-    Model container = ruleEnv_p.get(archi.getOwnedPhysicalComponent(), MainComponent2ModelQueryAndRule.ID);
+    Model container = mappingExecution_p.get(archi.getOwnedPhysicalComponent(), MainComponent2ModelQueryAndRule.ID);
     container.getOwnedTypes().add(target_p);
     // Create source Property
     Property srcEnd = UMLFactory.eINSTANCE.createProperty();
     target_p.getNavigableOwnedEnds().add(srcEnd);
-    Component sourceType = ruleEnv_p.get(
+    Component sourceType = mappingExecution_p.get(
         (AbstractFunction)source_p.getSource().eContainer(),
         Allocation2ComponentQueryAndRule.ID);
     srcEnd.setType(sourceType);
     // Create target Property
     Property dstEnd = UMLFactory.eINSTANCE.createProperty();
     target_p.getNavigableOwnedEnds().add(dstEnd);
-    Component dstType = ruleEnv_p.get(
+    Component dstType = mappingExecution_p.get(
         (AbstractFunction)source_p.getTarget().eContainer(),
         Allocation2ComponentQueryAndRule.ID);
     dstEnd.setType(dstType);
     // REGISTRATION OF ADDITIONAL ELEMENTS
-    registerInTrace(source_p, srcEnd, "_SRC", getMainRule(), ruleEnv_p); //$NON-NLS-1$
-    registerInTrace(source_p, dstEnd, "_DST", getMainRule(), ruleEnv_p); //$NON-NLS-1$
+    registerInTrace(source_p, srcEnd, "_SRC", getMainRule(), mappingExecution_p); //$NON-NLS-1$
+    registerInTrace(source_p, dstEnd, "_DST", getMainRule(), mappingExecution_p); //$NON-NLS-1$
   }
   
   /**

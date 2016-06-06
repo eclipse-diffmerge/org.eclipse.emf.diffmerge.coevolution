@@ -51,7 +51,7 @@ extends QueryAndRule<PhysicalArchitecture, PhysicalComponent, Model> {
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
   public Iterator<PhysicalComponent> evaluate(PhysicalArchitecture input_p,
-      IQueryExecution environment_p) {
+      IQueryExecution queryExecution_p) {
     return getIterator(input_p.getOwnedPhysicalComponent());
   }
   

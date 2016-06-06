@@ -64,7 +64,7 @@ extends QueryAndRule<PartDeploymentLink, ComponentExchange, Tuple3<Association, 
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
   public Iterator<ComponentExchange> evaluate(PartDeploymentLink input_p,
-      IQueryExecution environment_p) {
+      IQueryExecution queryExecution_p) {
     PhysicalComponent component = (PhysicalComponent)((Part)input_p.getDeployedElement()).getType();
     Collection<ComponentExchange> result = new LinkedList<ComponentExchange>();
     for (Partition partition : component.getOwnedPartitions()) {
@@ -91,22 +91,22 @@ extends QueryAndRule<PartDeploymentLink, ComponentExchange, Tuple3<Association, 
    */
   @Override
   public void defineTarget(ComponentExchange source_p,
-      Tuple3<Association, Property, Property> target_p, IQueryExecution queryEnv_p,
-      IMappingExecution ruleEnv_p) {
+      Tuple3<Association, Property, Property> target_p, IQueryExecution queryExecution_p,
+      IMappingExecution mappingExecution_p) {
     // Association
     target_p.get1().setName(source_p.getName());
     PhysicalArchitecture archi = (PhysicalArchitecture)source_p.eContainer().eContainer();
-    Model container = ruleEnv_p.get(archi.getOwnedPhysicalComponent(), MainComponent2ModelQueryAndRule.ID);
+    Model container = mappingExecution_p.get(archi.getOwnedPhysicalComponent(), MainComponent2ModelQueryAndRule.ID);
     container.getOwnedTypes().add(target_p.get1());
     // Source Property
     target_p.get1().getNavigableOwnedEnds().add(target_p.get2());
-    Component sourceType = ruleEnv_p.get((PartDeploymentLink)
+    Component sourceType = mappingExecution_p.get((PartDeploymentLink)
         ((Part)((PhysicalComponent)source_p.getSource().eContainer()).getTypedElements().get(0)).
         getDeployingLinks().get(0), Deployment2ComponentQueryAndRule.ID);
     target_p.get2().setType(sourceType);
     // Target Property
     target_p.get1().getNavigableOwnedEnds().add(target_p.get3());
-    Component targetType = ruleEnv_p.get((PartDeploymentLink)
+    Component targetType = mappingExecution_p.get((PartDeploymentLink)
         ((Part)((PhysicalComponent)source_p.getTarget().eContainer()).getTypedElements().get(0)).
         getDeployingLinks().get(0), Deployment2ComponentQueryAndRule.ID);
     target_p.get3().setType(targetType);

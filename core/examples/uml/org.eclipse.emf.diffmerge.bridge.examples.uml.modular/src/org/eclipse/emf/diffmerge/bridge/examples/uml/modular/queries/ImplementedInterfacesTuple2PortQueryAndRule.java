@@ -60,7 +60,7 @@ extends QueryAndRule<PartDeploymentLink, Tuple2<PhysicalComponent, Interface>, P
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
   public Iterator<Tuple2<PhysicalComponent, Interface>> evaluate(
-      PartDeploymentLink input_p, IQueryExecution environment_p) {
+      PartDeploymentLink input_p, IQueryExecution queryExecution_p) {
     @SuppressWarnings("unchecked")
     Iterator<Tuple2<PhysicalComponent, Interface>> result = getIterator();
     DeployableElement deployed = input_p.getDeployedElement();
@@ -93,13 +93,13 @@ extends QueryAndRule<PartDeploymentLink, Tuple2<PhysicalComponent, Interface>, P
   @Override
   public void defineTarget(
       Tuple2<PhysicalComponent, Interface> source_p, Port target_p,
-      IQueryExecution queryEnv_p, IMappingExecution ruleEnv_p) {
+      IQueryExecution queryExecution_p, IMappingExecution mappingExecution_p) {
     // Name
     String name = source_p.get1().getName() + "_impl_" + source_p.get2().getName(); //$NON-NLS-1$
     target_p.setName(name);
     // Component
-    PartDeploymentLink link = queryEnv_p.get(Deployment2ComponentQueryAndRule.ID);
-    Component component = ruleEnv_p.get(link, Deployment2ComponentQueryAndRule.ID);
+    PartDeploymentLink link = queryExecution_p.get(Deployment2ComponentQueryAndRule.ID);
+    Component component = mappingExecution_p.get(link, Deployment2ComponentQueryAndRule.ID);
     component.getOwnedPorts().add(target_p);
   }
   

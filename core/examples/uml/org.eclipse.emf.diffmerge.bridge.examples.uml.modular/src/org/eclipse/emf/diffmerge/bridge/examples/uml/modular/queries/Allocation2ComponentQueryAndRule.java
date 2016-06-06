@@ -57,7 +57,7 @@ extends QueryAndRule<PartDeploymentLink, AbstractFunction, Component> {
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
   public Iterator<AbstractFunction> evaluate(PartDeploymentLink input_p,
-      IQueryExecution environment_p) {
+      IQueryExecution queryExecution_p) {
     Iterator<AbstractFunction> result = getIterator();
     DeployableElement deployed = input_p.getDeployedElement();
     if (deployed instanceof Part) {
@@ -88,13 +88,13 @@ extends QueryAndRule<PartDeploymentLink, AbstractFunction, Component> {
    */
   @Override
   public void defineTarget(AbstractFunction source_p,
-      Component target_p, IQueryExecution queryEnv_p,
-      IMappingExecution ruleEnv_p) {
+      Component target_p, IQueryExecution queryExecution_p,
+      IMappingExecution mappingExecution_p) {
     // Name
     target_p.setName(source_p.getName());
     // Container
-    PartDeploymentLink dLink = queryEnv_p.get(Deployment2ComponentQueryAndRule.ID);
-    Component container = ruleEnv_p.get(dLink, Deployment2ComponentQueryAndRule.ID);
+    PartDeploymentLink dLink = queryExecution_p.get(Deployment2ComponentQueryAndRule.ID);
+    Component container = mappingExecution_p.get(dLink, Deployment2ComponentQueryAndRule.ID);
     container.getNestedClassifiers().add(target_p);
   }
   

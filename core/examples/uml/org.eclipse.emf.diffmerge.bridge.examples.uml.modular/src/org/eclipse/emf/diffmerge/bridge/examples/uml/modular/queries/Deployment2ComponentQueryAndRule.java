@@ -53,7 +53,7 @@ public class Deployment2ComponentQueryAndRule extends QueryAndRule<Part, PartDep
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
   public Iterator<PartDeploymentLink> evaluate(Part input_p,
-      IQueryExecution environment_p) {
+      IQueryExecution queryExecution_p) {
     return ((List)input_p.getOwnedDeploymentLinks()).iterator();
   }
   
@@ -71,15 +71,15 @@ public class Deployment2ComponentQueryAndRule extends QueryAndRule<Part, PartDep
    */
   @Override
   public void defineTarget(PartDeploymentLink source_p,
-      Component target_p, IQueryExecution queryEnv_p,
-      IMappingExecution ruleEnv_p) {
+      Component target_p, IQueryExecution queryExecution_p,
+      IMappingExecution mappingExecution_p) {
     // Name
     DeployableElement deployable = source_p.getDeployedElement();
     Type type = ((Part)deployable).getType();
     target_p.setName(type.getName());
     // Container
-    Part part = queryEnv_p.get(Node2ComponentQueryAndRule.ID);
-    Component container = ruleEnv_p.get(part, Node2ComponentQueryAndRule.ID);
+    Part part = queryExecution_p.get(Node2ComponentQueryAndRule.ID);
+    Component container = mappingExecution_p.get(part, Node2ComponentQueryAndRule.ID);
     container.getNestedClassifiers().add(target_p);
   }
   

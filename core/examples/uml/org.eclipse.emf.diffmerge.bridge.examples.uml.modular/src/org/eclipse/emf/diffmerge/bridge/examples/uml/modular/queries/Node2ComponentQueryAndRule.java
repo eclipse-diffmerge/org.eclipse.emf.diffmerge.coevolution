@@ -55,7 +55,7 @@ public class Node2ComponentQueryAndRule extends QueryAndRule<PhysicalComponent, 
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
   public Iterator<Part> evaluate(PhysicalComponent input_p,
-      IQueryExecution environment_p) {
+      IQueryExecution queryExecution_p) {
     Collection<Part> result = new LinkedList<Part>();
     for (Partition partition : input_p.getOwnedPartitions()) {
       Type type = partition.getType();
@@ -81,12 +81,12 @@ public class Node2ComponentQueryAndRule extends QueryAndRule<PhysicalComponent, 
    */
   @Override
   public void defineTarget(Part source_p,
-      Component target_p, IQueryExecution queryEnv_p,
-      IMappingExecution ruleEnv_p) {
+      Component target_p, IQueryExecution queryExecution_p,
+      IMappingExecution mappingExecution_p) {
     // Name
     target_p.setName(source_p.getName());
     // Container
-    Model container = ruleEnv_p.get(
+    Model container = mappingExecution_p.get(
         (PhysicalComponent)source_p.eContainer(), MainComponent2ModelQueryAndRule.ID);
     container.getOwnedTypes().add(target_p);
   }

@@ -73,7 +73,7 @@ extends Rule<ComponentExchange, EnumStruct<AssocElements>> {
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IRule#defineTarget(java.lang.Object, java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution, org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution)
    */
   public void defineTarget(ComponentExchange source_p,
-      EnumStruct<AssocElements> target_p, IQueryExecution queryEnv_p,
+      EnumStruct<AssocElements> target_p, IQueryExecution queryExecution_p,
       IMappingExecution ruleEnv_p) {
     // Association
     Association assoc = target_p.get(AssocElements.ASSOC);
