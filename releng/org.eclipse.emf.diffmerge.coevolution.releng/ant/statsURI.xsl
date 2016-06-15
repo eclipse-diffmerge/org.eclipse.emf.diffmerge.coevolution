@@ -27,23 +27,7 @@ Matthieu Helleboid
 		</properties>
 	</xsl:template>
 
-	<xsl:template match="artifact[@classifier='org.eclipse.update.feature' and @id='org.eclipse.emf.diffmerge.sdk.feature']/properties">
-		<xsl:call-template name="artifact_properties"/>
-	</xsl:template>
-		
-	<xsl:template match="artifact[@classifier='org.eclipse.update.feature' and @id='org.eclipse.emf.diffmerge.egit.feature']/properties">
-		<xsl:call-template name="artifact_properties"/>
-	</xsl:template>
-		
-	<xsl:template match="artifact[@classifier='org.eclipse.update.feature' and @id='org.eclipse.emf.diffmerge.svn.feature']/properties">
-		<xsl:call-template name="artifact_properties"/>
-	</xsl:template>
-		
-	<xsl:template match="artifact[@classifier='org.eclipse.update.feature' and @id='org.eclipse.emf.diffmerge.perforce.feature']/properties">
-		<xsl:call-template name="artifact_properties"/>
-	</xsl:template>
-		
-	<xsl:template match="artifact[@classifier='org.eclipse.update.feature' and @id='org.eclipse.emf.diffmerge.scm.feature']/properties">
+	<xsl:template match="artifact[@classifier='org.eclipse.update.feature' and @id='org.eclipse.emf.diffmerge.coevolution.sdk.feature']/properties">
 		<xsl:call-template name="artifact_properties"/>
 	</xsl:template>
 		
