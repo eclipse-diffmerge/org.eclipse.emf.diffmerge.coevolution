@@ -83,6 +83,20 @@ public class TransposerBridge<SD> extends AbstractBridge<SD, IEditableModelScope
   }
   
   /**
+   * Create and return a bridge operation for the given source and target data sets and the given execution
+   * @param sourceDataSet_p a non-null source data set
+   * @param targetDataSet_p a non-null target data set
+   * @param execution_p a non-null bridge execution
+   * @return a non-null object
+   */
+  protected TransposerBridgeOperation createBridgeOperation(SD sourceDataSet_p,
+      IEditableModelScope targetDataSet_p, TransposerBridgeExecution execution_p) {
+    TransposerBridgeOperation operation = new TransposerBridgeOperation(
+        sourceDataSet_p, targetDataSet_p, this, getTransposerConfiguration(), execution_p);
+    return operation;
+  }
+  
+  /**
    * @see org.eclipse.emf.diffmerge.bridge.api.IBridge#createExecution(org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace.Editable)
    */
   public TransposerBridgeExecution createExecution(IBridgeTrace.Editable trace_p) {
@@ -99,8 +113,8 @@ public class TransposerBridge<SD> extends AbstractBridge<SD, IEditableModelScope
       execution = (TransposerBridgeExecution) execution_p;
     else
       execution = createExecution(null);
-    TransposerBridgeOperation operation = new TransposerBridgeOperation(
-        sourceDataSet_p, targetDataSet_p, this, getTransposerConfiguration(), execution);
+    TransposerBridgeOperation operation = createBridgeOperation(
+        sourceDataSet_p, targetDataSet_p, execution);
     operation.run(monitor_p);
     return operation.getBridgeExecution();
   }
