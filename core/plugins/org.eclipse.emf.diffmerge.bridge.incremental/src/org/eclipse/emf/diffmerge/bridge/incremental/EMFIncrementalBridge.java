@@ -92,8 +92,8 @@ extends AbstractWrappingIncrementalEMFBridge<SD, TD> {
   protected EComparison compare(IEditableModelScope created_p, IEditableModelScope existing_p,
       IBridgeTrace createdTrace_p, IBridgeTrace existingTrace_p, IProgressMonitor monitor_p) {
     EComparison result = new EComparisonImpl(existing_p, created_p);
-    IMatchPolicy matchPolicy = new BridgeTraceBasedMatchPolicy(
-        created_p, createdTrace_p, existingTrace_p);
+    IMatchPolicy matchPolicy = createMatchPolicy(
+    		created_p, existing_p, createdTrace_p, existingTrace_p);
     result.compute(matchPolicy, getDiffPolicy(), getMergePolicy(), monitor_p);
     return result;
   }
@@ -104,6 +104,19 @@ extends AbstractWrappingIncrementalEMFBridge<SD, TD> {
   @Override
   public IEditableModelScope createIntermediateDataSet(SD sourceDataSet_p, TD targetDataSet_p) {
     return new IntermediateModelScope(sourceDataSet_p, targetDataSet_p);
+  }
+  
+  /**
+   * Return a match policy for the given scopes based on the given traces
+   * @param created_p a non-null model scope
+   * @param existing_p a non-null model scope
+   * @param createdTrace_p a non-null trace
+   * @param existingTrace_p a non-null trace
+   * @return a non-null object
+   */
+  protected IMatchPolicy createMatchPolicy(IEditableModelScope created_p, IEditableModelScope existing_p,
+		  IBridgeTrace createdTrace_p, IBridgeTrace existingTrace_p) {
+	  return new BridgeTraceBasedMatchPolicy(created_p, createdTrace_p, existingTrace_p);
   }
   
   /**
