@@ -70,7 +70,7 @@ public interface IMappingExecution extends IBridgeExecution {
   
   /**
    * Return the source data elements that are inputs of rules of the given identifier,
-   * restricted to the given query execution context if any
+   * restricted to (non-strict) sub-executions of the given query execution if any
    * @param <S> the type of the source data elements
    * @param ruleID_p a non-null rule ID
    * @param context_p an optional query execution

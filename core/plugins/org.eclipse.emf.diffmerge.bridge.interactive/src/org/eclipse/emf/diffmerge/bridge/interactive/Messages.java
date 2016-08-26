@@ -19,6 +19,8 @@ import org.eclipse.osgi.util.NLS;
 @SuppressWarnings("javadoc")
 public class Messages extends NLS {
   private static final String BUNDLE_NAME = "org.eclipse.emf.diffmerge.bridge.interactive.messages"; //$NON-NLS-1$
+  public static String BridgeComparisonViewer_ReferenceLabel;
+  public static String BridgeComparisonViewer_TargetLabel;
   public static String BridgeJob_ActionText;
   public static String BridgeJob_DefaultName;
   public static String BridgeJob_KeepOpen_Message;

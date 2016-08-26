@@ -27,7 +27,6 @@ import org.eclipse.emf.diffmerge.bridge.incremental.EMFIncrementalBridge;
 import org.eclipse.emf.diffmerge.diffdata.EComparison;
 import org.eclipse.emf.diffmerge.ui.util.DiffMergeDialog;
 import org.eclipse.emf.diffmerge.ui.viewers.AbstractComparisonViewer;
-import org.eclipse.emf.diffmerge.ui.viewers.ComparisonViewer;
 import org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -68,7 +67,7 @@ extends EMFIncrementalBridge<SD, TD> {
    * @return a non-null viewer
    */
   protected AbstractComparisonViewer createComparisonViewer(Composite parent_p) {
-    return new ComparisonViewer(parent_p);
+    return new BridgeComparisonViewer(parent_p);
   }
   
   /**
@@ -82,6 +81,8 @@ extends EMFIncrementalBridge<SD, TD> {
     final EMFDiffNode diffNode = new EMFDiffNode(comparison_p, domain_p, true, false);
     diffNode.setDefaultShowImpact(false);
     diffNode.setReferenceRole(TARGET_DATA_ROLE);
+    diffNode.setDrivingRole(TARGET_DATA_ROLE);
+    diffNode.setLeftRole(TARGET_DATA_ROLE.opposite()); // Left to right
     return diffNode;
   }
   

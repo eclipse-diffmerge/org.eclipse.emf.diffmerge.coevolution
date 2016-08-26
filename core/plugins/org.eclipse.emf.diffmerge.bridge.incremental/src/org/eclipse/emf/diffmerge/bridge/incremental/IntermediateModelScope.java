@@ -49,12 +49,4 @@ public class IntermediateModelScope extends RootedNormalizableModelScope {
     _targetDataSet = targetDataSet_p;
   }
   
-  /**
-   * @see org.eclipse.emf.diffmerge.impl.scopes.AbstractModelScope#getOriginator()
-   */
-  @Override
-  public Object getOriginator() {
-    return Messages.IntermediateModelScope_Originator;
-  }
-  
 }

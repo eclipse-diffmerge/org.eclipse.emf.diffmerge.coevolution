@@ -168,7 +168,8 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
       QueryExecution context = (context_p instanceof QueryExecution)? (QueryExecution)context_p: null;
       for (Map.Entry<Object, Map<IRule<?,?>, PendingDefinition>> sourceEntry : _content.entrySet()) {
         PendingDefinition pendingDef = sourceEntry.getValue().get(rule);
-        if (pendingDef != null && (context == null || context.isAncestorOf(pendingDef.getQueryExecution()))) {
+        if (pendingDef != null && (context == null ||
+            context.isAncestorOrEquals(pendingDef.getQueryExecution()))) {
           @SuppressWarnings("unchecked")
           S source = (S)sourceEntry.getKey();
           result.add(source);

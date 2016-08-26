@@ -126,19 +126,30 @@ public class QueryExecution implements IQueryExecution {
   
   /**
    * Return whether this query execution is an ancestor of the given one, i.e., the
-   * given one originates from this one and includes one or more additional query results
+   * given one originates from this one and includes one or more additional query results.
+   * If the given query execution is equal to this one then false is returned.
    * @param peer_p a non-null query execution
    */
   public boolean isAncestorOf(IQueryExecution peer_p) {
     if (peer_p instanceof QueryExecution) {
       QueryExecution superExec = ((QueryExecution)peer_p).getSuperExecution();
       while (superExec != null) {
-        if (superExec == this)
+        if (equals(superExec))
           return true;
         superExec = superExec.getSuperExecution();
       }
     }
     return false;
+  }
+  
+  /**
+   * Return whether this query execution is an ancestor of the given one, i.e., the
+   * given one originates from this one and includes one or more additional query results.
+   * If the given query execution is equal to this one then true is returned.
+   * @param peer_p a non-null query execution
+   */
+  public boolean isAncestorOrEquals(IQueryExecution peer_p) {
+    return equals(peer_p)? true: isAncestorOf(peer_p);
   }
   
   /**
