@@ -25,8 +25,10 @@ public class Messages extends NLS {
 	
 	private static final String BUNDLE_NAME = "org.eclipse.emf.diffmerge.bridge.examples.apa2capella.messages.messages"; //$NON-NLS-1$
 	
+	public static String Apa2CapellaBridgeCommandHandler_BridgeDialogTitle;
 	public static String Apa2CapellaBridgeCommandHandler_ExecutionContextNotFound;
-
+	public static String Apa2CapellaBridgeCommandHandler_TargetResourceNotFound;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

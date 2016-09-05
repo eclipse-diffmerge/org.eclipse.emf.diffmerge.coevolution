@@ -23,12 +23,17 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.AScope;
 import org.eclipse.emf.diffmerge.bridge.examples.apa2capella.messages.Messages;
+import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.polarsys.capella.common.platform.sirius.ted.SemanticEditingDomainFactory;
+import org.polarsys.capella.core.model.handler.command.CapellaResourceHelper;
 
 /**
  * The incremental bridge command handler. This command handler is invoked when
@@ -37,64 +42,75 @@ import org.polarsys.capella.common.platform.sirius.ted.SemanticEditingDomainFact
  * with the extension "apa".
  * 
  * @author Amine Lajmi
- *
+ * 
  */
 public class Apa2CapellaBridgeHandler extends AbstractHandler {
 
-  /**
-   * 
-   * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-   */
-  public Object execute(ExecutionEvent event_p) throws ExecutionException {
-    IFile file = unwrap(event_p, IFile.class);
-    if (file != null) {
-      IPath fullPath = file.getFullPath();
+	/**
+	 * 
+	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	 */
+	public Object execute(ExecutionEvent event_p) throws ExecutionException {
+		IFile file = unwrap(event_p, IFile.class);
+		if (file != null) {
+			IPath sourcePath = file.getFullPath();
 
-      // load source resource
-      SemanticEditingDomainFactory factory = new SemanticEditingDomainFactory();
-      EditingDomain editingDomain = factory.createEditingDomain();
-      ResourceSet resourceSet = editingDomain.getResourceSet();
-      URI sourceURI = URI.createPlatformResourceURI(fullPath.toOSString(),
-          false);
-      Resource resource = resourceSet.getResource(sourceURI, true);
+			// load source resource
+			SemanticEditingDomainFactory factory = new SemanticEditingDomainFactory();
+			EditingDomain editingDomain = factory.createEditingDomain();
+			ResourceSet resourceSet = editingDomain.getResourceSet();
+			URI sourceURI = URI.createPlatformResourceURI(sourcePath.toString(), false);
+			Resource resource = resourceSet.getResource(sourceURI, true);
 
-      AScope context = (AScope) resource.getContents().get(0);
-      if (context != null) {
-        Apa2CapellaBridgeJob apa2CapellaBridgeJob = new Apa2CapellaBridgeJob(context);
-        apa2CapellaBridgeJob.schedule();
-      } else {
-        throw new ExecutionException(Messages.Apa2CapellaBridgeCommandHandler_ExecutionContextNotFound);
-      }
+			AScope context = (AScope) resource.getContents().get(0);
+			if (context != null) {
+				IPath targetPath = file.getLocation().removeFileExtension().addFileExtension(CapellaResourceHelper.CAPELLA_MODEL_FILE_EXTENSION);
+				if (targetPath.toFile().exists()) {
+					IPath rootLocationPath = EcorePlugin.getWorkspaceRoot().getLocation();
+					IPath workspaceRelativePath = targetPath.makeRelativeTo(rootLocationPath);
+					URI targetURI = URI.createPlatformResourceURI(workspaceRelativePath.toString(), false);
+					Apa2CapellaBridgeJob apa2CapellaBridgeJob = new Apa2CapellaBridgeJob(context, targetURI);
+					apa2CapellaBridgeJob.schedule();	
+				} else {
+					Display display = Display.getCurrent();
+					if (display!=null) {
+						Shell shell = display.getActiveShell();
+						MessageDialog.openError(shell, Messages.Apa2CapellaBridgeCommandHandler_BridgeDialogTitle, Messages.Apa2CapellaBridgeCommandHandler_TargetResourceNotFound);						
+					}
+				}
+			} else {
+				throw new ExecutionException(
+						Messages.Apa2CapellaBridgeCommandHandler_ExecutionContextNotFound);
+			}
+		}
+		return null;
+	}
 
-    }
-    return null;
-  }
-
-  /**
-   * Unwraps the object given the type given as input
-   * 
-   * @param <T>
-   * 
-   * @param object_p (non-null)
-   *          the object to unwrap
-   * @param type_p (non-null)
-   *          the type to cast
-   * @return the (possibly null) unwrapped object
-   */
-  <T> T unwrap(Object object_p, Class<T> type_p) {
-    Object current = object_p;
-    if (current instanceof ExecutionEvent) {
-      current = HandlerUtil.getCurrentSelection((ExecutionEvent) current);
-    }
-    if (current instanceof IStructuredSelection) {
-      current = ((IStructuredSelection) current).getFirstElement();
-    }
-    if (current instanceof IAdaptable) {
-      current = ((IAdaptable) current).getAdapter(type_p);
-    }
-    if (type_p.isInstance(current)) {
-      return type_p.cast(current);
-    }
-    return null;
-  }
+	/**
+	 * Unwraps the object given the type given as input
+	 * 
+	 * @param <T> (non-null) the return type
+	 * 
+	 * @param object_p
+	 *            (non-null) the object to unwrap
+	 * @param type_p
+	 *            (non-null) the type to cast
+	 * @return the (possibly null) unwrapped object
+	 */
+	<T> T unwrap(Object object_p, Class<T> type_p) {
+		Object current = object_p;
+		if (current instanceof ExecutionEvent) {
+			current = HandlerUtil.getCurrentSelection((ExecutionEvent) current);
+		}
+		if (current instanceof IStructuredSelection) {
+			current = ((IStructuredSelection) current).getFirstElement();
+		}
+		if (current instanceof IAdaptable) {
+			current = ((IAdaptable) current).getAdapter(type_p);
+		}
+		if (type_p.isInstance(current)) {
+			return type_p.cast(current);
+		}
+		return null;
+	}
 }

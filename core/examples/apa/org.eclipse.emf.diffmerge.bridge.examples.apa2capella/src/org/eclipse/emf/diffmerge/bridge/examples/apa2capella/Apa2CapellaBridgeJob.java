@@ -52,6 +52,16 @@ public class Apa2CapellaBridgeJob extends BridgeJob<AScope> {
 	}
 
 	/**
+	 * Additional constructor with explicit target uri
+	 *
+	 * @param context_p the (non-null) source model scope
+	 * @param targetURI_p the (non-null) target uri
+	 */
+	public Apa2CapellaBridgeJob(AScope context_p, URI targetURI_p) {
+		super(IApa2CapellaBridgeConstants.APA_BRIDGE_JOB_NAME, context_p, targetURI_p);
+	}
+	
+	/**
 	 * @see org.eclipse.emf.diffmerge.bridge.interactive.BridgeJob#getTargetScope(org.eclipse.emf.ecore.resource.Resource)
 	 */
 	@Override
