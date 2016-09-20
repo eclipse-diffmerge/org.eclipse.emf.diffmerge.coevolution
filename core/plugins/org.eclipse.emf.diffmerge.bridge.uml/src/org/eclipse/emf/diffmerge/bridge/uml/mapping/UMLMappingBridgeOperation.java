@@ -196,9 +196,6 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
     Object slot = getProfileDataCauseSuffix(application_p);
     StructureBasedCause cause = new StructureBasedCause(mappingCause, slot);
     if (!execution_p.isTolerantToDuplicates() || !execution_p.isRegistered(cause)) {
-      // Addition to scope
-      if (application_p.eContainer() == null)
-        ((IMappingBridge<Object, Object>)getBridge()).addTarget(targetDataSet_p, application_p);
       // Registration in bridge execution
       execution_p.put(cause, application_p);
       // Special case of UML annotation for profile applications, implicitly added, referencing EPackage

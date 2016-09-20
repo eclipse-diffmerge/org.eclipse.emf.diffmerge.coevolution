@@ -15,8 +15,8 @@
 package org.eclipse.emf.diffmerge.bridge.uml.mapping;
 
 import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
+import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingBridge;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingExecution;
-import org.eclipse.emf.diffmerge.bridge.mapping.impl.emf.EMFMappingBridge;
 import org.eclipse.emf.diffmerge.bridge.mapping.operations.MappingBridgeOperation;
 
 
@@ -26,7 +26,8 @@ import org.eclipse.emf.diffmerge.bridge.mapping.operations.MappingBridgeOperatio
  * @param <TD> the type of the target data set
  * @author Olivier Constant
  */
-public class UMLMappingBridge<SD, TD extends IEditableModelScope> extends EMFMappingBridge<SD, TD> {
+public class UMLMappingBridge<SD, TD extends IEditableModelScope>
+extends MappingBridge<SD, TD> {
   
   /**
    * Constructor
@@ -36,7 +37,7 @@ public class UMLMappingBridge<SD, TD extends IEditableModelScope> extends EMFMap
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.mapping.impl.AbstractMappingBridge#createMappingOperation(java.lang.Object, java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingExecution)
+   * @see org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingBridge#createMappingOperation(java.lang.Object, java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingExecution)
    */
   @Override
   protected MappingBridgeOperation createMappingOperation(SD sourceDataSet_p,
@@ -46,7 +47,7 @@ public class UMLMappingBridge<SD, TD extends IEditableModelScope> extends EMFMap
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.mapping.impl.AbstractMappingBridge#getWorkAmount(java.lang.Object, java.lang.Object)
+   * @see org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingBridge#getWorkAmount(java.lang.Object, java.lang.Object)
    */
   @Override
   public int getWorkAmount(SD sourceDataSet_p, TD targetDataSet_p) {

@@ -14,10 +14,7 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.apa.operations;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
@@ -81,19 +78,19 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
     // Main component query
     final Query<PhysicalArchitecture, PhysicalComponent> mainPCQuery =
         new Query<PhysicalArchitecture, PhysicalComponent>(mapping) {
-          public Iterator<PhysicalComponent> evaluate(
+          public Iterable<PhysicalComponent> evaluate(
               PhysicalArchitecture source_p, IQueryExecution environment_p) {
             pause(PAUSE);
-            return getIterator(source_p.getOwnedPhysicalComponent());
+            return newIterable(source_p.getOwnedPhysicalComponent());
           }
         };
     // Nodes query
     final IQuery<PhysicalComponent, Part> nodesQuery =
         new Query<PhysicalComponent, Part>(mainPCQuery) {
-          public Iterator<Part> evaluate(
+          public Iterable<Part> evaluate(
               PhysicalComponent source_p, IQueryExecution environment_p) {
             pause(PAUSE);
-            Collection<Part> result = new LinkedList<Part>();
+            Collection<Part> result = newIterable();
             for (Partition partition : source_p.getOwnedPartitions()) {
               Type type = partition.getType();
               if (type instanceof PhysicalComponent &&
@@ -101,36 +98,34 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
                   PhysicalComponentNature.NODE)
                 result.add((Part)partition);
             }
-            return result.iterator();
+            return result;
           }
         };
     // Deployments query
     final IQuery<Part, PartDeploymentLink> deploymentsQuery =
         new Query<Part, PartDeploymentLink>(nodesQuery) {
           @SuppressWarnings({ "unchecked", "rawtypes" })
-          public Iterator<PartDeploymentLink> evaluate(
+          public Iterable<PartDeploymentLink> evaluate(
               Part source_p, IQueryExecution environment_p) {
             pause(PAUSE);
-            return ((List)source_p.getOwnedDeploymentLinks()).iterator();
+            return ((Collection)source_p.getOwnedDeploymentLinks());
           }
         };
     // Allocated Functions query
     final IQuery<PartDeploymentLink, AbstractFunction> allocationsQuery =
         new Query<PartDeploymentLink, AbstractFunction>(deploymentsQuery) {
-          public Iterator<AbstractFunction> evaluate(
+          public Iterable<AbstractFunction> evaluate(
               PartDeploymentLink source_p, IQueryExecution environment_p) {
             pause(PAUSE);
-            Iterator<AbstractFunction> result = getIterator();
+            List<AbstractFunction> result = newIterable();
             DeployableElement deployed = source_p.getDeployedElement();
             if (deployed instanceof Part) {
               Type type = ((Part)deployed).getType();
               if (type instanceof PhysicalComponent) {
-                Collection<AbstractFunction> functions = new ArrayList<AbstractFunction>();
                 for (ComponentFunctionalAllocation allocation :
                   ((PhysicalComponent)type).getOwnedFunctionalAllocation()) {
-                  functions.add(allocation.getFunction());
+                  result.add(allocation.getFunction());
                 }
-                result = functions.iterator();
               }
             }
             return result;
@@ -140,10 +135,10 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
     final IQuery<AbstractFunction, FunctionalExchange> exchangesQuery =
         new Query<AbstractFunction, FunctionalExchange>(allocationsQuery) {
           @SuppressWarnings({ "rawtypes", "unchecked" })
-          public Iterator<FunctionalExchange> evaluate(
+          public Iterable<FunctionalExchange> evaluate(
               AbstractFunction source_p, IQueryExecution environment_p) {
             pause(PAUSE);
-            return (Iterator)source_p.getOutgoing().iterator();
+            return (Collection)source_p.getOutgoing();
           }
         };
     //******** RULES ********
@@ -154,6 +149,8 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
           AScope target_p, IQueryExecution queryEnv_p,
           IMappingExecution ruleEnv_p) {
         pause(PAUSE);
+        // Attachment to target scope
+        ((IEditableModelScope)ruleEnv_p.getTargetDataSet()).add(target_p);
         // Name
         target_p.setName(source_p.getName());
       }

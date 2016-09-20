@@ -38,7 +38,7 @@ import org.eclipse.emf.diffmerge.bridge.mapping.api.IRuleIdentifier;
  * A mapping execution which can be modified.
  * @author Olivier Constant
  */
-public class MappingExecution extends AbstractBridgeTraceExecution implements IMappingExecution {
+public class MappingExecution extends AbstractBridgeTraceExecution implements IMappingExecution.Editable {
   
   /** The content of the rule environment: source data -> rule -> (query execution, target data) */
   protected final Map<Object, Map<IRule<?,?>, PendingDefinition>> _content;
@@ -48,6 +48,9 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
   
   /** Whether duplicate pending definitions are tolerated (only one among the duplicates will be processed) */
   private boolean _isTolerantToDuplicates;
+  
+  /** The (initially null) target data set */
+  private Object _targetDataSet;
   
   
   /**
@@ -220,7 +223,6 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
                 "A pending definition is already registered for rule [%1$s] on source [%2$s]: [%3$s] replaced by [%4$s].", //$NON-NLS-1$
                 rule, source, squatter, target_p));
     }
-    super.put(cause_p, target_p);
   }
   
   /**
@@ -230,6 +232,30 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
    */
   public void setTolerantToDuplicates(boolean tolerant_p) {
     _isTolerantToDuplicates = tolerant_p;
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#getTargetDataSet()
+   */
+  @SuppressWarnings("unchecked")
+  public <TD> TD getTargetDataSet() {  
+	  return (TD) _targetDataSet;
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeExecution#putInTrace(org.eclipse.emf.diffmerge.bridge.api.ICause, java.lang.Object)
+   */
+	@Override
+	public <T> void putInTrace(ICause<?, T> cause_p, T target_p) {
+		super.putInTrace(cause_p, target_p);
+	}
+  
+  /**
+   * Set the target data set of the execution
+   * @param targetDataSet_p a non-null target data set
+   */
+  public void setTargetDataSet(Object targetDataSet_p) {
+	_targetDataSet = targetDataSet_p;
   }
   
   
@@ -254,16 +280,6 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
       _target = target_p;
     }
     /**
-     * Return the query execution
-     * @return a non-null object
-     */
-    public IQueryExecution getQueryExecution() { return _context; }
-    /**
-     * Return the target object
-     * @return a non-null object
-     */
-    public Object getTarget() { return _target; }
-    /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override public boolean equals(Object other_p) {
@@ -276,6 +292,16 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
       }
       return result; 
     }
+    /**
+     * Return the query execution
+     * @return a non-null object
+     */
+    public IQueryExecution getQueryExecution() { return _context; }
+    /**
+     * Return the target object
+     * @return a non-null object
+     */
+    public Object getTarget() { return _target; }
     /**
      * @see java.lang.Object#hashCode()
      */

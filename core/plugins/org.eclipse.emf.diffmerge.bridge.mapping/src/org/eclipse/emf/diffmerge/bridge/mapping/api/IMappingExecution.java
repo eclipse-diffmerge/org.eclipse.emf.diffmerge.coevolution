@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
+import org.eclipse.emf.diffmerge.bridge.api.ICause;
 
 
 /**
@@ -77,5 +78,30 @@ public interface IMappingExecution extends IBridgeExecution {
    * @return a non-null iterator
    */
   <S> Iterator<S> getRuleInputs(IRuleIdentifier<S,?> ruleID_p, IQueryExecution context_p);
+  
+  /**
+   * Return the target scope from the mapping execution. It may only be used for
+   * storing the target elements in the data set when applicable.
+   * Beware that only the constant, fixed part of the data set may be used for that purpose,
+   * not the variable part that is defined by rules.
+   * @param <TD> the type of the target scope
+   * @return the (non-null) target scope
+   */
+  <TD> TD getTargetDataSet();
+  
+  
+  /**
+   * Modifiable extension of IMappingExecution.
+   */
+  interface Editable extends IMappingExecution {
+	
+	  /**
+	   * Register the given target data elements with the given cause
+	   * in the execution trace, if any
+	   * @param cause_p a non-null cause
+	   * @param target_p a non-null target data element
+	   */
+	  <T> void putInTrace(ICause<?, T> cause_p, T target_p) ;
+  }
   
 }

@@ -31,8 +31,8 @@ import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryIdentifier;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IRule;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingCause;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingExecution;
-import org.eclipse.emf.diffmerge.bridge.mapping.impl.QueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingExecution.PendingDefinition;
+import org.eclipse.emf.diffmerge.bridge.mapping.impl.QueryExecution;
 import org.eclipse.emf.diffmerge.bridge.operations.AbstractBridgeOperation;
 
 
@@ -100,6 +100,8 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
   @SuppressWarnings({ "rawtypes", "unchecked" })
   protected void handleBridge(IMappingBridge<?,?> bridge_p, MappingExecution execution_p,
       Object sourceDataSet_p, Object targetDataSet_p) {
+    // Store the target data set in the mapping execution
+    execution_p.setTargetDataSet(targetDataSet_p);
     // Root query execution definition
     QueryExecution rootQueryEnv = createQueryExecution();
     // First iteration: target creations
@@ -150,8 +152,9 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
     checkProgress();
     // Query execution
     @SuppressWarnings("unchecked")
-    Iterator<?> queryResultIterator =
+    Iterable<?> queryResultIterable =
       ((IQuery<Object, Object>)query_p).evaluate(source_p, queryExecution_p);
+    Iterator<?> queryResultIterator = queryResultIterable.iterator();
     if (queryResultIterator.hasNext()) {
       @SuppressWarnings("unchecked")
       IQueryIdentifier<Object> queryID = (IQueryIdentifier<Object>)query_p.getID();
@@ -208,8 +211,6 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
     if (!execution_p.isTolerantToDuplicates() || !execution_p.isRegistered(cause)) {
       // Target creation
       Object target = ((IRule<Object, Object>)rule_p).createTarget(source_p, queryExecution_p);
-      // Target addition to scope
-      ((IMappingBridge<Object, Object>)bridge_p).addTarget(targetDataSet_p, target);
       // Target registration in bridge execution
       execution_p.put(cause, target);
     }
@@ -265,6 +266,9 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
         pendingDef_p.getTarget(),
         pendingDef_p.getQueryExecution(),
         execution_p);
+    MappingCause<Object,Object> cause = new MappingCause<Object,Object>(
+        pendingDef_p.getQueryExecution(), source_p, (IRule<Object, Object>)rule_p);
+    execution_p.putInTrace(cause, pendingDef_p.getTarget());
     getMonitor().worked(1);
   }
   

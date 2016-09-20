@@ -14,8 +14,7 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.uml.modular.queries;
 
-import java.util.Iterator;
-
+import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryHolder;
@@ -50,9 +49,9 @@ extends QueryAndRule<PhysicalArchitecture, PhysicalComponent, Model> {
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
-  public Iterator<PhysicalComponent> evaluate(PhysicalArchitecture input_p,
+  public Iterable<PhysicalComponent> evaluate(PhysicalArchitecture input_p,
       IQueryExecution queryExecution_p) {
-    return getIterator(input_p.getOwnedPhysicalComponent());
+    return newIterable(input_p.getOwnedPhysicalComponent());
   }
   
   /**
@@ -70,6 +69,10 @@ extends QueryAndRule<PhysicalArchitecture, PhysicalComponent, Model> {
   @Override
   public void defineTarget(PhysicalComponent source_p, Model target_p,
       IQueryExecution queryExecution_p, IMappingExecution mappingExecution_p) {
+    // Add the target element as a root in the target scope
+    IEditableModelScope targetScope = mappingExecution_p.getTargetDataSet();
+    targetScope.add(target_p);
+    // Name
     target_p.setName(source_p.getName());
   }
   

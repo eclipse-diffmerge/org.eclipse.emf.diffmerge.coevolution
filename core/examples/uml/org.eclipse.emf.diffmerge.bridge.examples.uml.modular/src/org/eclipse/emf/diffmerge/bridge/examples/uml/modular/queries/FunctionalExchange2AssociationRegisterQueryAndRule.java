@@ -14,7 +14,7 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.uml.modular.queries;
 
-import java.util.Iterator;
+import java.util.Collection;
 
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
@@ -61,9 +61,9 @@ extends QueryAndRule<AbstractFunction, FunctionalExchange, Association> {
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
   @SuppressWarnings({ "rawtypes", "unchecked" })
-  public Iterator<FunctionalExchange> evaluate(
+  public Iterable<FunctionalExchange> evaluate(
       AbstractFunction source_p, IQueryExecution queryExecution_p) {
-    return (Iterator)source_p.getOutgoing().iterator();
+    return (Collection)source_p.getOutgoing();
   }
   
   /**

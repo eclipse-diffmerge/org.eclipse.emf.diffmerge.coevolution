@@ -14,10 +14,8 @@
  */
 package org.eclipse.emf.diffmerge.bridge.mapping.impl;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,7 +24,6 @@ import org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryHolder;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryIdentifier;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IRule;
-import org.eclipse.emf.diffmerge.bridge.util.CollectionsUtil;
 
 
 /**
@@ -105,18 +102,6 @@ implements IQuery<I, O> {
    */
   public IQueryIdentifier<O> getID() {
     return _identifier;
-  }
-  
-  /**
-   * Return an iterator over the given array of output elements
-   * @param elements_p a possibly empty, possibly null array
-   * @return a non-null iterator
-   */
-  protected Iterator<O> getIterator(O... elements_p) {
-    if (elements_p == null || elements_p.length == 0 ||
-        elements_p.length == 1 && elements_p[0] == null)
-      return CollectionsUtil.emptyIterator();
-    return Arrays.asList(elements_p).iterator();
   }
   
   /**

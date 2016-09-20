@@ -14,14 +14,12 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.apa2capella.queries;
 
-import java.util.Iterator;
-
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.AExchange;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.AScope;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryHolder;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.Query;
+
 
 /**
  * @author Amine Lajmi
@@ -39,8 +37,7 @@ public class AExchangeQuery extends Query<AScope, AExchange>{
 	/**
 	 * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
 	 */
-	public Iterator<AExchange> evaluate(AScope input_p, IQueryExecution environment_p) {
-		EList<AExchange> exchanges = input_p.getExchanges();
-		return exchanges.iterator();
+	public Iterable<AExchange> evaluate(AScope input_p, IQueryExecution environment_p) {
+		return input_p.getExchanges();
 	}
 }

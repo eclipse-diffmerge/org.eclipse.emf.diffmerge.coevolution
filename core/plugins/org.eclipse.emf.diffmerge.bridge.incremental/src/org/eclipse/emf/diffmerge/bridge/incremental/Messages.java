@@ -20,6 +20,7 @@ import org.eclipse.osgi.util.NLS;
 @SuppressWarnings("javadoc")
 public class Messages extends NLS {
   private static final String BUNDLE_NAME = "org.eclipse.emf.diffmerge.bridge.incremental.messages"; //$NON-NLS-1$
+  public static String IntermediateModelScope_Originator;
 
   static {
     // initialize resource bundle

@@ -15,8 +15,6 @@
 package org.eclipse.emf.diffmerge.bridge.examples.uml.modular.queries;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
@@ -54,9 +52,9 @@ public class Node2ComponentQueryAndRule extends QueryAndRule<PhysicalComponent, 
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
-  public Iterator<Part> evaluate(PhysicalComponent input_p,
+  public Iterable<Part> evaluate(PhysicalComponent input_p,
       IQueryExecution queryExecution_p) {
-    Collection<Part> result = new LinkedList<Part>();
+    Collection<Part> result = newIterable();
     for (Partition partition : input_p.getOwnedPartitions()) {
       Type type = partition.getType();
       if (type instanceof PhysicalComponent &&
@@ -64,7 +62,7 @@ public class Node2ComponentQueryAndRule extends QueryAndRule<PhysicalComponent, 
           PhysicalComponentNature.NODE)
         result.add((Part)partition);
     }
-    return result.iterator();
+    return result;
   }
   
   /**

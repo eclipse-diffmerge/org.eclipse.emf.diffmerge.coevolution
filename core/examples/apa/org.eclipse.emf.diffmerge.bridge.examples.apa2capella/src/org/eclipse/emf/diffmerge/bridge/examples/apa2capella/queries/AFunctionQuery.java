@@ -14,14 +14,12 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.apa2capella.queries;
 
-import java.util.Iterator;
-
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.ABehavior;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.AFunction;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryHolder;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.Query;
+
 
 /**
  * @author Amine Lajmi
@@ -40,8 +38,7 @@ public class AFunctionQuery extends Query<ABehavior, AFunction>{
 	 * 
 	 * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
 	 */
-	public Iterator<AFunction> evaluate(ABehavior input_p, IQueryExecution environment_p) {
-		EList<AFunction> functions = input_p.getFunctions();
-		return functions.iterator();
+	public Iterable<AFunction> evaluate(ABehavior input_p, IQueryExecution environment_p) {
+		return input_p.getFunctions();
 	}
 }

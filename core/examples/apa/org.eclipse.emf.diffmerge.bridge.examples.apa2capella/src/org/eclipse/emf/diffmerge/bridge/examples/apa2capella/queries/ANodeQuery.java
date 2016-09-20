@@ -14,14 +14,12 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.apa2capella.queries;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.emf.diffmerge.bridge.examples.apa.ANode;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.AScope;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryHolder;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.Query;
+
 
 /**
  * @author Amine Lajmi
@@ -39,8 +37,7 @@ public class ANodeQuery extends Query<AScope, ANode> {
 	/**
 	 * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
 	 */
-	public Iterator<ANode> evaluate(AScope input_p, IQueryExecution environment_p) {
-		List<ANode> nodes = input_p.getNodes();
-		return nodes.iterator();
+	public Iterable<ANode> evaluate(AScope input_p, IQueryExecution environment_p) {
+		return input_p.getNodes();
 	}
 }

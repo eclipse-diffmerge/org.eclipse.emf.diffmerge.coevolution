@@ -14,8 +14,7 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.uml.modular.queries;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
@@ -52,9 +51,9 @@ public class Deployment2ComponentQueryAndRule extends QueryAndRule<Part, PartDep
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public Iterator<PartDeploymentLink> evaluate(Part input_p,
+  public Iterable<PartDeploymentLink> evaluate(Part input_p,
       IQueryExecution queryExecution_p) {
-    return ((List)input_p.getOwnedDeploymentLinks()).iterator();
+    return ((Collection)input_p.getOwnedDeploymentLinks());
   }
   
   /**

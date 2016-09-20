@@ -15,7 +15,6 @@
 package org.eclipse.emf.diffmerge.bridge.mapping.api;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.eclipse.emf.diffmerge.bridge.api.IIdentifiedWithType;
 import org.eclipse.emf.diffmerge.bridge.api.ISymbolProvider;
@@ -44,13 +43,13 @@ IIdentifiedWithType<IQueryIdentifier<O>>, ISymbolProvider {
   void accept(IRule<? super O, ?> rule_p);
   
   /**
-   * Return an iterator over the results of the query on the given source data
+   * Return the results of the query on the given source data
    * in the context of the given query execution.
-   * The iterator is not allowed to yield null values.
+   * The returned iterable is not allowed to iterate over null values.
    * @param queryExecution_p a non-null query execution
-   * @return a non-null iterator
+   * @return a non-null iterable
    */
-  Iterator<O> evaluate(I input_p, IQueryExecution queryExecution_p);
+  Iterable<O> evaluate(I input_p, IQueryExecution queryExecution_p);
   
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IDataConsumer#getInputProvider()

@@ -30,14 +30,6 @@ import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 public interface IMappingBridge<SD, TD> extends IBridge<SD, TD>, IQueryHolder<SD> {
   
   /**
-   * Add the given target data into the given target data set, if feasible
-   * @param targetDataSet_p a non-null object
-   * @param target_p a non-null object
-   * @return whether the operation succeeded
-   */
-  boolean addTarget(TD targetDataSet_p, Object target_p);
-  
-  /**
    * @see org.eclipse.emf.diffmerge.bridge.api.IBridge#executeOn(java.lang.Object, java.lang.Object, org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution, org.eclipse.core.runtime.IProgressMonitor)
    */
   IMappingExecution executeOn(SD sourceDataSet_p, TD targetDataSet_p,

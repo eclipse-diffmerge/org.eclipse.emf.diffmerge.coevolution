@@ -58,25 +58,25 @@ public abstract class BridgeJob<SD> extends Job {
   protected ResourceSet _targetResourceSet;
   
   
-	/**
-	 * Constructor
-	 * @param jobName_p an optional name for the job
-	 * @param sourceDataSet_p the non-null source data set
-	 * @param targetURI_p the non-null URI of the target resource
-	 */
-	public BridgeJob(String jobName_p, SD sourceDataSet_p, URI targetURI_p) {
+  /**
+   * Constructor
+   * @param jobName_p an optional name for the job
+   * @param sourceDataSet_p the non-null source data set
+   * @param targetURI_p the non-null URI of the target resource
+   */
+  public BridgeJob(String jobName_p, SD sourceDataSet_p, URI targetURI_p) {
 	  super(jobName_p == null? Messages.BridgeJob_DefaultName: jobName_p);
 	  _sourceDataSet = sourceDataSet_p;
 	  _targetURI = targetURI_p;
 	  _targetResourceSet = initializeTargetResourceSet();
 	  setUser(true);
-	}
-	
-	/**
-	 * Return the bridge
-	 * @return a non-null object
-	 */
-	protected abstract EMFInteractiveBridge<SD, IEditableModelScope> getBridge();
+  }
+
+  /**
+   * Return the bridge
+   * @return a non-null object
+   */
+  protected abstract EMFInteractiveBridge<SD, IEditableModelScope> getBridge();
 	
   /**
    * Return the resource of the given URI in the target resource set,

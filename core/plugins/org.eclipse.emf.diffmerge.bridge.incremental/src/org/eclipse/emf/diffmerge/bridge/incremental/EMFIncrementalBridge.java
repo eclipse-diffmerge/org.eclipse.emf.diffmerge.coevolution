@@ -32,7 +32,6 @@ import org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridge;
 import org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.impl.emf.AbstractWrappingIncrementalEMFBridge;
 import org.eclipse.emf.diffmerge.bridge.traces.gen.bridgetraces.BridgetracesFactory;
-import org.eclipse.emf.diffmerge.bridge.util.INormalizableModelScope;
 import org.eclipse.emf.diffmerge.diffdata.EComparison;
 import org.eclipse.emf.diffmerge.diffdata.impl.EComparisonImpl;
 import org.eclipse.emf.ecore.EObject;
@@ -190,8 +189,7 @@ extends AbstractWrappingIncrementalEMFBridge<SD, TD> {
    * @param intermediateDataSet_p a non-null model scope
    */
   protected void intermediateDataSetFilled(IEditableModelScope intermediateDataSet_p) {
-    if (intermediateDataSet_p instanceof INormalizableModelScope)
-      ((INormalizableModelScope)intermediateDataSet_p).normalize();
+    // Nothing specific
   }
   
   /**

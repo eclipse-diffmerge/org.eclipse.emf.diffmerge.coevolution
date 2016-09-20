@@ -48,7 +48,7 @@ IDataFunction<S, T>, ISymbolProvider {
   
   /**
    * Define the given target data element according to the given source data element
-   * and the given query and rule executions.
+   * and the given query and rule executions in the context of the given target data set.
    * The source data element and the executions are not modified by the operation.
    * @param source_p a non-null object
    * @param target_p a non-null object

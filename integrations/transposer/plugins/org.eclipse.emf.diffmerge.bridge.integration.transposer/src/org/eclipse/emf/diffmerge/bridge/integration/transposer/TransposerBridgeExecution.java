@@ -14,11 +14,16 @@
  */
 package org.eclipse.emf.diffmerge.bridge.integration.transposer;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 import org.eclipse.emf.diffmerge.bridge.api.ICause;
 import org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeTraceExecution;
+import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
+import org.eclipse.emf.ecore.EObject;
 import org.polarsys.kitalpha.transposer.transformation.context.TransformationKey;
 
 
@@ -28,9 +33,6 @@ import org.polarsys.kitalpha.transposer.transformation.context.TransformationKey
  * @see IBridgeExecution
  */
 public class TransposerBridgeExecution extends AbstractBridgeTraceExecution {
-  
-  /** The non-null Transposer bridge that is being executed */
-  private final TransposerBridge<?> _bridge;
   
   /** The (initially null, then non-null after a call to setup(...))
    * Transposer context associated to this execution */
@@ -43,14 +45,49 @@ public class TransposerBridgeExecution extends AbstractBridgeTraceExecution {
   
   /**
    * Constructor
-   * @param bridge_p the non-null Transposer bridge that is being executed
    * @param trace_p the optional trace that reflects this execution
    */
-  public TransposerBridgeExecution(TransposerBridge<?> bridge_p, IBridgeTrace.Editable trace_p) {
+  public TransposerBridgeExecution(IBridgeTrace.Editable trace_p) {
     super(trace_p);
-    _bridge = bridge_p;
     _context = null;
     _targetScope = null;
+  }
+  
+  /**
+   * Add the given target data element into the given target data set, if feasible
+   * @param targetDataSet_p a non-null object
+   * @param target_p a non-null object
+   * @return whether the operation succeeded
+   */
+  protected boolean addElementaryTarget(IEditableModelScope targetDataSet_p, Object target_p) {
+    boolean result = false;
+    if (target_p instanceof EObject) {
+      EObject element = (EObject)target_p;
+      if (element.eContainer() == null)
+        result = targetDataSet_p.add(element);
+    }
+    return result;
+  }
+  
+  /**
+   * Add the given target data into the given target data set, if feasible
+   * @param targetDataSet_p a non-null object
+   * @param target_p a non-null object
+   * @return whether the operation succeeded
+   */
+  protected boolean addTarget(IEditableModelScope targetDataSet_p, Object target_p) {
+    // Decompose pure structures
+    Collection<?> targetElements;
+    if (target_p instanceof IPureStructure<?>) {
+      targetElements = ((IPureStructure<?>)target_p).asCollection();
+    } else {
+      targetElements = Collections.singleton(target_p);
+    }
+    for (Object targetElement : targetElements) {
+      boolean OK = addElementaryTarget(targetDataSet_p, targetElement);
+      if (!OK) return false;
+    }
+    return true;
   }
   
   /**
@@ -71,7 +108,7 @@ public class TransposerBridgeExecution extends AbstractBridgeTraceExecution {
    * @param target_p a non-null target data element
    */
   protected void doPut(TransposerBridgeCause cause_p, Object target_p) {
-    getBridge().addTarget(getTargetScope(), target_p);
+    addTarget(getTargetScope(), target_p);
     super.put(cause_p, target_p);
   }
   
@@ -86,14 +123,6 @@ public class TransposerBridgeExecution extends AbstractBridgeTraceExecution {
       result = (T)_context.get(transposerBridgeCause.getTransformationKey());
     }
     return result;
-  }
-  
-  /**
-   * Return the Transposer bridge that is being executed
-   * @return a non-null bridge
-   */
-  protected TransposerBridge<?> getBridge() {
-    return _bridge;
   }
   
   /**

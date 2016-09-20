@@ -31,7 +31,7 @@ import org.eclipse.emf.diffmerge.bridge.util.structures.Tuple2;
  */
 public abstract class AbstractBridgeExecution implements IBridgeExecution.Editable {
   
-  /** The status of the execution */
+  /** The potentially null status of the execution */
   private IStatus _status;
   
   

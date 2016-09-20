@@ -14,9 +14,7 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.uml.modular.queries;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
@@ -56,19 +54,17 @@ extends QueryAndRule<PartDeploymentLink, AbstractFunction, Component> {
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
-  public Iterator<AbstractFunction> evaluate(PartDeploymentLink input_p,
+  public Iterable<AbstractFunction> evaluate(PartDeploymentLink input_p,
       IQueryExecution queryExecution_p) {
-    Iterator<AbstractFunction> result = getIterator();
+    List<AbstractFunction> result = newIterable();
     DeployableElement deployed = input_p.getDeployedElement();
     if (deployed instanceof Part) {
       Type type = ((Part)deployed).getType();
       if (type instanceof PhysicalComponent) {
-        Collection<AbstractFunction> functions = new ArrayList<AbstractFunction>();
         for (ComponentFunctionalAllocation allocation :
           ((PhysicalComponent)type).getOwnedFunctionalAllocation()) {
-          functions.add(allocation.getFunction());
+          result.add(allocation.getFunction());
         }
-        result = functions.iterator();
       }
     }
     return result;

@@ -14,9 +14,7 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.uml.modular.queries;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
@@ -63,15 +61,16 @@ extends QueryAndRule<PartDeploymentLink, ComponentExchange, Tuple3<Association, 
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
-  public Iterator<ComponentExchange> evaluate(PartDeploymentLink input_p,
+  public Iterable<ComponentExchange> evaluate(PartDeploymentLink input_p,
       IQueryExecution queryExecution_p) {
-    PhysicalComponent component = (PhysicalComponent)((Part)input_p.getDeployedElement()).getType();
-    Collection<ComponentExchange> result = new LinkedList<ComponentExchange>();
+    PhysicalComponent component =
+        (PhysicalComponent)((Part)input_p.getDeployedElement()).getType();
+    List<ComponentExchange> result = newIterable();
     for (Partition partition : component.getOwnedPartitions()) {
       if (partition instanceof ComponentPort)
         result.addAll(((ComponentPort)partition).getComponentExchanges());
     }
-    return result.iterator();
+    return result;
   }
   
   /**

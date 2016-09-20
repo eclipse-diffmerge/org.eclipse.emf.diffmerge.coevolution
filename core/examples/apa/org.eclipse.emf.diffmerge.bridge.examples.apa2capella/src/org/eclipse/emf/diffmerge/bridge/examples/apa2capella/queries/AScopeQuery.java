@@ -14,12 +14,11 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.apa2capella.queries;
 
-import java.util.Iterator;
-
 import org.eclipse.emf.diffmerge.bridge.examples.apa.AScope;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryHolder;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.Query;
+
 
 /**
  * @author Amine Lajmi
@@ -37,8 +36,7 @@ public class AScopeQuery extends Query<AScope, AScope>{
 	/**
 	 * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
 	 */
-	public Iterator<AScope> evaluate(AScope input_p, IQueryExecution environment_p) {
-		Iterator<AScope> result = getIterator(input_p);
-		return result;
+	public Iterable<AScope> evaluate(AScope input_p, IQueryExecution environment_p) {
+		return newIterable(input_p);
 	}
 }

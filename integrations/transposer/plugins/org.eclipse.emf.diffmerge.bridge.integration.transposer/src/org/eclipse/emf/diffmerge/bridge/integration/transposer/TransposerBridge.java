@@ -19,8 +19,6 @@ import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridge;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
-import org.eclipse.emf.diffmerge.bridge.impl.AbstractBridge;
-import org.eclipse.emf.ecore.EObject;
 import org.polarsys.kitalpha.transposer.api.ITransposer;
 import org.polarsys.kitalpha.transposer.api.TransposerConfiguration;
 import org.polarsys.kitalpha.transposer.generic.GenericTransposer;
@@ -32,7 +30,7 @@ import org.polarsys.kitalpha.transposer.generic.GenericTransposer;
  * @see ITransposer
  * @param <SD> the type of the source data set
  */
-public class TransposerBridge<SD> extends AbstractBridge<SD, IEditableModelScope> {
+public class TransposerBridge<SD> implements IBridge<SD, IEditableModelScope> {
   
   /** The non-null Transposer transformation */
   private final ITransposer _transposer;
@@ -69,20 +67,6 @@ public class TransposerBridge<SD> extends AbstractBridge<SD, IEditableModelScope
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.impl.AbstractBridge#addElementaryTarget(java.lang.Object, java.lang.Object)
-   */
-  @Override
-  protected boolean addElementaryTarget(IEditableModelScope targetDataSet_p, Object target_p) {
-    boolean result = false;
-    if (target_p instanceof EObject) {
-      EObject element = (EObject)target_p;
-      if (element.eContainer() == null)
-        result = targetDataSet_p.add(element);
-    }
-    return result;
-  }
-  
-  /**
    * Create and return a bridge operation for the given source and target data sets and the given execution
    * @param sourceDataSet_p a non-null source data set
    * @param targetDataSet_p a non-null target data set
@@ -100,7 +84,7 @@ public class TransposerBridge<SD> extends AbstractBridge<SD, IEditableModelScope
    * @see org.eclipse.emf.diffmerge.bridge.api.IBridge#createExecution(org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace.Editable)
    */
   public TransposerBridgeExecution createExecution(IBridgeTrace.Editable trace_p) {
-    return new TransposerBridgeExecution(this, trace_p);
+    return new TransposerBridgeExecution(trace_p);
   }
   
   /**

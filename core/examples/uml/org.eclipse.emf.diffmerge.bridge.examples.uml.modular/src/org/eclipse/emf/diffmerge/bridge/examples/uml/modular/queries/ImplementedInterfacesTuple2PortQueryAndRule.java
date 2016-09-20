@@ -14,8 +14,6 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.uml.modular.queries;
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
@@ -59,21 +57,17 @@ extends QueryAndRule<PartDeploymentLink, Tuple2<PhysicalComponent, Interface>, P
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#evaluate(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
-  public Iterator<Tuple2<PhysicalComponent, Interface>> evaluate(
+  public Iterable<Tuple2<PhysicalComponent, Interface>> evaluate(
       PartDeploymentLink input_p, IQueryExecution queryExecution_p) {
-    @SuppressWarnings("unchecked")
-    Iterator<Tuple2<PhysicalComponent, Interface>> result = getIterator();
+    List<Tuple2<PhysicalComponent, Interface>> result = newIterable();
     DeployableElement deployed = input_p.getDeployedElement();
     if (deployed instanceof Part) {
       Type type = ((Part)deployed).getType(); //TODO: This variable should be reused from other queries
       if (type instanceof PhysicalComponent) {
         PhysicalComponent pc = (PhysicalComponent)type;
-        List<Tuple2<PhysicalComponent, Interface>> couples =
-            new LinkedList<Tuple2<PhysicalComponent, Interface>>();
         for (Interface itf : pc.getImplementedInterfaces()) {
-          couples.add(Tuples.tuple(pc, itf));
+          result.add(Tuples.tuple(pc, itf));
         }
-        result = couples.iterator();
       }
     }
     return result;

@@ -14,9 +14,12 @@
  */
 package org.eclipse.emf.diffmerge.bridge.mapping.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery;
@@ -54,6 +57,27 @@ public abstract class AbstractQueryHolder<I> implements IQueryHolder<I> {
    */
   public Collection<? extends IQuery<? super I, ?>> getQueries() {
     return Collections.unmodifiableCollection(_queries);
+  }
+  
+  /**
+   * Return a new iterable over elements of the given type
+   * @param <TYPE> the type of the elements
+   * @return a non-null, modifiable, empty list
+   */
+  protected <TYPE> List<TYPE> newIterable() {
+    return new LinkedList<TYPE>();
+  }
+  
+  /**
+   * Return an iterable over the given elements
+   * @param elements_p a possibly empty, possibly null array or sequence of parameters
+   * @return a non-null, non-modifiable list
+   */
+  protected <TYPE> List<TYPE> newIterable(TYPE... elements_p) {
+    if (elements_p == null || elements_p.length == 0 ||
+        elements_p.length == 1 && elements_p[0] == null)
+      return Collections.emptyList();
+    return Arrays.asList(elements_p);
   }
   
 }

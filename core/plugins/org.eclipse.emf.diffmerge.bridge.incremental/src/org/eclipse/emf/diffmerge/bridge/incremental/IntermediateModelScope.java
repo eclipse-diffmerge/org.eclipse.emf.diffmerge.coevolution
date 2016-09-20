@@ -17,6 +17,7 @@ package org.eclipse.emf.diffmerge.bridge.incremental;
 import java.util.Collections;
 
 import org.eclipse.emf.diffmerge.api.scopes.IModelScope;
+import org.eclipse.emf.diffmerge.impl.scopes.RootedModelScope;
 import org.eclipse.emf.ecore.EObject;
 
 
@@ -24,7 +25,7 @@ import org.eclipse.emf.ecore.EObject;
  * A model scope which is dedicated to holding intermediate targets in incremental transformations.
  * @author Olivier Constant
  */
-public class IntermediateModelScope extends RootedNormalizableModelScope {
+public class IntermediateModelScope extends RootedModelScope {
   
   /** The optional source data set */
   protected final Object _sourceDataSet;
@@ -49,4 +50,12 @@ public class IntermediateModelScope extends RootedNormalizableModelScope {
     _targetDataSet = targetDataSet_p;
   }
   
+	/**
+	 * @see org.eclipse.emf.diffmerge.impl.scopes.AbstractModelScope#getOriginator()
+	 */
+	@Override
+	public Object getOriginator() {
+		return Messages.IntermediateModelScope_Originator;
+	}
+	
 }
