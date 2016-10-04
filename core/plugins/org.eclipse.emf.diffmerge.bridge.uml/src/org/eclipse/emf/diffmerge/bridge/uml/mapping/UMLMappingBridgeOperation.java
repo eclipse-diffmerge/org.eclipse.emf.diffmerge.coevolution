@@ -82,6 +82,8 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
   @SuppressWarnings({ "rawtypes", "unchecked" })
   protected void handleBridge(IMappingBridge<?,?> bridge_p, MappingExecution execution_p,
       Object sourceDataSet_p, Object targetDataSet_p) {
+    // Store the target data set in the mapping execution
+    execution_p.setTargetDataSet(targetDataSet_p);
     // Root query execution definition
     QueryExecution rootQueryEnv = createQueryExecution();
     // First iteration: target creations
