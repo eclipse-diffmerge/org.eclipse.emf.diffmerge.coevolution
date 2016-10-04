@@ -16,7 +16,7 @@ package org.eclipse.emf.diffmerge.bridge.interactive;
 
 import org.eclipse.emf.diffmerge.api.Role;
 import org.eclipse.emf.diffmerge.api.scopes.IModelScope;
-import org.eclipse.emf.diffmerge.ui.viewers.ComparisonViewer;
+import org.eclipse.emf.diffmerge.ui.viewers.DirectedComparisonViewer;
 import org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode;
 import org.eclipse.emf.diffmerge.ui.viewers.EnhancedComparisonSideViewer;
 import org.eclipse.swt.graphics.Image;
@@ -30,7 +30,7 @@ import org.eclipse.ui.IActionBars;
  * the update phase during the execution of an interactive, incremental bridge.
  * @author Olivier Constant
  */
-public class BridgeComparisonViewer extends ComparisonViewer {
+public class BridgeComparisonViewer extends DirectedComparisonViewer {
   
   /**
    * Constructor
