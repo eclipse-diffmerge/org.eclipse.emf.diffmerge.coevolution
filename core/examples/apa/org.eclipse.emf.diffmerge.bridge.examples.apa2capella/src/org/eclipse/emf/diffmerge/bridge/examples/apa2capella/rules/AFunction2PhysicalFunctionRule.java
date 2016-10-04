@@ -14,6 +14,10 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.apa2capella.rules;
 
+import java.util.List;
+
+import org.eclipse.emf.diffmerge.bridge.capella.integration.scopes.CapellaUpdateScope;
+import org.eclipse.emf.diffmerge.bridge.capella.integration.util.CapellaUtil;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.ABehavior;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.AFunction;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
@@ -28,6 +32,7 @@ import org.polarsys.capella.core.data.fa.FaFactory;
 import org.polarsys.capella.core.data.pa.PaFactory;
 import org.polarsys.capella.core.data.pa.PhysicalComponent;
 import org.polarsys.capella.core.data.pa.PhysicalFunction;
+import org.polarsys.capella.core.data.pa.PhysicalFunctionPkg;
 
 /**
  * @author Amine Lajmi
@@ -62,10 +67,7 @@ public class AFunction2PhysicalFunctionRule extends Rule<AFunction, Tuple2<Physi
   }
 
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IRule#defineTarget(java.lang.Object,
-   *      java.lang.Object,
-   *      org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution,
-   *      org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution)
+   * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IRule#defineTarget(java.lang.Object, java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution, org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution)
    */
   public void defineTarget(final AFunction source_p, final Tuple2<PhysicalFunction, ComponentFunctionalAllocation> target_p,
       IQueryExecution queryExecution_p, IMappingExecution mappingExecution_p) {
@@ -74,11 +76,18 @@ public class AFunction2PhysicalFunctionRule extends Rule<AFunction, Tuple2<Physi
     final Tuple2<PhysicalComponent, Part> container = mappingExecution_p.get(
         (ABehavior) source_p.eContainer(), ABehaviour2PhysicalComponentRule.ID);
 
-    // add the function to the functions package
+    // Store the function
     PhysicalFunction function = target_p.get1();
     function.setName(source_p.getName());
+    CapellaUpdateScope targetScope = mappingExecution_p.getTargetDataSet();
+    PhysicalFunctionPkg physicalFunctionPkg = CapellaUtil.getPhysicalFunctionPackage(targetScope.getProject());
+    List<PhysicalFunction> rootFunctions = physicalFunctionPkg.getOwnedPhysicalFunctions();
+    if (rootFunctions.isEmpty())
+      physicalFunctionPkg.getOwnedPhysicalFunctions().add(function);
+    else
+      rootFunctions.get(0).getOwnedFunctions().add(function);
 
-    // set it as owned by the behaviour component
+    // set it as owned by the behavior component
     ComponentFunctionalAllocation allocation = target_p.get2();
     PhysicalComponent behaviourComponent = container.get1();
     behaviourComponent.getOwnedFunctionalAllocation().add(allocation);

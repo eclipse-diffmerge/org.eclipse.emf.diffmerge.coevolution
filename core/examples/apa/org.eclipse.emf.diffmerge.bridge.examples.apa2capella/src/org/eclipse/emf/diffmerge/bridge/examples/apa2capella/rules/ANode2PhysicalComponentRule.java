@@ -14,6 +14,8 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.apa2capella.rules;
 
+import org.eclipse.emf.diffmerge.bridge.capella.integration.scopes.CapellaUpdateScope;
+import org.eclipse.emf.diffmerge.bridge.capella.integration.util.CapellaUtil;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.ANode;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery;
@@ -63,23 +65,24 @@ public class ANode2PhysicalComponentRule  extends Rule<ANode, Tuple2<PhysicalCom
   }
 
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IRule#defineTarget(java.lang.Object,
-   *      java.lang.Object,
-   *      org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution,
-   *      org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution)
+   * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IRule#defineTarget(java.lang.Object, java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution, org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution)
    */
   public void defineTarget(final ANode source_p,
-      final Tuple2<PhysicalComponent, Part> target_p,
-      IQueryExecution queryExecution_p, IMappingExecution mappingExecution_p) {
-    // Physical Component
-    PhysicalComponent physicalComponent = target_p.get1();
-    physicalComponent.setName(source_p.getName());
-    physicalComponent.setNature(PhysicalComponentNature.NODE);
-
-    // Part
-    Part physicalPart = target_p.get2();
-    physicalPart.setName(source_p.getName());
-    physicalPart.setAggregationKind(AggregationKind.UNSET);
-    physicalPart.setAbstractType(physicalComponent);
+		  final Tuple2<PhysicalComponent, Part> target_p,
+		  IQueryExecution queryExecution_p, IMappingExecution mappingExecution_p) {
+	  // Physical Component
+	  PhysicalComponent physicalComponent = target_p.get1();
+	  physicalComponent.setName(source_p.getName());
+	  physicalComponent.setNature(PhysicalComponentNature.NODE);
+	  // Part
+	  Part physicalPart = target_p.get2();
+	  physicalPart.setName(source_p.getName());
+	  physicalPart.setAggregationKind(AggregationKind.UNSET);
+	  physicalPart.setAbstractType(physicalComponent);
+	  // Storage
+    CapellaUpdateScope targetScope = mappingExecution_p.getTargetDataSet();
+    PhysicalComponent rootPhysicalSystem = CapellaUtil.getPhysicalSystemRoot(targetScope.getProject());
+    rootPhysicalSystem.getOwnedPhysicalComponents().add(physicalComponent);
+    rootPhysicalSystem.getOwnedFeatures().add(physicalPart);
   }
 }

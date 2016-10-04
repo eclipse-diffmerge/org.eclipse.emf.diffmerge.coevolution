@@ -14,6 +14,8 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.apa2capella.rules;
 
+import org.eclipse.emf.diffmerge.bridge.capella.integration.scopes.CapellaUpdateScope;
+import org.eclipse.emf.diffmerge.bridge.capella.integration.util.CapellaUtil;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.AExchange;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.AFunction;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
@@ -23,6 +25,7 @@ import org.eclipse.emf.diffmerge.bridge.mapping.impl.Rule;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.RuleIdentifier;
 import org.eclipse.emf.diffmerge.bridge.util.structures.Tuple2;
 import org.eclipse.emf.diffmerge.bridge.util.structures.Tuple3;
+import org.polarsys.capella.core.data.capellamodeller.Project;
 import org.polarsys.capella.core.data.fa.ComponentFunctionalAllocation;
 import org.polarsys.capella.core.data.fa.FaFactory;
 import org.polarsys.capella.core.data.fa.FunctionInputPort;
@@ -33,7 +36,8 @@ import org.polarsys.capella.core.data.pa.PhysicalFunction;
  * @author Amine Lajmi
  *
  */
-public class AExchange2FunctionalExchangeRule extends Rule<AExchange, Tuple3<FunctionalExchange, FunctionInputPort, FunctionOutputPort>> {
+public class AExchange2FunctionalExchangeRule
+extends Rule<AExchange, Tuple3<FunctionalExchange, FunctionInputPort, FunctionOutputPort>> {
 
 	/**
 	 * The rule identifier
@@ -66,29 +70,38 @@ public class AExchange2FunctionalExchangeRule extends Rule<AExchange, Tuple3<Fun
 	 * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IRule#defineTarget(java.lang.Object, java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution, org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution)
 	 */
 	public void defineTarget(final AExchange source_p, final Tuple3<FunctionalExchange, FunctionInputPort, FunctionOutputPort>  target_p, IQueryExecution queryExecution_p, IMappingExecution mappingExecution_p) {		
-		
+
 		//source function
 		AFunction sourceFunction = source_p.getSource();
-		
+
 		//target function
 		AFunction targetFunction = source_p.getTarget();
-		
+
 		FunctionalExchange functionalExchange = target_p.get1();
 		FunctionInputPort inputPort = target_p.get2();		
 		FunctionOutputPort outputPort = target_p.get3();
-		
+
 		//functional exchange source and target
 		functionalExchange.setSource(outputPort);
 		functionalExchange.setTarget(inputPort);
-		
+
 		//source physical function
-		Tuple2<PhysicalFunction, ComponentFunctionalAllocation> tupleSource = mappingExecution_p.get(sourceFunction,AFunction2PhysicalFunctionRule.ID);
+		Tuple2<PhysicalFunction, ComponentFunctionalAllocation> tupleSource =
+		    mappingExecution_p.get(sourceFunction, AFunction2PhysicalFunctionRule.ID);
 		PhysicalFunction sourcePhysicalFunction = tupleSource.get1();
 		sourcePhysicalFunction.getOutputs().add(outputPort);
-		
+
 		//target physical function
-		Tuple2<PhysicalFunction, ComponentFunctionalAllocation> tupleTarget = mappingExecution_p.get(targetFunction,AFunction2PhysicalFunctionRule.ID);
+		Tuple2<PhysicalFunction, ComponentFunctionalAllocation> tupleTarget =
+		    mappingExecution_p.get(targetFunction, AFunction2PhysicalFunctionRule.ID);
 		PhysicalFunction targetPhysicalFunction = tupleTarget.get1();
 		targetPhysicalFunction.getInputs().add(inputPort);
+
+		//glue to the topmost elements
+		CapellaUpdateScope targetScope = mappingExecution_p.getTargetDataSet();
+		Project project = targetScope.getProject();
+    PhysicalFunction physicalFunction = CapellaUtil.getPhysicalFunctionRoot(project);
+    physicalFunction.getOwnedFunctionalExchanges().add(functionalExchange);
 	}
+	
 }

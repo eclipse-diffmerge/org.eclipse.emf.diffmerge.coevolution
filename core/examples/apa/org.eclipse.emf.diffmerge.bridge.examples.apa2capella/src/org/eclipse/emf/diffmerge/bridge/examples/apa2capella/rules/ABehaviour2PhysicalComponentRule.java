@@ -14,6 +14,8 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.apa2capella.rules;
 
+import org.eclipse.emf.diffmerge.bridge.capella.integration.scopes.CapellaUpdateScope;
+import org.eclipse.emf.diffmerge.bridge.capella.integration.util.CapellaUtil;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.ABehavior;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.ANode;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
@@ -69,35 +71,38 @@ public class ABehaviour2PhysicalComponentRule extends Rule<ABehavior, Tuple3<Phy
 	}
 
 	/**
-	 * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IRule#defineTarget(java.lang.Object,
-	 *      java.lang.Object,
-	 *      org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution,
-	 *      org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution)
+	 * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IRule#defineTarget(java.lang.Object, java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution, org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution)
 	 */
 	public void defineTarget(final ABehavior source_p,
 			final Tuple3<PhysicalComponent, Part, PartDeploymentLink> target_p, IQueryExecution queryExecution_p,
 			IMappingExecution mappingExecution_p) {
 
-		// The parent
+    // The parent
 		final Tuple2<PhysicalComponent, Part> parent = mappingExecution_p.get((ANode) source_p.eContainer(),
 				ANode2PhysicalComponentRule.ID);
-
+		
 		// Physical Component
 		PhysicalComponent behaviourComponent = target_p.get1();
 		behaviourComponent.setName(source_p.getName());
 		behaviourComponent.setNature(PhysicalComponentNature.BEHAVIOR);
-
+		
 		// Part
 		Part behaviourPart = target_p.get2();
 		behaviourPart.setName(source_p.getName());
 		behaviourPart.setAggregationKind(AggregationKind.UNSET);
 		behaviourPart.setAbstractType(behaviourComponent);
-
+		
 		// Deployment link
 		Part parentPart = parent.get2();
 		PartDeploymentLink deploymentLink = target_p.get3();
 		deploymentLink.setLocation(parentPart);
 		deploymentLink.setDeployedElement(behaviourPart);
 		parentPart.getOwnedDeploymentLinks().add(deploymentLink);
+
+    // Storage
+    CapellaUpdateScope targetScope = mappingExecution_p.getTargetDataSet();
+    PhysicalComponent rootPhysicalSystem = CapellaUtil.getPhysicalSystemRoot(targetScope.getProject());
+    rootPhysicalSystem.getOwnedPhysicalComponents().add(behaviourComponent);
+    rootPhysicalSystem.getOwnedFeatures().add(behaviourPart);
 	}
 }
