@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Status;
+import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.impl.StructureBasedCause;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingBridge;
@@ -168,6 +169,8 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
       Collection<EObject> stereotypeApps = rule.createStereotypeApplications(
           source_p, pendingDef_p.getTarget(), pendingDef_p.getQueryExecution(), execution_p);
       for (EObject application : stereotypeApps) {
+        if (application.eContainer() == null && targetDataSet_p instanceof IEditableModelScope)
+          ((IEditableModelScope)targetDataSet_p).add(application);
         registerProfileData(rule_p, source_p, pendingDef_p, execution_p, targetDataSet_p, application);
       }
       break;
