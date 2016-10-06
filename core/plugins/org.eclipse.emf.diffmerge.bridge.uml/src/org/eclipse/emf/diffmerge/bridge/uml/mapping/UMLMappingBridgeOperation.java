@@ -203,6 +203,7 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
     if (!execution_p.isTolerantToDuplicates() || !execution_p.isRegistered(cause)) {
       // Registration in bridge execution
       execution_p.put(cause, application_p);
+      execution_p.putInTrace(cause, application_p);
       // Special case of UML annotation for profile applications, implicitly added, referencing EPackage
       if (application_p instanceof ProfileApplication) {
         EAnnotation umlAnnotation = ((EModelElement)application_p).getEAnnotation(UML_PROFILE_ANNOTATION);
