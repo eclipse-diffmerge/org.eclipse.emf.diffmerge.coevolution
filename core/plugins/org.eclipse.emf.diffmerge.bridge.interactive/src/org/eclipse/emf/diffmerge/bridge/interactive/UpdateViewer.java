@@ -21,7 +21,9 @@ import org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode;
 import org.eclipse.emf.diffmerge.ui.viewers.EnhancedComparisonSideViewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 
 
@@ -30,13 +32,13 @@ import org.eclipse.ui.IActionBars;
  * the update phase during the execution of an interactive, incremental bridge.
  * @author Olivier Constant
  */
-public class BridgeComparisonViewer extends DirectedComparisonViewer {
+public class UpdateViewer extends DirectedComparisonViewer {
   
   /**
    * Constructor
    * @param parent_p a non-null composite
    */
-  public BridgeComparisonViewer(Composite parent_p) {
+  public UpdateViewer(Composite parent_p) {
     this(parent_p, null);
   }
   
@@ -45,8 +47,16 @@ public class BridgeComparisonViewer extends DirectedComparisonViewer {
    * @param parent_p a non-null composite
    * @param actionBars_p optional action bars
    */
-  public BridgeComparisonViewer(Composite parent_p, IActionBars actionBars_p) {
+  public UpdateViewer(Composite parent_p, IActionBars actionBars_p) {
     super(parent_p, actionBars_p);
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.ui.viewers.ComparisonViewer#createItemSupportUndoRedo(org.eclipse.swt.widgets.Menu)
+   */
+  @Override
+  protected Item createItemSupportUndoRedo(Menu context_p) {
+    return null;
   }
   
   /**

@@ -34,8 +34,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.progress.IProgressConstants;
 
@@ -174,23 +174,26 @@ public abstract class BridgeJob<SD> extends Job {
       // The user has waited: immediate execution
       deferrableAction.run();
       IStatus status = deferrableAction.getStatus();
-      if (status != null && status.getSeverity() == IStatus.CANCEL) {
-        // The user cancelled: prompt for action deferring
-        final Display display = Display.getDefault();
-        final boolean[] keepOpen = new boolean[1];
-        display.syncExec(new Runnable() {
-          /**
-           * @see java.lang.Runnable#run()
-           */
-          public void run() {
-            keepOpen[0] = MessageDialog.openQuestion(
-                display.getActiveShell(),
-                Messages.BridgeJob_KeepOpen_Title,
-                Messages.BridgeJob_KeepOpen_Message);
-          }
-        });
-        if (!keepOpen[0])
+      if (status != null) {
+        if (status.getSeverity() == IStatus.CANCEL) {
           deferrableAction.dispose();
+        } else if (status.getSeverity() == IStatus.INFO) {
+          // Still ongoing: show progress view if possible
+          final Display display = Display.getDefault();
+          display.syncExec(new Runnable() {
+            /**
+             * @see java.lang.Runnable#run()
+             */
+            public void run() {
+              try {
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(
+                    IProgressConstants.PROGRESS_VIEW_ID);
+              } catch (Exception e) {
+                // Proceed
+              }
+            }
+          });
+        }
       }
     }
   }
@@ -255,8 +258,8 @@ public abstract class BridgeJob<SD> extends Job {
        * @see java.lang.Runnable#run()
        */
       public void run() {
-        IIncrementalBridgeExecution localExecution =
-            bridge.executeOn(_sourceDataSet, targetScope, null, existingTrace, true, bridgeMonitor);
+        IIncrementalBridgeExecution localExecution = bridge.executeOn(
+            _sourceDataSet, targetScope, null, existingTrace, true, bridgeMonitor);
         executionWrapper[0] = localExecution;
       }
     };
@@ -359,6 +362,8 @@ public abstract class BridgeJob<SD> extends Job {
           ResourceUtil.makePersistent(_targetResource);
           ResourceUtil.closeResource(_targetResource);
         }
+      }
+      if (_status.isOK() || _status.getSeverity() == IStatus.CANCEL) {
         _monitor.done();
         dispose();
       }

@@ -23,13 +23,12 @@ public class Messages extends NLS {
   public static String BridgeComparisonViewer_TargetLabel;
   public static String BridgeJob_ActionText;
   public static String BridgeJob_DefaultName;
-  public static String BridgeJob_KeepOpen_Message;
-  public static String BridgeJob_KeepOpen_Title;
   public static String BridgeJob_Step_Completion;
   public static String BridgeJob_Step_Execution;
   public static String BridgeJob_Step_InteractiveUpdate;
   public static String BridgeJob_Step_SetUp;
   public static String InteractiveEMFBridge_DefaultDialogTitle;
+  public static String UpdateDialog_Defer;
   static {
     // initialize resource bundle
     NLS.initializeMessages(BUNDLE_NAME, Messages.class);

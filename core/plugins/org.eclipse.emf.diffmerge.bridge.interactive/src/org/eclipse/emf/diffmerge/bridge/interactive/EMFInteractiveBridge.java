@@ -25,13 +25,11 @@ import org.eclipse.emf.diffmerge.bridge.api.IBridge;
 import org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridge;
 import org.eclipse.emf.diffmerge.bridge.incremental.EMFIncrementalBridge;
 import org.eclipse.emf.diffmerge.diffdata.EComparison;
-import org.eclipse.emf.diffmerge.ui.util.DiffMergeDialog;
-import org.eclipse.emf.diffmerge.ui.viewers.AbstractComparisonViewer;
 import org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 
@@ -62,15 +60,6 @@ extends EMFIncrementalBridge<SD, TD> {
   }
   
   /**
-   * Create and return the comparison viewer for interactive merge in the given composite
-   * @param parent_p a non-null composite
-   * @return a non-null viewer
-   */
-  protected AbstractComparisonViewer createComparisonViewer(Composite parent_p) {
-    return new BridgeComparisonViewer(parent_p);
-  }
-  
-  /**
    * Create and return a diff node for the interactive merge
    * @param comparison_p a non-null comparison
    * @param domain_p an optional editing domain 
@@ -92,17 +81,7 @@ extends EMFIncrementalBridge<SD, TD> {
    * @return a non-null window
    */
   protected Window createMergeDialog(EMFDiffNode diffNode_p) {
-    return new DiffMergeDialog(
-        Display.getDefault().getActiveShell(), getTitle(), diffNode_p) {
-      /**
-       * @see org.eclipse.emf.diffmerge.ui.util.DiffMergeDialog#createComparisonViewer(org.eclipse.swt.widgets.Composite)
-       */
-      @Override
-      protected AbstractComparisonViewer createComparisonViewer(
-          Composite parent_p) {
-        return EMFInteractiveBridge.this.createComparisonViewer(parent_p);
-      }
-    };
+    return new UpdateDialog(Display.getDefault().getActiveShell(), getTitle(), diffNode_p);
   }
   
   /**
@@ -131,7 +110,7 @@ extends EMFIncrementalBridge<SD, TD> {
     if (targetScope.getAllContents().hasNext())
       domain = AdapterFactoryEditingDomain.getEditingDomainFor(targetScope.getAllContents().next());
     final EMFDiffNode diffNode = createDiffNode(comparison_p, domain);
-    final int[] done = new int[] {0};
+    final int[] returnCodeWrapper = new int[] {0};
     final Display display = Display.getDefault();
     display.syncExec(new Runnable() {
       /**
@@ -139,10 +118,22 @@ extends EMFIncrementalBridge<SD, TD> {
        */
       public void run() {
         Window dialog = createMergeDialog(diffNode);
-        done[0] = dialog.open();
+        returnCodeWrapper[0] = dialog.open();
       }
     });
-    IStatus result = Window.OK == done[0]? Status.OK_STATUS: Status.CANCEL_STATUS;
+    int returnCode = returnCodeWrapper[0];
+    IStatus result;
+    switch (returnCode) {
+    case IDialogConstants.OK_ID:
+      result = Status.OK_STATUS;
+      break;
+    case UpdateDialog.DEFER_ID:
+      result = new Status(
+          IStatus.INFO, InteractiveBridgePlugin.getDefault().getPluginId(), "ongoing");  //$NON-NLS-1$
+      break;
+    default:
+      result = Status.CANCEL_STATUS;
+    }
     return result;
   }
   
