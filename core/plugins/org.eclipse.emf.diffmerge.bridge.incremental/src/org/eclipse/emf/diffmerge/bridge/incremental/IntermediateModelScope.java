@@ -32,17 +32,12 @@ public class IntermediateModelScope extends RootedModelScope {
   
   /** The optional target data set */
   protected final IModelScope _targetDataSet;
-  
-  
+
   /**
-   * Constructor
-   */
-  public IntermediateModelScope() {
-    this(null, null);
-  }
-  
-  /**
-   * Constructor
+   * Default constructor
+   * 
+   * @param sourceDataSet_p the (non-null) source data set
+   * @param targetDataSet_p the (non-null) target data set
    */
   public IntermediateModelScope(Object sourceDataSet_p, IModelScope targetDataSet_p) {
     super(Collections.<EObject>emptyList());
@@ -58,4 +53,11 @@ public class IntermediateModelScope extends RootedModelScope {
 		return Messages.IntermediateModelScope_Originator;
 	}
 	
+  /**
+   * Returns the backed target data set
+   * @return the (non-null) target data set
+   */
+  public IModelScope getTargetDataSet() {
+    return _targetDataSet;
+  }
 }
