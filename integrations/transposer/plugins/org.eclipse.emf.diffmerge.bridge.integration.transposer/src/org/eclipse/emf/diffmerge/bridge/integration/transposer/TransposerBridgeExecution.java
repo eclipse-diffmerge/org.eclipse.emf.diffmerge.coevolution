@@ -152,7 +152,7 @@ public class TransposerBridgeExecution extends AbstractBridgeTraceExecution {
    * @param targetScope_p a non-null object
    * @param context_p a non-null object
    */
-  /*package*/ void setup(IEditableModelScope targetScope_p, TransposerBridgeContext context_p) {
+  public void setup(IEditableModelScope targetScope_p, TransposerBridgeContext context_p) {
     _targetScope = targetScope_p;
     _context = context_p;
   }
