@@ -16,10 +16,6 @@ package org.eclipse.emf.diffmerge.bridge.examples.apa2capella.messages;
 
 import org.eclipse.osgi.util.NLS;
 
-/**
- * @author Amine Lajmi
- *
- */
 @SuppressWarnings("javadoc")
 public class Messages extends NLS {
 	
@@ -28,7 +24,8 @@ public class Messages extends NLS {
 	public static String Apa2CapellaBridgeCommandHandler_BridgeDialogTitle;
 	public static String Apa2CapellaBridgeCommandHandler_ExecutionContextNotFound;
 	public static String Apa2CapellaBridgeCommandHandler_TargetResourceNotFound;
-	
+	public static String Apa2CapellaBridgeJob_JobLabel;
+	 
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -26,13 +26,14 @@ import org.eclipse.emf.diffmerge.bridge.examples.apa2capella.messages.Messages;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.polarsys.capella.common.platform.sirius.ted.SemanticEditingDomainFactory;
+import org.polarsys.capella.common.ef.ExecutionManager;
+import org.polarsys.capella.common.ef.ExecutionManagerRegistry;
 import org.polarsys.capella.core.model.handler.command.CapellaResourceHelper;
 
 /**
@@ -55,10 +56,10 @@ public class Apa2CapellaBridgeHandler extends AbstractHandler {
 		if (file != null) {
 			IPath sourcePath = file.getFullPath();
 
-			// load source resource
-			SemanticEditingDomainFactory factory = new SemanticEditingDomainFactory();
-			EditingDomain editingDomain = factory.createEditingDomain();
-			ResourceSet resourceSet = editingDomain.getResourceSet();
+			// load source resource		
+			ExecutionManager manager = ExecutionManagerRegistry.getInstance().addNewManager();
+			TransactionalEditingDomain domain = manager.getEditingDomain();
+			ResourceSet resourceSet = domain.getResourceSet();
 			URI sourceURI = URI.createPlatformResourceURI(sourcePath.toString(), false);
 			Resource resource = resourceSet.getResource(sourceURI, true);
 
@@ -89,12 +90,9 @@ public class Apa2CapellaBridgeHandler extends AbstractHandler {
 	/**
 	 * Unwraps the object given the type given as input
 	 * 
-	 * @param <T> (non-null) the return type
-	 * 
-	 * @param object_p
-	 *            (non-null) the object to unwrap
-	 * @param type_p
-	 *            (non-null) the type to cast
+	 * @param <T> the return type
+	 * @param object_p (non-null) the object to unwrap
+	 * @param type_p (non-null) the type to cast
 	 * @return the (possibly null) unwrapped object
 	 */
 	<T> T unwrap(Object object_p, Class<T> type_p) {
