@@ -23,6 +23,7 @@ import org.eclipse.emf.diffmerge.api.IMatchPolicy;
 import org.eclipse.emf.diffmerge.api.IMergePolicy;
 import org.eclipse.emf.diffmerge.api.IMergeSelector;
 import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
+import org.eclipse.emf.diffmerge.bridge.api.IBridge;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace.Editable;
 import org.eclipse.emf.diffmerge.bridge.capella.integration.policies.CapellaConfigurableMatchPolicy;
@@ -32,7 +33,6 @@ import org.eclipse.emf.diffmerge.bridge.capella.integration.scopes.CapellaUpdate
 import org.eclipse.emf.diffmerge.bridge.interactive.BridgeJob;
 import org.eclipse.emf.diffmerge.bridge.interactive.EMFInteractiveBridge;
 import org.eclipse.emf.diffmerge.bridge.interactive.util.ResourceUtil;
-import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingBridge;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.emf.EMFMappingBridge;
 import org.eclipse.emf.diffmerge.diffdata.EComparison;
 import org.eclipse.emf.diffmerge.diffdata.impl.EComparisonImpl;
@@ -126,10 +126,11 @@ public class CapellaBridgeJob<SD> extends BridgeJob<SD> {
 			protected EComparison compare(IEditableModelScope created_p, IEditableModelScope existing_p, IBridgeTrace createdTrace_p, IBridgeTrace existingTrace_p,	IProgressMonitor monitor_p) {
 				EComparison comparison = new EComparisonImpl(existing_p, created_p);
 				IMatchPolicy delegate = createMatchPolicyDelegate();
-				IMatchPolicy matchPolicy = new DelegatingTraceBasedMatchPolicy(created_p, createdTrace_p, existingTrace_p, delegate);
+				IMatchPolicy matchPolicy = createDelegatingMatchPolicy(created_p, createdTrace_p, existingTrace_p, delegate);
 				comparison.compute(matchPolicy, getDiffPolicy(), getMergePolicy(), monitor_p);
 				return comparison;
 			}
+			
 			/**
 			 * @see org.eclipse.emf.diffmerge.bridge.incremental.EMFIncrementalBridge#createTrace()
 			 */
@@ -177,7 +178,7 @@ public class CapellaBridgeJob<SD> extends BridgeJob<SD> {
 	/**
 	 * @return the extended EMF mapping bridge
 	 */
-	protected IMappingBridge<SD, IEditableModelScope> createMappingBridge() {
+	protected IBridge<SD, IEditableModelScope> createMappingBridge() {
 		return new EMFMappingBridge<SD, IEditableModelScope>();
 	}
 
@@ -195,6 +196,23 @@ public class CapellaBridgeJob<SD> extends BridgeJob<SD> {
 		delegate.setUseFineGrainedMatchCriterion(CapellaConfigurableMatchPolicy.CRITERION_SEMANTICS_DEFAULTCONTENTS, true);
 		return delegate;
 	}
+	
+  /**
+   * Creates and configures a delegating match policy with default delegation
+   * configured to the match policy returned by
+   * {@link org.eclipse.emf.diffmerge.bridge.capella.integration.CapellaBridgeJob#createMatchPolicyDelegate()
+   * createMatchPolicyDelegate}.
+   * 
+   * @param createdScope_p a non-null model scope
+   * @param createdTrace_p a non-null trace
+   * @param existingTrace_p a non-null trace
+   * @param delegate_p the non-null match policy to delegate to
+   * @return the delegating match policy.
+   */
+  protected IMatchPolicy createDelegatingMatchPolicy(IEditableModelScope createdScope_p, IBridgeTrace createdTrace_p, IBridgeTrace existingTrace_p, IMatchPolicy delegate_p) {
+    IMatchPolicy matchPolicy = new DelegatingTraceBasedMatchPolicy(createdScope_p, createdTrace_p, existingTrace_p, delegate_p);
+    return matchPolicy;
+  }
 
 	/**
 	 * Creates an intermediate model scope tailored for Capella models
