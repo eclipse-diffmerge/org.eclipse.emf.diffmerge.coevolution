@@ -363,7 +363,9 @@ public abstract class BridgeJob<SD> extends Job {
           ResourceUtil.closeResource(_targetResource);
         }
       }
-      if (_status.isOK() || _status.getSeverity() == IStatus.CANCEL) {
+      if (_status.isOK() || _status.getSeverity() == IStatus.CANCEL ||
+          _status.getSeverity() == IStatus.INFO &&
+              EMFInteractiveBridge.STATUS_SWITCH_TO_EDITOR.equals(_status.getMessage())) {
         _monitor.done();
         dispose();
       }

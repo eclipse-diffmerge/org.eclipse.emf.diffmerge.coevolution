@@ -14,6 +14,7 @@
  */
 package org.eclipse.emf.diffmerge.bridge.interactive;
 
+import org.eclipse.compare.CompareUI;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -23,13 +24,16 @@ import org.eclipse.emf.diffmerge.api.IMergeSelector;
 import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridge;
 import org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridge;
+import org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.incremental.EMFIncrementalBridge;
+import org.eclipse.emf.diffmerge.bridge.interactive.editor.BridgeCompareEditorInput;
+import org.eclipse.emf.diffmerge.bridge.interactive.editor.BridgeComparisonMethod;
 import org.eclipse.emf.diffmerge.diffdata.EComparison;
 import org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.window.Window;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 
 
@@ -44,6 +48,10 @@ import org.eclipse.swt.widgets.Display;
  */
 public class EMFInteractiveBridge<SD, TD extends IEditableModelScope>
 extends EMFIncrementalBridge<SD, TD> {
+  
+  /** The status message for a switch to editor mode in the interactive phase */
+  public static final String STATUS_SWITCH_TO_EDITOR = "editorSwitch"; //$NON-NLS-1$
+  
   
   /**
    * Constructor
@@ -80,7 +88,7 @@ extends EMFIncrementalBridge<SD, TD> {
    * @param diffNode_p a non-null diff node
    * @return a non-null window
    */
-  protected Window createMergeDialog(EMFDiffNode diffNode_p) {
+  protected UpdateDialog createMergeDialog(EMFDiffNode diffNode_p) {
     return new UpdateDialog(Display.getDefault().getActiveShell(), getTitle(), diffNode_p);
   }
   
@@ -99,42 +107,68 @@ extends EMFIncrementalBridge<SD, TD> {
   protected boolean isAlwaysInteractive() {
     return true;
   }
-  
+
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.incremental.EMFIncrementalBridge#mergeInteractively(org.eclipse.emf.diffmerge.diffdata.EComparison, org.eclipse.core.runtime.IProgressMonitor)
+   * @see org.eclipse.emf.diffmerge.bridge.incremental.EMFIncrementalBridge#handleInteractiveMerge(org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridgeExecution, org.eclipse.core.runtime.IProgressMonitor)
    */
   @Override
-  protected IStatus mergeInteractively(EComparison comparison_p, IProgressMonitor monitor_p) {
+  protected IStatus handleInteractiveMerge(IIncrementalBridgeExecution execution_p, IProgressMonitor monitor_p) {
+    IStatus result = Status.CANCEL_STATUS;
     EditingDomain domain = null;
-    IEditableModelScope targetScope = comparison_p.getTargetScope();
-    if (targetScope.getAllContents().hasNext())
-      domain = AdapterFactoryEditingDomain.getEditingDomainFor(targetScope.getAllContents().next());
-    final EMFDiffNode diffNode = createDiffNode(comparison_p, domain);
-    final int[] returnCodeWrapper = new int[] {0};
-    final Display display = Display.getDefault();
-    display.syncExec(new Runnable() {
-      /**
-       * @see java.lang.Runnable#run()
-       */
-      public void run() {
-        Window dialog = createMergeDialog(diffNode);
-        returnCodeWrapper[0] = dialog.open();
+    Object mergeData = execution_p.getInteractiveMergeData();
+    if (mergeData instanceof EComparison) {
+      EComparison comparison = (EComparison)mergeData;
+      IEditableModelScope targetScope = comparison.getTargetScope();
+      if (targetScope.getAllContents().hasNext())
+        domain = AdapterFactoryEditingDomain.getEditingDomainFor(
+            targetScope.getAllContents().next());
+      final EMFDiffNode diffNode = createDiffNode(comparison, domain);
+      final int[] returnCodeWrapper = new int[] {0};
+      final IStructuredSelection[] selectionWrapper = new IStructuredSelection[] {null};
+      final Display display = Display.getDefault();
+      display.syncExec(new Runnable() {
+        /**
+         * @see java.lang.Runnable#run()
+         */
+        public void run() {
+          UpdateDialog dialog = createMergeDialog(diffNode);
+          returnCodeWrapper[0] = dialog.open();
+          selectionWrapper[0] = dialog.getSelection();
+        }
+      });
+      switch (returnCodeWrapper[0]) {
+      case IDialogConstants.OK_ID:
+        result = Status.OK_STATUS;
+        break;
+      case UpdateDialog.DEFER_ID:
+        result = new Status(
+            IStatus.INFO, InteractiveBridgePlugin.getDefault().getPluginId(), "ongoing");  //$NON-NLS-1$
+        break;
+      case UpdateDialog.OPEN_EDITOR_ID:
+        openInEditor(execution_p, diffNode, selectionWrapper[0]);
+        result = new Status(
+            IStatus.INFO, InteractiveBridgePlugin.getDefault().getPluginId(),
+            STATUS_SWITCH_TO_EDITOR);
+        break;
+      default:
+        result = Status.CANCEL_STATUS;
       }
-    });
-    int returnCode = returnCodeWrapper[0];
-    IStatus result;
-    switch (returnCode) {
-    case IDialogConstants.OK_ID:
-      result = Status.OK_STATUS;
-      break;
-    case UpdateDialog.DEFER_ID:
-      result = new Status(
-          IStatus.INFO, InteractiveBridgePlugin.getDefault().getPluginId(), "ongoing");  //$NON-NLS-1$
-      break;
-    default:
-      result = Status.CANCEL_STATUS;
     }
     return result;
+  }
+  
+  /**
+   * Open the given bridge execution and given corresponding diff node in an editor
+   * @param execution_p a non-null bridge execution
+   * @param diffNode_p a non-null diff node
+   * @param initialSelection_p a non-null, potentially empty initial selection
+   */
+  protected void openInEditor(IIncrementalBridgeExecution execution_p,
+      EMFDiffNode diffNode_p, IStructuredSelection initialSelection_p) {
+    BridgeComparisonMethod method = new BridgeComparisonMethod(diffNode_p);
+    BridgeCompareEditorInput editorInput =
+        new BridgeCompareEditorInput(method, execution_p, initialSelection_p);
+    CompareUI.openCompareEditor(editorInput, true);
   }
   
 }

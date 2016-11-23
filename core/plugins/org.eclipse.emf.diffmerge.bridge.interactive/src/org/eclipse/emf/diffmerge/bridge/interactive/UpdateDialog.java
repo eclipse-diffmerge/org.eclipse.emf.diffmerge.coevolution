@@ -17,6 +17,11 @@ package org.eclipse.emf.diffmerge.bridge.interactive;
 import org.eclipse.emf.diffmerge.ui.util.DiffMergeDialog;
 import org.eclipse.emf.diffmerge.ui.viewers.AbstractComparisonViewer;
 import org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -26,13 +31,16 @@ import org.eclipse.swt.widgets.Shell;
  * A dialog dedicated to interactive updates during bridge executions.
  * @author Olivier Constant
  */
-public class UpdateDialog extends DiffMergeDialog {
+public class UpdateDialog extends DiffMergeDialog implements ISelectionChangedListener{
   
   /** The ID of the 'defer' button */
   public static final int DEFER_ID = 2;
   
   /** The ID of the 'open editor' button */
   public static final int OPEN_EDITOR_ID = 3;
+  
+  /** The current non-null, potentially empty viewer selection */
+  protected IStructuredSelection _selection;
   
   
   /**
@@ -43,6 +51,7 @@ public class UpdateDialog extends DiffMergeDialog {
    */
   public UpdateDialog(Shell shell_p, String title_p, EMFDiffNode input_p) {
     super(shell_p, title_p, input_p);
+    _selection = StructuredSelection.EMPTY;
   }
   
   /**
@@ -63,7 +72,7 @@ public class UpdateDialog extends DiffMergeDialog {
    */
   @Override
   protected void createButtonsForButtonBar(Composite parent_p) {
-//    createOpenEditorButton(parent_p);
+    createOpenEditorButton(parent_p);
     if (isEditable())
       createDeferButton(parent_p);
     super.createButtonsForButtonBar(parent_p);
@@ -74,7 +83,9 @@ public class UpdateDialog extends DiffMergeDialog {
    */
   @Override
   protected AbstractComparisonViewer createComparisonViewer(Composite parent_p) {
-    return new UpdateViewer(parent_p);
+    UpdateViewer viewer = new UpdateViewer(parent_p);
+    viewer.addSelectionChangedListener(this);
+    return viewer;
   }
   
   /**
@@ -88,15 +99,34 @@ public class UpdateDialog extends DiffMergeDialog {
     return result;
   }
   
-//  /**
-//   * Create an 'open editor' button
-//   * @param parent_p a non-null composite
-//   */
-//  protected Button createOpenEditorButton(Composite parent_p) {
-//    Button result = createButton(
-//        parent_p, OPEN_EDITOR_ID, "Open Editor", false);
-//    result.setEnabled(_input.getActualComparison().hasRemainingDifferences());
-//    return result;
-//  }
+  /**
+   * Create an 'open editor' button
+   * @param parent_p a non-null composite
+   */
+  protected Button createOpenEditorButton(Composite parent_p) {
+    Button result = createButton(
+        parent_p, OPEN_EDITOR_ID, Messages.UpdateDialog_OpenEditorButton, false);
+    result.setEnabled(_input.getActualComparison().hasRemainingDifferences());
+    return result;
+  }
+  
+  /**
+   * Return the current user selection in this dialog
+   * @return a non-null selection
+   */
+  public IStructuredSelection getSelection() {
+    return _selection;
+  }
+  
+  /**
+   * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+   */
+  public void selectionChanged(SelectionChangedEvent event_p) {
+    ISelection newSelection = event_p.getSelection();
+    if (newSelection instanceof IStructuredSelection)
+      _selection = (IStructuredSelection) newSelection;
+    else
+      _selection = StructuredSelection.EMPTY;
+  }
   
 }

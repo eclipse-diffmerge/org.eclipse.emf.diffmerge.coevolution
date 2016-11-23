@@ -151,6 +151,16 @@ extends AbstractWrappingIncrementalEMFBridge<SD, TD> {
   }
   
   /**
+   * Merge the given (REFERENCE: created, TARGET: existing) comparison interactively
+   * @param execution_p a non-null bridge execution
+   * @return a non-null status
+   */
+  protected IStatus handleInteractiveMerge(IIncrementalBridgeExecution execution_p, IProgressMonitor monitor_p) {
+    // Do nothing by default
+    return Status.OK_STATUS;
+  }
+  
+  /**
    * Handle the merged differences of the given comparison so as to update traces
    * @param comparison_p a non-null comparison
    * @param createdTrace_p a non-null object
@@ -243,22 +253,12 @@ extends AbstractWrappingIncrementalEMFBridge<SD, TD> {
       if (mergeData instanceof EComparison) {
         EComparison comparison = (EComparison)mergeData;
         if (isAlwaysInteractive() || comparison.hasRemainingDifferences())
-          result = mergeInteractively(comparison, monitor_p);
+          result = handleInteractiveMerge(execution_p, monitor_p);
         if (result.isOK())
           handleMergedDifferences(comparison, execution_p.getTrace(), execution_p.getReferenceTrace());
       }
     }
     return result;
-  }
-  
-  /**
-   * Merge the given (REFERENCE: created, TARGET: existing) comparison interactively
-   * @param comparison_p a non-null comparison
-   * @return a non-null status
-   */
-  protected IStatus mergeInteractively(EComparison comparison_p, IProgressMonitor monitor_p) {
-    // Do nothing by default
-    return Status.OK_STATUS;
   }
   
   /**

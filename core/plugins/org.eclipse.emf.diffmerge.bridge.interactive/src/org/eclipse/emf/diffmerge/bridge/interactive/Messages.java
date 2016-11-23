@@ -29,6 +29,7 @@ public class Messages extends NLS {
   public static String BridgeJob_Step_SetUp;
   public static String InteractiveEMFBridge_DefaultDialogTitle;
   public static String UpdateDialog_Defer;
+  public static String UpdateDialog_OpenEditorButton;
   static {
     // initialize resource bundle
     NLS.initializeMessages(BUNDLE_NAME, Messages.class);

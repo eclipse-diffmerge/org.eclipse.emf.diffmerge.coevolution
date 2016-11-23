@@ -12,4 +12,5 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.emf.diffmerge.bridge.interactive,
+ org.eclipse.emf.diffmerge.bridge.interactive.editor,
  org.eclipse.emf.diffmerge.bridge.interactive.util
