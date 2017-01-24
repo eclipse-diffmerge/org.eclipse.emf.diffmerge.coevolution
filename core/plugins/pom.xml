@@ -1,0 +1,20 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>org.eclipse.emf.diffmerge.coevolution.core.plugins</artifactId>
+	<packaging>pom</packaging>
+	<parent>
+		<groupId>org.eclipse.emf.diffmerge</groupId>
+		<artifactId>org.eclipse.emf.diffmerge.coevolution.core</artifactId>
+		<version>0.7.0-SNAPSHOT</version>
+	</parent>
+	<modules>
+		<module>org.eclipse.emf.diffmerge.bridge</module>
+		<module>org.eclipse.emf.diffmerge.bridge.incremental</module>
+		<module>org.eclipse.emf.diffmerge.bridge.interactive</module>
+		<module>org.eclipse.emf.diffmerge.bridge.mapping</module>
+		<module>org.eclipse.emf.diffmerge.bridge.traces.gen</module>
+		<module>org.eclipse.emf.diffmerge.bridge.traces.gen.edit</module>
+		<module>org.eclipse.emf.diffmerge.bridge.traces.gen.editor</module>
+		<module>org.eclipse.emf.diffmerge.bridge.uml</module>
+	</modules>
+</project>
