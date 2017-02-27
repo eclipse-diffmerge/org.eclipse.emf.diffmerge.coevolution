@@ -63,7 +63,7 @@ import org.polarsys.capella.core.model.skeleton.impl.cmd.CreateCapellaProjectCmd
 public class CapellaBridgeJob<SD> extends BridgeJob<SD> {
 
 	/**
-	 * The bridge job logger
+	 * The Capella bridge job logger
 	 */
 	static final Logger logger = Logger.getLogger(CapellaBridgeJob.class);
 
@@ -71,11 +71,6 @@ public class CapellaBridgeJob<SD> extends BridgeJob<SD> {
 	 * The default bridge job label
 	 */
 	private static final String DEFAULT_BRIDGE_JOB_LABEL = "Capella Bridge Job"; //$NON-NLS-1$
-
-	/**
-	 * The Mdelody semantic model file extension
-	 */
-	private static final String MELODYMODELLER_FILE_EXTENSION = "melodymodeller"; //$NON-NLS-1$
 
 	/**
 	 * The default constructor
@@ -250,8 +245,8 @@ public class CapellaBridgeJob<SD> extends BridgeJob<SD> {
 		Resource semanticResource = null;
 		String projectName = project.getName();
 
-		URI uri = URI.createURI("dummy:/" + project.getName() + "/" //$NON-NLS-1$ //$NON-NLS-2$
-				+ project.getName() + "." + MELODYMODELLER_FILE_EXTENSION); //$NON-NLS-1$
+		URI uri = URI.createURI("dummy:/" + targetURI.devicePath()); //$NON-NLS-1$
+
 		semanticResource = resourceSet.createResource(uri);
 		command = createInitialElementsCommand(semanticResource, projectName, new NullProgressMonitor());
 		if (command != null) {
