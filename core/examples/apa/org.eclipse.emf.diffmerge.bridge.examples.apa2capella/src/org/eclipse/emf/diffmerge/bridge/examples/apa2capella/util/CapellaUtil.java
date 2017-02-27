@@ -14,24 +14,11 @@
  */
 package org.eclipse.emf.diffmerge.bridge.examples.apa2capella.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.sirius.business.api.session.Session;
-import org.eclipse.sirius.business.api.session.SessionManager;
-import org.polarsys.capella.common.helpers.EcoreUtil2;
 import org.polarsys.capella.core.data.capellamodeller.ModelRoot;
 import org.polarsys.capella.core.data.capellamodeller.Project;
 import org.polarsys.capella.core.data.capellamodeller.SystemEngineering;
@@ -40,7 +27,6 @@ import org.polarsys.capella.core.data.pa.PhysicalArchitecture;
 import org.polarsys.capella.core.data.pa.PhysicalComponent;
 import org.polarsys.capella.core.data.pa.PhysicalFunction;
 import org.polarsys.capella.core.data.pa.PhysicalFunctionPkg;
-import org.polarsys.capella.core.libraries.utils.IFileRequestor;
 import org.polarsys.capella.core.model.handler.command.CapellaResourceHelper;
 
 /**
@@ -50,24 +36,6 @@ import org.polarsys.capella.core.model.handler.command.CapellaResourceHelper;
  *
  */
 public class CapellaUtil {
-
-  /**
-   * Returns the Sirius resource set given a project name
-   * 
-   * @param projectName_p 
-   *          the (non-null) project name
-   * @return the resourceSet associated to the Sirius session
-   */
-  public static ResourceSet getResourceSet(String projectName_p) {
-    IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName_p);
-    Collection<Session> existingSessions = CapellaUtil
-        .getExistingSessions(project);
-    if (!existingSessions.isEmpty()) {
-      Session session = existingSessions.iterator().next();
-      return session.getTransactionalEditingDomain().getResourceSet();
-    }
-    return null;
-  }
 
   /**
    * Returns the root physical component of the Capella physical architecture given a semantic object
@@ -167,34 +135,5 @@ public class CapellaUtil {
   public static PhysicalFunction getPhysicalFunctionRoot(Resource resource_p) {
     PhysicalFunctionPkg functionPackage = getPhysicalFunctionPackage(resource_p.getContents().get(0));
     return functionPackage.getOwnedPhysicalFunctions().get(0);
-  }
-
-  /**
-   * Get active sessions from the given project
-   * 
-   * @param project_p (non-null) project handle
-   * @return the existing sessions for the given project
-   */
-  public static Collection<Session> getExistingSessions(IProject project_p) {
-    // Sessions are children of IProjects, get all active sessions.
-    // Iterate over active sessions to search the ones that semantic
-    // resources are contained by the project.
-    Collection<Session> sessions = new ArrayList<Session>();
-    List<IFile> files = new IFileRequestor().search(project_p, CapellaResourceHelper.AIRD_FILE_EXTENSION, false);
-    for (IFile mmFile : files) {
-      Session session = SessionManager.INSTANCE.getExistingSession(EcoreUtil2.getURI(mmFile));
-      if (session != null) {
-        sessions.add(session);
-      } else {
-        // load the aird resource
-        IPath fullPath = project_p.getFullPath();
-        IPath airdResourcePath = fullPath.append(new Path(project_p.getName()
-            + "." + CapellaResourceHelper.AIRD_FILE_EXTENSION)); //$NON-NLS-1$
-        URI airdURI = URI.createPlatformResourceURI(airdResourcePath.toOSString(), false);
-        session = SessionManager.INSTANCE.getSession(airdURI, new NullProgressMonitor());
-        sessions.add(session);
-      }
-    }
-    return sessions;
   }
 }
