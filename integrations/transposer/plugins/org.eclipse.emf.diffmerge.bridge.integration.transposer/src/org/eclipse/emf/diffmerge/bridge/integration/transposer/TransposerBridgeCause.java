@@ -14,6 +14,9 @@
  */
 package org.eclipse.emf.diffmerge.bridge.integration.transposer;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.emf.diffmerge.bridge.api.ICause;
 import org.eclipse.emf.diffmerge.bridge.api.ISymbolFunction;
 import org.polarsys.kitalpha.transposer.transformation.context.TransformationKey;
@@ -103,5 +106,11 @@ public class TransposerBridgeCause implements ICause.Symbolic<Object, Object> {
   public int hashCode() {
     return _transformationKey.hashCode();
   }
-  
+
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic#getSourceElements()
+   */
+  public List<Object> getSourceElements() {
+    return Collections.singletonList(getTransformationKey().getSourceObject());
+  }
 }

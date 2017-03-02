@@ -13,4 +13,6 @@ Export-Package: org.eclipse.emf.diffmerge.bridge.mapping,
  org.eclipse.emf.diffmerge.bridge.mapping.api,
  org.eclipse.emf.diffmerge.bridge.mapping.impl,
  org.eclipse.emf.diffmerge.bridge.mapping.impl.emf,
- org.eclipse.emf.diffmerge.bridge.mapping.operations
+ org.eclipse.emf.diffmerge.bridge.mapping.operations,
+ org.eclipse.emf.diffmerge.bridge.mapping.util
+Import-Package: org.apache.log4j

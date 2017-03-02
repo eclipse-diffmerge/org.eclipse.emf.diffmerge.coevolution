@@ -14,6 +14,8 @@
  */
 package org.eclipse.emf.diffmerge.bridge.impl;
 
+import java.util.List;
+
 import org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic;
 import org.eclipse.emf.diffmerge.bridge.api.ISymbolFunction;
 import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
@@ -69,6 +71,13 @@ public class StructureBasedCause implements Symbolic<Object, Object> {
     else
       result = baseSymbol.toString() + '|' + slotSymbol;
     return result;
+  }
+
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic#getSourceElements()
+   */
+  public List<Object> getSourceElements() {
+    return _baseCause.getSourceElements();
   }
   
 }

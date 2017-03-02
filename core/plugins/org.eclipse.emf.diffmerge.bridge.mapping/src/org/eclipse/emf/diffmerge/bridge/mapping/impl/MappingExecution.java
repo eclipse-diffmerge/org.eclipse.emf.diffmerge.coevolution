@@ -26,12 +26,15 @@ import java.util.Set;
 
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 import org.eclipse.emf.diffmerge.bridge.api.ICause;
+import org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic;
 import org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeTraceExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingCause;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IRule;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IRuleIdentifier;
+import org.eclipse.emf.diffmerge.bridge.mapping.util.TraceLoggingMessage;
+import org.eclipse.emf.diffmerge.bridge.util.BaseTraceLoggingMessage;
 
 
 /**
@@ -249,6 +252,14 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
 	public <T> void putInTrace(ICause<?, T> cause_p, T target_p) {
 		super.putInTrace(cause_p, target_p);
 	}
+	
+	/**
+	 * @see org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeExecution#createTraceLoggingMessage(java.lang.Object, org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic)
+	 */
+	@Override
+	protected BaseTraceLoggingMessage createTraceLoggingMessage(Object target_p, Symbolic<?, ?> cause_p) {
+	  return new TraceLoggingMessage(target_p, cause_p);
+	}
   
   /**
    * Set the target data set of the execution
@@ -257,7 +268,6 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
   public void setTargetDataSet(Object targetDataSet_p) {
     _targetDataSet = targetDataSet_p;
   }
-  
   
   /**
    * A trivial structure for pending definitions, associating a target with the query execution

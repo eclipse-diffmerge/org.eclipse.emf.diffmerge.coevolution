@@ -23,6 +23,7 @@ public class Messages extends NLS {
   public static String BridgeComparisonViewer_TargetLabel;
   public static String BridgeJob_ActionText;
   public static String BridgeJob_DefaultName;
+  public static String BridgeJob_InteractiveMergeLoggingMessage;
   public static String BridgeJob_Step_Completion;
   public static String BridgeJob_Step_Execution;
   public static String BridgeJob_Step_InteractiveUpdate;

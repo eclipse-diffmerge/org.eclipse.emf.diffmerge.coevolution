@@ -20,11 +20,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.diffmerge.bridge.api.IBridge;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
+import org.eclipse.emf.diffmerge.bridge.mapping.Messages;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingBridge;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryIdentifier;
@@ -33,14 +35,20 @@ import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingCause;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingExecution.PendingDefinition;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.QueryExecution;
+import org.eclipse.emf.diffmerge.bridge.mapping.util.QueryLoggingMessage;
+import org.eclipse.emf.diffmerge.bridge.mapping.util.RuleLoggingMessage;
 import org.eclipse.emf.diffmerge.bridge.operations.AbstractBridgeOperation;
-
 
 /**
  * An operation that executes a mapping bridge between data scopes.
  * @author Olivier Constant
  */
 public class MappingBridgeOperation extends AbstractBridgeOperation {
+  
+  /**
+   * The logger associated to this class.
+   */
+  static final Logger logger = Logger.getLogger(MappingBridgeOperation.class);
   
   /**
    * Constructor
@@ -105,10 +113,12 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
     // Root query execution definition
     QueryExecution rootQueryEnv = createQueryExecution();
     // First iteration: target creations
+    logger.info(Messages.MappingBridgeOperation_TargetCreationStepMessage); 
     handleQueriesForTargetCreationRec(bridge_p.getQueries(), bridge_p,
         sourceDataSet_p, targetDataSet_p, rootQueryEnv, execution_p);
     ((IMappingBridge)bridge_p).targetsCreated(targetDataSet_p);
     // Second iteration: target definitions
+    logger.info(Messages.MappingBridgeOperation_TargetDefinitionStepMessage); 
     handleTargetDefinitions(execution_p);
     ((IMappingBridge)bridge_p).targetsDefined(targetDataSet_p);
     execution_p.setStatus(Status.OK_STATUS);
@@ -181,12 +191,14 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
    * @param queryExecution_p a non-null query execution whose last element is source_p
    * @param execution_p a non-null object
    */
-  protected void handleQueryForTargetCreation(IQuery<?,?> query_p,
-      IBridge<?,?> bridge_p, Object source_p, Object targetDataSet_p,
+  protected void handleQueryForTargetCreation(IQuery<?, ?> query_p,
+      IBridge<?, ?> bridge_p, Object source_p, Object targetDataSet_p,
       QueryExecution queryExecution_p, MappingExecution execution_p) {
+    logger.info(new QueryLoggingMessage(queryExecution_p));
     // Execution of local rules
     for (IRule<?, ?> rule : query_p.getRules()) {
-      handleRuleForTargetCreation(rule, bridge_p, source_p, targetDataSet_p, queryExecution_p, execution_p);
+      handleRuleForTargetCreation(rule, bridge_p, source_p, targetDataSet_p,
+          queryExecution_p, execution_p);
     }
     getMonitor().worked(1);
   }
@@ -210,6 +222,7 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
         queryExecution_p, source_p, (IRule<Object, Object>)rule_p);
     if (!execution_p.isTolerantToDuplicates() || !execution_p.isRegistered(cause)) {
       // Target creation
+      logger.info(new RuleLoggingMessage(rule_p, RuleLoggingMessage.Step.TargetCreation)); 
       Object target = ((IRule<Object, Object>)rule_p).createTarget(source_p, queryExecution_p);
       // Target registration in bridge execution
       execution_p.put(cause, target);
@@ -261,6 +274,7 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
   protected void handleRuleForTargetDefinition(IRule<?,?> rule_p,
       Object source_p, PendingDefinition pendingDef_p, MappingExecution execution_p) {
     checkProgress();
+    logger.info(new RuleLoggingMessage(rule_p, RuleLoggingMessage.Step.TargetDefinition)); 
     ((IRule<Object,Object>)rule_p).defineTarget(
         source_p,
         pendingDef_p.getTarget(),

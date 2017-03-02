@@ -24,6 +24,12 @@ import org.eclipse.osgi.util.NLS;
 @SuppressWarnings("javadoc")
 public class Messages extends NLS {
   private static final String BUNDLE_NAME = "org.eclipse.emf.diffmerge.bridge.mapping.messages"; //$NON-NLS-1$
+  public static String MappingBridgeOperation_TargetCreationStepMessage;
+  public static String MappingBridgeOperation_TargetDefinitionStepMessage;
+  public static String QueryLoggingMessage_EmptyQueryExecutionError;
+  public static String QueryLoggingMessage_EmptyQueryResultError;
+  public static String RuleLoggingMessage_TargetCreationMessageSuffix;
+  public static String RuleLoggingMessage_TargetDefinitionMessageSuffix;
   static {
     // initialize resource bundle
     NLS.initializeMessages(BUNDLE_NAME, Messages.class);

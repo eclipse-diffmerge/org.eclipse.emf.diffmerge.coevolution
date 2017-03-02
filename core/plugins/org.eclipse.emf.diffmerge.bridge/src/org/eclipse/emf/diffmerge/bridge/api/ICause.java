@@ -14,6 +14,7 @@
  */
 package org.eclipse.emf.diffmerge.bridge.api;
 
+import java.util.List;
 
 /**
  * The cause of the presence of target data elements in terms of source data.
@@ -23,6 +24,7 @@ package org.eclipse.emf.diffmerge.bridge.api;
  */
 public interface ICause<S, T> {
   
+  
   /**
    * A cause that can be represented as a symbol.
    * @param <S> the type of source data elements
@@ -30,6 +32,12 @@ public interface ICause<S, T> {
    */
   interface Symbolic<S, T> extends ICause<S, T>, ISymbolProvider {
     // Nothing needed
+    
+    /**
+     * @return the source objects
+     */
+    List<Object> getSourceElements();
+
   }
   
 }

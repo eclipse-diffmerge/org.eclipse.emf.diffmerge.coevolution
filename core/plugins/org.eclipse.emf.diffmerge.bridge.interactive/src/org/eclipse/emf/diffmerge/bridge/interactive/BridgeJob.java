@@ -14,6 +14,8 @@
  */
 package org.eclipse.emf.diffmerge.bridge.interactive;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubMonitor;
@@ -48,6 +50,11 @@ import org.eclipse.ui.progress.IProgressConstants;
  */
 public abstract class BridgeJob<SD> extends Job {
   
+  /**
+   * The bridge job logger
+   */
+  static final Logger logger = Logger.getLogger(BridgeJob.class);
+  
   /** The non-null source data set */
   protected final SD _sourceDataSet;
   
@@ -70,6 +77,7 @@ public abstract class BridgeJob<SD> extends Job {
 	  _targetURI = targetURI_p;
 	  _targetResourceSet = initializeTargetResourceSet();
 	  setUser(true);
+    Logger.getRootLogger().setLevel(Level.DEBUG);
   }
 
   /**
@@ -267,6 +275,7 @@ public abstract class BridgeJob<SD> extends Job {
     IIncrementalBridgeExecution execution = executionWrapper[0];
     bridgeMonitor.done();
     // User interactions and completion
+    logger.info(Messages.BridgeJob_InteractiveMergeLoggingMessage); 
     handleDeferrablePart(bridge, execution, targetResource, traceResource, monitor);
     return execution.getStatus();
   }

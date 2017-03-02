@@ -14,10 +14,16 @@
  */
 package org.eclipse.emf.diffmerge.bridge.mapping.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.emf.diffmerge.bridge.api.ISymbolFunction;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingCause;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IRule;
+import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
+import org.eclipse.emf.ecore.EObject;
 
 
 /**
@@ -89,6 +95,17 @@ public class MappingCause<S, T> implements IMappingCause<S, T> {
   }
   
   /**
+   * @see org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic#getSourceElements()
+   */
+  public List<Object> getSourceElements() {
+    if (_source instanceof IPureStructure<?>)
+      return new ArrayList<Object>(((IPureStructure<?>)_source).asCollection());
+    else if (_source instanceof EObject)
+      return Collections.singletonList((Object)_source);
+    return Collections.emptyList();
+  }
+
+  /**
    * @see org.eclipse.emf.diffmerge.bridge.api.ISymbolProvider#getSymbol(org.eclipse.emf.diffmerge.bridge.api.ISymbolFunction)
    */
   public Object getSymbol(ISymbolFunction function_p) {
@@ -124,6 +141,5 @@ public class MappingCause<S, T> implements IMappingCause<S, T> {
     result = prime * result + getSource().hashCode();
     result = prime * result + getRule().hashCode();
     return result;
-  }
-  
+  }  
 }
