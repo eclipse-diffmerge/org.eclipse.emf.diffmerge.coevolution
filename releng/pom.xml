@@ -13,6 +13,7 @@
 	<modules>
 		<module>org.eclipse.emf.diffmerge.coevolution.configuration</module>
 		<module>org.eclipse.emf.diffmerge.coevolution.target</module>
-		<!-- <module>org.eclipse.emf.diffmerge.coevolution.update</module>-->
+		<module>org.eclipse.emf.diffmerge.coevolution.javadoc</module>
+		<module>org.eclipse.emf.diffmerge.coevolution.update</module>
 	</modules>
 </project>
