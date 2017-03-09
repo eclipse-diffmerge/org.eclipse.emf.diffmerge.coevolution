@@ -45,7 +45,6 @@ public class BaseTraceLoggingMessage extends AbstractLoggingMessage {
     StringBuilder builder = new StringBuilder();
     builder.append("Produced [" + getObjectLabel(getTarget()) + "]");  //$NON-NLS-1$//$NON-NLS-2$
     builder.append(" From ["); //$NON-NLS-1$
-    //we are agnostic of the cause here, navigable causes are in mapping
     builder.append(getObjectLabel(getCause()));
     builder.append("]"); //$NON-NLS-1$
     return builder.toString();

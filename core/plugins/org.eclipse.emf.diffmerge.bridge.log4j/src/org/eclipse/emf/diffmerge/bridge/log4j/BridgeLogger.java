@@ -50,7 +50,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * The singleton instance
    */
   private static BridgeLogger INSTANCE = null;
-
+  
   /**
    * Internal constructor
    */
@@ -223,14 +223,15 @@ public class BridgeLogger implements IBridgeLogListener {
 
   /**
    * Populates the fragment to uri map for the given object
-   * @param console_p
-   * @param object_p
+   * 
+   * @param console_p the (non-null) bridge console
+   * @param object_p the (non-null) object whose uri is to map
    */
   private void registerObject(final BridgeConsole console_p, Object object_p) {
     if (object_p instanceof EObject) {
-      // map source fragments to complete URI
-      URI sourceURI = EcoreUtil.getURI((EObject) object_p);
-      console_p.getFragmentToURIMap().put(sourceURI.fragment(), sourceURI.trimFragment());
+      // map object fragment to base URI
+      URI objectURI = EcoreUtil.getURI((EObject) object_p);
+      console_p.getFragmentToURIMap().put(objectURI.fragment(), objectURI.trimFragment());
     }
   }
 
@@ -239,7 +240,7 @@ public class BridgeLogger implements IBridgeLogListener {
    */
   private BridgeConsole setupConsole() {
     BridgeConsole console = findConsole();
-    console.setWaterMarks(-1, -1);
+    initLimitOutput(console);
     IWorkbench workbench = PlatformUI.getWorkbench();
     IWorkbenchWindow activeWorkbenchWindow = workbench.getActiveWorkbenchWindow();
     if (activeWorkbenchWindow != null) {
@@ -252,6 +253,16 @@ public class BridgeLogger implements IBridgeLogListener {
       }
     }
     return console;
+  }
+
+  /**
+   * Sets the default console water marks, by default use the settings of the standard debug console.
+   * 
+   * @param console_p the (non-null) bridge console
+   */
+  private void initLimitOutput(BridgeConsole console_p) {
+    console_p.setWaterMarks(0, 80000); //limit console output
+    console_p.setConsoleWidth(0); //unlimited width
   }
 
   /**
@@ -281,6 +292,7 @@ public class BridgeLogger implements IBridgeLogListener {
   private BridgeConsole createNewConsole(IConsoleManager consoleManager_p) {
     BridgeConsole console = new BridgeConsole(Messages.BridgeLogger_ConsoldeId, null);
     consoleManager_p.addConsoles(new IConsole[] { console });
+    console.activate();
     return console;
   }
 }

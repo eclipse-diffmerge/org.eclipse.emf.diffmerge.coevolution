@@ -149,10 +149,13 @@ public class BridgeConsole extends MessageConsole {
     try {
       removePatternMatchListener(_notifier);
       _infoStream.getColor().dispose();
+      _infoStream.flush();
       _infoStream.close();
       _warningStream.getColor().dispose();
+      _warningStream.flush();
       _warningStream.close();
       _errorStream.getColor().dispose();
+      _errorStream.flush();
       _errorStream.close();
     } catch (IOException ex) {
       logger.error(ex.getStackTrace(), ex);
@@ -172,9 +175,17 @@ public class BridgeConsole extends MessageConsole {
   public static class PatternMatchListener implements IPatternMatchListener {
 
     /**
-     * The pattern to detect identifiable elements written in console between [ and ]
+     * The pattern to detect identifiers written in console between [ and ]
      */
     private static final String BRIDGE_ELEMENT_ID_PATTERN = "\\[([a-zA-Z\\d_$-][a-zA-Z\\d_$-]*\\.)*[a-zA-Z\\d_$-][a-zA-Z\\d_$-]*\\]"; //$NON-NLS-1$
+    /**
+     * The pattern to detect fragments in the form //@model/@features.0/@... between [ and ]
+     */
+    private static final String BRIDGE_ELEMENT_FRAGMENT_PATTERN = "\\[(\\/(\\/)?\\@[a-zA-Z\\d_][a-zA-Z\\d_]*(\\.[0-9]+)?)+\\]"; //$NON-NLS-1$
+    /**
+     * The logical OR of the patterns previously defined
+     */
+    private static final String BRIDGE_ELEMENT_COMBINED_PATTERN = "(" + BRIDGE_ELEMENT_ID_PATTERN + "|" + BRIDGE_ELEMENT_FRAGMENT_PATTERN + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     /**
      * The console this notifier is tracking 
      */
@@ -205,7 +216,7 @@ public class BridgeConsole extends MessageConsole {
         String identifier = document.get(offset, length);
         String identifierWithoutBrackets = identifier.substring(1, identifier.length() - 1);
         URI uri = ((BridgeConsole) _console).getFragmentToURIMap().get(identifierWithoutBrackets);
-        if (uri != null) {
+        if (uri != null && !uri.isEmpty()) {
           BridgeElementLink link = new BridgeElementLink(uri.appendFragment(identifierWithoutBrackets));
           _console.addHyperlink(link, offset + 1, identifierWithoutBrackets.length());
         }
@@ -218,7 +229,7 @@ public class BridgeConsole extends MessageConsole {
      * @see org.eclipse.ui.console.IPatternMatchListener#getPattern()
      */
     public String getPattern() {
-      return BRIDGE_ELEMENT_ID_PATTERN;
+      return BRIDGE_ELEMENT_COMBINED_PATTERN;
     }
 
     /**
