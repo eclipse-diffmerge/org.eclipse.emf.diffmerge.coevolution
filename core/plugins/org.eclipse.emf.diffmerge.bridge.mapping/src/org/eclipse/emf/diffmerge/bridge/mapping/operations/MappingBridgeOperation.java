@@ -113,12 +113,12 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
     // Root query execution definition
     QueryExecution rootQueryEnv = createQueryExecution();
     // First iteration: target creations
-    logger.info(Messages.MappingBridgeOperation_TargetCreationStepMessage); 
+    logger.info(Messages.BridgeLogger_TargetCreationStepMessage); 
     handleQueriesForTargetCreationRec(bridge_p.getQueries(), bridge_p,
         sourceDataSet_p, targetDataSet_p, rootQueryEnv, execution_p);
     ((IMappingBridge)bridge_p).targetsCreated(targetDataSet_p);
     // Second iteration: target definitions
-    logger.info(Messages.MappingBridgeOperation_TargetDefinitionStepMessage); 
+    logger.info(Messages.BridgeLogger_TargetDefinitionStepMessage); 
     handleTargetDefinitions(execution_p);
     ((IMappingBridge)bridge_p).targetsDefined(targetDataSet_p);
     execution_p.setStatus(Status.OK_STATUS);
@@ -222,7 +222,7 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
         queryExecution_p, source_p, (IRule<Object, Object>)rule_p);
     if (!execution_p.isTolerantToDuplicates() || !execution_p.isRegistered(cause)) {
       // Target creation
-      logger.info(new RuleLoggingMessage(rule_p, RuleLoggingMessage.Step.TargetCreation)); 
+      logger.info(new RuleLoggingMessage(rule_p, RuleLoggingMessage.Step.TargetCreation, queryExecution_p)); 
       Object target = ((IRule<Object, Object>)rule_p).createTarget(source_p, queryExecution_p);
       // Target registration in bridge execution
       execution_p.put(cause, target);
@@ -274,7 +274,7 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
   protected void handleRuleForTargetDefinition(IRule<?,?> rule_p,
       Object source_p, PendingDefinition pendingDef_p, MappingExecution execution_p) {
     checkProgress();
-    logger.info(new RuleLoggingMessage(rule_p, RuleLoggingMessage.Step.TargetDefinition)); 
+    logger.info(new RuleLoggingMessage(rule_p, RuleLoggingMessage.Step.TargetDefinition,  pendingDef_p.getQueryExecution())); 
     ((IRule<Object,Object>)rule_p).defineTarget(
         source_p,
         pendingDef_p.getTarget(),

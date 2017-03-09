@@ -54,7 +54,7 @@ public class TraceLoggingMessage extends BaseTraceLoggingMessage {
     //append the identifier inside the message using symbol function. 
     builder.append("[").append(function.getSymbol(getTarget())).append("]");//$NON-NLS-1$ //$NON-NLS-2$
     //source however can be a single object or a tuple
-    builder.append(" From {"); //$NON-NLS-1$
+    builder.append(") From {"); //$NON-NLS-1$
     for (Object source : getCause().getSourceElements()) {
       String sourceName = getObjectLabel(source);
       String sourceType = ((EObject) source).eClass().getName();

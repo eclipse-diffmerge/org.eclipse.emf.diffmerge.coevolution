@@ -16,11 +16,11 @@ package org.eclipse.emf.diffmerge.bridge.mapping.util;
 
 import java.util.List;
 
+import org.eclipse.emf.diffmerge.bridge.impl.AbstractNamedElement;
 import org.eclipse.emf.diffmerge.bridge.impl.emf.EMFSymbolFunction;
 import org.eclipse.emf.diffmerge.bridge.mapping.Messages;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryIdentifier;
-import org.eclipse.emf.diffmerge.bridge.mapping.impl.QueryIdentifier;
 import org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage;
 import org.eclipse.emf.ecore.EObject;
 
@@ -71,19 +71,20 @@ public class QueryLoggingMessage extends AbstractLoggingMessage{
     }
     return queryIdentifiers.get(queryIdentifiers.size() - 1);
   }
-  
+
   /**
    * @see org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage#getMessageBody()
    */
   @Override
   protected String getMessageBody() {
-    if (getQueryIdentifier() == null)
-      return Messages.QueryLoggingMessage_EmptyQueryExecutionError;
+    IQueryIdentifier<?> queryIdentifier = getQueryIdentifier();
+    if (queryIdentifier == null)
+      return Messages.BridgeLogger_EmptyQueryExecutionError;
     if (getQueryResult() == null)
-      return Messages.QueryLoggingMessage_EmptyQueryResultError;
+      return Messages.BridgeLogger_EmptyQueryResultError;
     StringBuilder builder = new StringBuilder("["); //$NON-NLS-1$
+    String queryName = getQueryName(queryIdentifier);  
     String typeName = ((EObject) getQueryResult()).eClass().getName();
-    String queryName = ((QueryIdentifier<?>)getQueryIdentifier()).getName();
     builder.append(queryName);
     builder.append("] returns ("); //$NON-NLS-1$
     EMFSymbolFunction function = EMFSymbolFunction.getInstance();
@@ -94,11 +95,32 @@ public class QueryLoggingMessage extends AbstractLoggingMessage{
   }
 
   /**
+   * Returns a user friendly name for the query identifier given as input.
+   * 
+   * @param queryIdentifier_p the (non-null) query identifier
+   * @return the query name
+   */
+  protected String getQueryName(IQueryIdentifier<?> queryIdentifier_p) {
+    String queryName = null;
+    if (queryIdentifier_p instanceof AbstractNamedElement)
+      queryName = ((AbstractNamedElement)queryIdentifier_p).getName();
+    else
+      queryName = queryIdentifier_p.toString();
+    return queryName;
+  }
+
+  /**
    * @see org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage#getPrefix()
    */
   @Override
   protected String getPrefix() {
-    return "\t|__Query "; //$NON-NLS-1$
+    StringBuilder builder = new StringBuilder();
+    int depth = ((IQueryExecution) getQueryObject()).getAll().size();
+    builder.append("\t|"); //$NON-NLS-1$
+    for (int i=1;i<depth;i++)
+      builder.append("\t|"); //$NON-NLS-1$
+    builder.append("__Query "); //$NON-NLS-1$
+    return builder.toString();
   }
 
   /**
