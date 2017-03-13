@@ -21,7 +21,9 @@ import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 import org.eclipse.emf.diffmerge.bridge.api.ICause;
+import org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic;
 import org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeTraceExecution;
+import org.eclipse.emf.diffmerge.bridge.util.BaseTraceLoggingMessage;
 import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
 import org.eclipse.emf.ecore.EObject;
 import org.polarsys.kitalpha.transposer.transformation.context.TransformationKey;
@@ -157,4 +159,11 @@ public class TransposerBridgeExecution extends AbstractBridgeTraceExecution {
     _context = context_p;
   }
   
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeExecution#createTraceLoggingMessage(java.lang.Object, org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic)
+   */
+  @Override
+  protected BaseTraceLoggingMessage createTraceLoggingMessage(Object target_p, Symbolic<?, ?> cause_p) {
+    return new TransposerTraceLoggingMessage(_context, target_p, cause_p);
+  }
 }
