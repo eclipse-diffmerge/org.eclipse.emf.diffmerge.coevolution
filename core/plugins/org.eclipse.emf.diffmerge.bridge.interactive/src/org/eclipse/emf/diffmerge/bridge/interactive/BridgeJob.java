@@ -14,8 +14,12 @@
  */
 package org.eclipse.emf.diffmerge.bridge.interactive;
 
+import java.util.Properties;
+
 import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubMonitor;
@@ -54,6 +58,11 @@ public abstract class BridgeJob<SD> extends Job {
    * The bridge job logger
    */
   static final Logger logger = Logger.getLogger(BridgeJob.class);
+
+  /**
+   * The model size beyond which the logger shall be disabled.
+   */
+  private static final long LOGGING_TRESHOLD =  20971520; //20MB
   
   /** The non-null source data set */
   protected final SD _sourceDataSet;
@@ -77,7 +86,7 @@ public abstract class BridgeJob<SD> extends Job {
 	  _targetURI = targetURI_p;
 	  _targetResourceSet = initializeTargetResourceSet();
 	  setUser(true);
-    Logger.getRootLogger().setLevel(Level.DEBUG);
+	  setupLogger();
   }
 
   /**
@@ -180,6 +189,7 @@ public abstract class BridgeJob<SD> extends Job {
     setProperty(IProgressConstants.ACTION_PROPERTY, deferrableAction);
     if (isModal()) {
       // The user has waited: immediate execution
+      logger.info(Messages.BridgeLogger_InteractiveMergeStepMessage);
       deferrableAction.run();
       IStatus status = deferrableAction.getStatus();
       if (status != null) {
@@ -275,7 +285,6 @@ public abstract class BridgeJob<SD> extends Job {
     IIncrementalBridgeExecution execution = executionWrapper[0];
     bridgeMonitor.done();
     // User interactions and completion
-    logger.info(Messages.BridgeJob_InteractiveMergeLoggingMessage); 
     handleDeferrablePart(bridge, execution, targetResource, traceResource, monitor);
     return execution.getStatus();
   }
@@ -291,8 +300,33 @@ public abstract class BridgeJob<SD> extends Job {
       traceResource_p.getContents().add((EObject)trace_p);
     }
   }
-  
-  
+
+  /**
+   * Enable/disable logging facility according to source data set size.
+   */
+  protected void setupLogger() {
+    long dataSetSize = 0;
+  	if (_sourceDataSet instanceof Resource)
+  		dataSetSize = ResourceUtil.getFileForResource((Resource) _sourceDataSet).getLocation().toFile().length();
+  	else if (_sourceDataSet instanceof EObject)
+  		dataSetSize = ResourceUtil.getFileForResource(((EObject) _sourceDataSet).eResource()).getLocation().toFile().length();
+  	if (dataSetSize < LOGGING_TRESHOLD) {
+  		LogManager.resetConfiguration();
+  		Properties properties = new Properties();
+  		properties.setProperty(Messages.BridgeLoggerConfig_LoggerKey, Messages.BridgeLoggerConfig_LoggerValue);
+  		properties.setProperty(Messages.BridgeLoggerConfig_AppenderKey, Messages.BridgeLoggerConfig_AppenderValue);
+  		properties.setProperty(Messages.BridgeLoggerConfig_LayoutKey, Messages.BridgeLoggerConfig_LayoutValue);
+  		properties.setProperty(Messages.BridgeLoggerConfig_TresholdKey, Messages.BridgeLoggerConfig_TresholdValue);
+  		properties.setProperty(Messages.BridgeLoggerConfig_ConversionPatternKey,	Messages.BridgeLoggerConfig_ConversionPatternValue);
+  		PropertyConfigurator.configure(properties);
+  	} else {
+  		logger.warn(Messages.BridgeLoggerConfig_DisabledLoggerWarning);
+  		LogManager.resetConfiguration();
+  		LogManager.getRootLogger().setLevel(Level.OFF);
+  	}
+  }
+
+
   /**
    * An action that triggers the deferred completion of the execution of a bridge.
    */
