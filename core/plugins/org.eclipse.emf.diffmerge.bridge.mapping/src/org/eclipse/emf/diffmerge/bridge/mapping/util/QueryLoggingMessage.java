@@ -14,6 +14,7 @@
  */
 package org.eclipse.emf.diffmerge.bridge.mapping.util;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.diffmerge.bridge.impl.AbstractNamedElement;
@@ -22,6 +23,7 @@ import org.eclipse.emf.diffmerge.bridge.mapping.Messages;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryIdentifier;
 import org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage;
+import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -43,7 +45,7 @@ public class QueryLoggingMessage extends AbstractLoggingMessage{
    * @return the (non-null) query execution
    */
   protected Object getQueryObject() {
-    //only one object (the query) is mapped in query logging messages
+    //the query object is the first object in the map
     return getObjectToLabel().keySet().iterator().next();
   }
   
@@ -80,18 +82,44 @@ public class QueryLoggingMessage extends AbstractLoggingMessage{
     IQueryIdentifier<?> queryIdentifier = getQueryIdentifier();
     if (queryIdentifier == null)
       return Messages.BridgeLogger_EmptyQueryExecutionError;
-    if (getQueryResult() == null)
+    Object queryResult = getQueryResult();
+    if (queryResult == null)
       return Messages.BridgeLogger_EmptyQueryResultError;
     StringBuilder builder = new StringBuilder("["); //$NON-NLS-1$
-    String queryName = getQueryName(queryIdentifier);  
-    String typeName = ((EObject) getQueryResult()).eClass().getName();
+    String queryName = getQueryName(queryIdentifier);
     builder.append(queryName);
-    builder.append("] returns ("); //$NON-NLS-1$
-    EMFSymbolFunction function = EMFSymbolFunction.getInstance();
-    builder.append(typeName).append(" \""); //$NON-NLS-1$
-    builder.append(getObjectLabel(getQueryResult())).append("\""); //$NON-NLS-1$
-    builder.append("[").append(function.getSymbol(getQueryResult())).append("])");  //$NON-NLS-1$//$NON-NLS-2$
+    builder.append("] returns {"); //$NON-NLS-1$
+    if (queryResult instanceof EObject) {
+      serializeObject(queryResult, builder);
+    }
+    else if (queryResult instanceof IPureStructure<?>) {
+      Collection<?> contents = ((IPureStructure<?>) queryResult).asCollection();
+      for (Object object: contents) {
+        serializeObject(object, builder);
+        builder.append(", "); //$NON-NLS-1$
+      }
+    }
+    builder.append("}"); //$NON-NLS-1$
     return builder.toString();
+  }
+
+  /**
+   * Serializes an object in the form (type "name" [identifier])
+   * 
+   * @param object_p the non-null object to serialize
+   * @param builder_p the non-null string builder
+   */
+  protected void serializeObject(Object object_p, StringBuilder builder_p) {
+    EMFSymbolFunction function = EMFSymbolFunction.getInstance();
+    String typeName = null;
+    if (object_p instanceof EObject)
+      typeName = ((EObject) object_p).eClass().getName();
+    else
+      typeName = object_p.getClass().getSimpleName();
+    builder_p.append("("); //$NON-NLS-1$
+    builder_p.append(typeName).append(" \""); //$NON-NLS-1$
+    builder_p.append(getObjectLabel(object_p)).append("\""); //$NON-NLS-1$
+    builder_p.append("[").append(function.getSymbol(object_p)).append("])"); //$NON-NLS-1$//$NON-NLS-2$
   }
 
   /**
@@ -117,7 +145,7 @@ public class QueryLoggingMessage extends AbstractLoggingMessage{
     StringBuilder builder = new StringBuilder();
     int depth = ((IQueryExecution) getQueryObject()).getAll().size();
     builder.append("\t|"); //$NON-NLS-1$
-    for (int i=1;i<depth;i++)
+    for (int i=1; i<depth; i++)
       builder.append("\t|"); //$NON-NLS-1$
     builder.append("__Query "); //$NON-NLS-1$
     return builder.toString();

@@ -14,6 +14,7 @@
  */
 package org.eclipse.emf.diffmerge.bridge.log4j;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Level;
@@ -24,6 +25,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.diffmerge.bridge.mapping.util.QueryLoggingMessage;
 import org.eclipse.emf.diffmerge.bridge.mapping.util.RuleLoggingMessage;
 import org.eclipse.emf.diffmerge.bridge.util.BaseTraceLoggingMessage;
+import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
 import org.eclipse.emf.diffmerge.ui.EMFDiffMergeUIPlugin;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -188,9 +190,18 @@ public class BridgeLogger implements IBridgeLogListener {
   private void handleQueryLoggingMessage(QueryLoggingMessage message_p) {
     final BridgeConsole console = findConsole();
     Object queryResult = message_p.getQueryResult();
-    registerObject(console, queryResult);
-    String objectLabel = EMFDiffMergeUIPlugin.getDefault().getAdapterFactoryLabelProvider().getText(queryResult);
-    message_p.mapObjectToLabel(queryResult, objectLabel);
+    if (queryResult instanceof EObject) {
+      registerObject(console, queryResult);
+      String objectLabel = EMFDiffMergeUIPlugin.getDefault().getAdapterFactoryLabelProvider().getText(queryResult);
+      message_p.mapObjectToLabel(queryResult, objectLabel); 
+    } else if (queryResult instanceof IPureStructure<?>) {
+      Collection<?> objects = ((IPureStructure<?>) queryResult).asCollection();
+      for (Object object : objects) {
+        registerObject(console, object);
+        String sourceName = EMFDiffMergeUIPlugin.getDefault().getAdapterFactoryLabelProvider().getText(object);
+        message_p.mapObjectToLabel(object, sourceName);
+      }
+    }
   }
 
   /**
@@ -229,7 +240,6 @@ public class BridgeLogger implements IBridgeLogListener {
    */
   private void registerObject(final BridgeConsole console_p, Object object_p) {
     if (object_p instanceof EObject) {
-      // map object fragment to base URI
       URI objectURI = EcoreUtil.getURI((EObject) object_p);
       console_p.getFragmentToURIMap().put(objectURI.fragment(), objectURI.trimFragment());
     }

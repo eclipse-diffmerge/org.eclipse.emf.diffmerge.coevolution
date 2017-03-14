@@ -58,11 +58,10 @@ public abstract class BridgeJob<SD> extends Job {
    * The bridge job logger
    */
   static final Logger logger = Logger.getLogger(BridgeJob.class);
-
   /**
    * The model size beyond which the logger shall be disabled.
    */
-  private static final long LOGGING_TRESHOLD =  20971520; //20MB
+  protected static final long LOGGING_TRESHOLD =  20971520; //20MB
   
   /** The non-null source data set */
   protected final SD _sourceDataSet;
@@ -72,7 +71,6 @@ public abstract class BridgeJob<SD> extends Job {
   
   /** The non-null resource set for the target model */
   protected ResourceSet _targetResourceSet;
-  
   
   /**
    * Constructor

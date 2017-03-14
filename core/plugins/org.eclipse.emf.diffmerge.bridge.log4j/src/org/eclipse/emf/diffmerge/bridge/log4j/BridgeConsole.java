@@ -216,13 +216,23 @@ public class BridgeConsole extends MessageConsole {
         String identifier = document.get(offset, length);
         String identifierWithoutBrackets = identifier.substring(1, identifier.length() - 1);
         URI uri = ((BridgeConsole) _console).getFragmentToURIMap().get(identifierWithoutBrackets);
-        if (uri != null && !uri.isEmpty()) {
+        if (isValid(uri)) {
           BridgeElementLink link = new BridgeElementLink(uri.appendFragment(identifierWithoutBrackets));
           _console.addHyperlink(link, offset + 1, identifierWithoutBrackets.length());
         }
       } catch (BadLocationException ex) {
         logger.error(ex.getStackTrace(), ex);
       }
+    }
+
+    /**
+     * Returns whether the URI is a valid one
+     * 
+     * @param uri_p the uri to consider
+     * @return whether the uri is a valid uri
+     */
+    public boolean isValid(URI uri_p) {
+      return uri_p != null && !uri_p.isEmpty() && uri_p.scheme()!=null;
     }
 
     /**
