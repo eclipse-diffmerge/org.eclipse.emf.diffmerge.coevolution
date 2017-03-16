@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setup:Project
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:git="http://www.eclipse.org/oomph/setup/git/1.0"
+    xmlns:jdt="http://www.eclipse.org/oomph/setup/jdt/1.0"
+    xmlns:predicates="http://www.eclipse.org/oomph/predicates/1.0"
+    xmlns:projects="http://www.eclipse.org/oomph/setup/projects/1.0"
+    xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
+    xmlns:setup.p2="http://www.eclipse.org/oomph/setup/p2/1.0"
+    xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
+    xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
+    name="coevolution"
+    label="Co-Evolution">
+  <setupTask
+      xsi:type="jdt:JRETask"
+      version="JavaSE-1.8"
+      location="${jre.location-1.8}"
+      name="JRE for JavaSE-1.8">
+    <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
+  </setupTask>
+  <setupTask
+      xsi:type="setup.p2:P2Task">
+    <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
+  </setupTask>
+  <setupTask
+      xsi:type="git:GitCloneTask"
+      id="git.clone.edm.coevolution"
+      remoteURI="diffmerge/org.eclipse.emf.diffmerge.coevolution">
+    <annotation
+        source="http://www.eclipse.org/oomph/setup/InducedChoices">
+      <detail
+          key="inherit">
+        <value>eclipse.git.gerrit.remoteURIs</value>
+      </detail>
+      <detail
+          key="label">
+        <value>${scope.project.label} Git or Gerrit repository</value>
+      </detail>
+      <detail
+          key="target">
+        <value>remoteURI</value>
+      </detail>
+    </annotation>
+    <description>${scope.project.label}</description>
+  </setupTask>
+  <setupTask
+      xsi:type="projects:ProjectsImportTask">
+    <sourceLocator
+        rootFolder="${git.clone.edm.coevolution.location}"
+        locateNestedProjects="true"/>
+    <description></description>
+  </setupTask>
+  <setupTask
+      xsi:type="setup.targlets:TargletTask">
+    <targlet
+        name="EMF DiffMerge Co-Evolution"
+        activeRepositoryList="${eclipse.target.platform}">
+      <requirement
+          name="org.eclipse.sdk.feature.group"/>
+      <requirement
+          name="org.eclipse.emf.diffmerge.coevolution.sdk.feature.feature.group"/>
+      <sourceLocator
+          rootFolder="${git.clone.edm.coevolution.location}"
+          locateNestedProjects="true"/>
+      <repositoryList
+          name="Oxygen">
+        <repository
+            url="http://download.eclipse.org/releases/oxygen"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+      </repositoryList>
+      <repositoryList
+          name="Neon">
+        <repository
+            url="http://download.eclipse.org/releases/neon"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+      </repositoryList>
+      <repositoryList
+          name="Mars">
+        <repository
+            url="http://download.eclipse.org/releases/mars"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+      </repositoryList>
+      <repositoryList
+          name="Luna">
+        <repository
+            url="http://download.eclipse.org/releases/luna"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+      </repositoryList>
+      <repositoryList
+          name="Kepler">
+        <repository
+            url="http://download.eclipse.org/releases/kepler"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+      </repositoryList>
+      <repositoryList
+          name="Juno">
+        <repository
+            url="http://download.eclipse.org/releases/juno"/>
+        <repository
+            url="http://download.eclipse.org/cbi/updates/license"/>
+      </repositoryList>
+    </targlet>
+    <targlet
+        name="EMF DiffMerge Co-Evolution Capella">
+      <requirement
+          name="org.polarsys.kitalpha.sdk.feature.feature.group"/>
+      <requirement
+          name="org.polarsys.capella.core.data.gen"/>
+      <requirement
+          name="org.polarsys.capella.core.model.skeleton"/>
+      <requirement
+          name="org.polarsys.capella.core.compare"/>
+      <repositoryList>
+        <repository
+            url="https://hudson.polarsys.org/kitalpha/job/Kitalpha_master/7/artifact/result/publish/kitalpha_runtime/site.p2"/>
+        <repository
+            url="https://hudson.polarsys.org/kitalpha/job/Kitalpha_master/7/artifact/result/publish/kitalpha_sdk/site.p2"/>
+        <repository
+            url="http://download.eclipse.org/modeling/amalgam/updates/nightly/1.8.0-N20161007-040549/mars"/>
+        <repository
+            url="https://hudson.polarsys.org/capella/job/capella-master/lastSuccessfulBuild/artifact/result/publish/org.polarsys.capella/site.p2/"/>
+      </repositoryList>
+    </targlet>
+  </setupTask>
+  <setupTask
+      xsi:type="setup.workingsets:WorkingSetTask"
+      prefix="org.eclipse.emf.diffmerge.coevolution-">
+    <workingSet
+        name="EMF DiffMerge Co-Evolution">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.emf.diffmerge.coevolution.releng"/>
+      </predicate>
+    </workingSet>
+    <description>The dynamic working sets for ${scope.project.label}</description>
+  </setupTask>
+  <stream name="master"
+      label="Master">
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="-Doomph.redirection.edm.coevolution"
+        value="=https://git.eclipse.org/c/diffmerge/org.eclipse.emf.diffmerge.coevolution.git/plain/releng/org.eclipse.emf.diffmerge.coevolution.releng/setup/CoEvolution.setup->${git.clone.edm.coevolution.location|uri}/releng/org.eclipse.emf.diffmerge.coevolution.releng/setup/CoEvolution.setup"
+        vm="true">
+      <description>Set an Oomph redirection system property to redirect the logical location of this setup to its physical location in the Git clone.</description>
+    </setupTask>
+  </stream>
+  <logicalProjectContainer
+      xsi:type="setup:Project"
+      href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@projects[name='emf.diffmerge']"/>
+  <description>Co-Evolution provides cool stuff.</description>
+</setup:Project>
