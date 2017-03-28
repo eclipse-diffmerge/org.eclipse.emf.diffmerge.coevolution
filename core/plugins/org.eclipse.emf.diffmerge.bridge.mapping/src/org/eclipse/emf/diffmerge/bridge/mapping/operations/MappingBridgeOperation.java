@@ -45,10 +45,9 @@ import org.eclipse.emf.diffmerge.bridge.operations.AbstractBridgeOperation;
  */
 public class MappingBridgeOperation extends AbstractBridgeOperation {
   
-  /**
-   * The logger associated to this class.
-   */
-  static final Logger logger = Logger.getLogger(MappingBridgeOperation.class);
+  /** The logger for this class */
+  protected static final Logger logger = Logger.getLogger(MappingBridgeOperation.class);
+  
   
   /**
    * Constructor

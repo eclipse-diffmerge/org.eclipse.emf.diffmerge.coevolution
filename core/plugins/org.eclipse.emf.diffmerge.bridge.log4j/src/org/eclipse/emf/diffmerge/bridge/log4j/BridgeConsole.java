@@ -34,110 +34,45 @@ import org.eclipse.ui.console.MessageConsoleStream;
 import org.eclipse.ui.console.PatternMatchEvent;
 import org.eclipse.ui.console.TextConsole;
 
+
 /**
- * The incremental bridge console
+ * The incremental bridge console.
  */
 public class BridgeConsole extends MessageConsole {
   
-  /**
-   * The logger of this class
-   */
-  static final Logger logger = Logger.getLogger(BridgeConsole.class);
-  /**
-   * Info stream
-   */
+  /** The logger for this class */
+  protected static final Logger logger = Logger.getLogger(BridgeConsole.class);
+  
+  /** The non-null info stream */
   private MessageConsoleStream _infoStream;
-  /**
-   * Warning stream
-   */
+  
+  /** The non-null warning stream */
   private MessageConsoleStream _warningStream;
-  /**
-   * Error stream
-   */
+  
+  /** The non-null error stream */
   private MessageConsoleStream _errorStream;
-  /**
-   * Console line notifier
-   */
+  
+  /** The console line notifier */
   private final PatternMatchListener _notifier;
-  /**
-   * The fragment to uri map
-   */
-  private Map<String, URI> fragmentToURIMap = new HashMap<String, URI>();
+  
+  /** The non-null fragment to URI map */
+  private Map<String, URI> _fragmentToURIMap;
+  
   
   /**
-   * Default constructor
-   * 
-   * @param name_p (non-null) console name
-   * @param imageDescriptor_p possibly null image descriptor
+   * Constructor
+   * @param name_p a (non-null) console name
+   * @param imageDescriptor_p a possibly null image descriptor
    */
   public BridgeConsole(String name_p, ImageDescriptor imageDescriptor_p) {
     super(name_p, imageDescriptor_p);
+    _fragmentToURIMap = new HashMap<String, URI>();
     Display display = PlatformUI.getWorkbench().getDisplay();
     initializeInfoStream(display);
     initializeWarningStream(display);
     initializeErrorStream(display);
     _notifier = new PatternMatchListener();
     addPatternMatchListener(_notifier);
-  }
-
-  /**
-   * Returns the console info stream
-   * 
-   * @return the (non-null) info stream
-   */
-  public MessageConsoleStream getInfoStream() {
-    return _infoStream;
-  }
-
-  /**
-   * Returns the console warning stream
-   * 
-   * @return the (non-null) warning stream
-   */
-  public MessageConsoleStream getWarningStream() {
-    return _warningStream;
-  }
-
-  /**
-   * Returns the console error stream
-   * 
-   * @return the (non-null) error stream
-   */
-  public MessageConsoleStream getErrorStream() {
-    return _errorStream;
-  }
-
-  /**
-   * Creates and initializes the info stream with color and font style
-   * 
-   * @param display_p (non-null) the device on which to allocate the color
-   */
-  private void initializeInfoStream(Display display_p) {
-    Color color = new Color(display_p, new RGB(0, 0, 0));
-    _infoStream = newMessageStream();
-    _infoStream.setColor(color);
-  }
-
-  /**
-   * Creates and initializes the warning stream with color and font style
-   * 
-   * @param display_p (non-null) the device on which to allocate the color
-   */
-  private void initializeWarningStream(Display display_p) {
-    Color color = new Color(display_p, new RGB(255, 127, 80));
-    _warningStream = newMessageStream();
-    _warningStream.setColor(color);
-  }
-
-  /**
-   * Creates and initializes the error stream with color and font style
-   * 
-   * @param display_p (non-null) the device on which to allocate the color
-   */
-  private void initializeErrorStream(Display display_p) {
-    Color color = new Color(display_p, new RGB(255, 0, 0));
-    _errorStream = newMessageStream();
-    _errorStream.setColor(color);
   }
   
   /**
@@ -161,50 +96,140 @@ public class BridgeConsole extends MessageConsole {
       logger.error(ex.getStackTrace(), ex);
     }
   }
-
+  
   /**
-   * @return the fragment to uri map
+   * Return the fragment to URI map
+   * @return a non-null map
    */
   public Map<String, URI> getFragmentToURIMap() {
-    return fragmentToURIMap;
+    return _fragmentToURIMap;
   }
-
+  
   /**
-   * Console line notifier
+   * Return the console info stream
+   * @return the (non-null) info stream
+   */
+  public MessageConsoleStream getInfoStream() {
+    return _infoStream;
+  }
+  
+  /**
+   * Return the console warning stream
+   * @return the (non-null) warning stream
+   */
+  public MessageConsoleStream getWarningStream() {
+    return _warningStream;
+  }
+  
+  /**
+   * Return the console error stream
+   * @return the (non-null) error stream
+   */
+  public MessageConsoleStream getErrorStream() {
+    return _errorStream;
+  }
+  
+  /**
+   * Create and initialize the info stream with color and font style
+   * @param display_p (non-null) the device on which to allocate the color
+   */
+  private void initializeInfoStream(Display display_p) {
+    Color color = new Color(display_p, new RGB(0, 0, 0));
+    _infoStream = newMessageStream();
+    _infoStream.setColor(color);
+  }
+  
+  /**
+   * Create and initialize the warning stream with color and font style
+   * @param display_p (non-null) the device on which to allocate the color
+   */
+  private void initializeWarningStream(Display display_p) {
+    Color color = new Color(display_p, new RGB(255, 127, 80));
+    _warningStream = newMessageStream();
+    _warningStream.setColor(color);
+  }
+  
+  /**
+   * Create and initialize the error stream with color and font style
+   * @param display_p (non-null) the device on which to allocate the color
+   */
+  private void initializeErrorStream(Display display_p) {
+    Color color = new Color(display_p, new RGB(255, 0, 0));
+    _errorStream = newMessageStream();
+    _errorStream.setColor(color);
+  }
+  
+  
+  /**
+   * The console line notifier.
    */
   public static class PatternMatchListener implements IPatternMatchListener {
-
+    /** The pattern to detect identifiers written in console between [ and ] */
+    private static final String BRIDGE_ELEMENT_ID_PATTERN =
+        "\\[([a-zA-Z\\d_$-][a-zA-Z\\d_$-]*\\.)*[a-zA-Z\\d_$-][a-zA-Z\\d_$-]*\\]"; //$NON-NLS-1$
+    
+    /** The pattern to detect fragments in the form //@model/@features.0/@... between [ and ] */
+    private static final String BRIDGE_ELEMENT_FRAGMENT_PATTERN =
+        "\\[(\\/(\\/)?\\@[a-zA-Z\\d_][a-zA-Z\\d_]*(\\.[0-9]+)?)+\\]"; //$NON-NLS-1$
+    
+    /** The logical OR of the patterns previously defined */
+    private static final String BRIDGE_ELEMENT_COMBINED_PATTERN =
+        "(" + BRIDGE_ELEMENT_ID_PATTERN + "|" + BRIDGE_ELEMENT_FRAGMENT_PATTERN + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    
+    /** The potentially null console this notifier is tracking */
+    private TextConsole _console;
+    
     /**
-     * The pattern to detect identifiers written in console between [ and ]
+     * Constructor
      */
-    private static final String BRIDGE_ELEMENT_ID_PATTERN = "\\[([a-zA-Z\\d_$-][a-zA-Z\\d_$-]*\\.)*[a-zA-Z\\d_$-][a-zA-Z\\d_$-]*\\]"; //$NON-NLS-1$
-    /**
-     * The pattern to detect fragments in the form //@model/@features.0/@... between [ and ]
-     */
-    private static final String BRIDGE_ELEMENT_FRAGMENT_PATTERN = "\\[(\\/(\\/)?\\@[a-zA-Z\\d_][a-zA-Z\\d_]*(\\.[0-9]+)?)+\\]"; //$NON-NLS-1$
-    /**
-     * The logical OR of the patterns previously defined
-     */
-    private static final String BRIDGE_ELEMENT_COMBINED_PATTERN = "(" + BRIDGE_ELEMENT_ID_PATTERN + "|" + BRIDGE_ELEMENT_FRAGMENT_PATTERN + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    /**
-     * The console this notifier is tracking 
-     */
-    private TextConsole _console = null;
-
+    public PatternMatchListener() {
+      _console = null;
+    }
+    
     /**
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.TextConsole)
      */
     public void connect(TextConsole console_p) {
       _console = console_p;
     }
-
+    
     /**
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#disconnect()
      */
     public void disconnect() {
       _console = null;
     }
-
+    
+    /**
+     * @see org.eclipse.ui.console.IPatternMatchListener#getCompilerFlags()
+     */
+    public int getCompilerFlags() {
+      return Pattern.DOTALL;
+    }
+    
+    /**
+     * @see org.eclipse.ui.console.IPatternMatchListener#getLineQualifier()
+     */
+    public String getLineQualifier() {
+      return null;
+    }
+    
+    /**
+     * @see org.eclipse.ui.console.IPatternMatchListener#getPattern()
+     */
+    public String getPattern() {
+      return BRIDGE_ELEMENT_COMBINED_PATTERN;
+    }
+    
+    /**
+     * Return whether the given URI is a valid one
+     * @param uri_p the potentially null URI to consider
+     * @return whether the URI is valid
+     */
+    public boolean isValid(URI uri_p) {
+      return uri_p != null && !uri_p.isEmpty() && uri_p.scheme()!=null;
+    }
+    
     /**
      * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#matchFound(org.eclipse.ui.console.PatternMatchEvent)
      */
@@ -224,36 +249,6 @@ public class BridgeConsole extends MessageConsole {
         logger.error(ex.getStackTrace(), ex);
       }
     }
-
-    /**
-     * Returns whether the URI is a valid one
-     * 
-     * @param uri_p the uri to consider
-     * @return whether the uri is a valid uri
-     */
-    public boolean isValid(URI uri_p) {
-      return uri_p != null && !uri_p.isEmpty() && uri_p.scheme()!=null;
-    }
-
-    /**
-     * @see org.eclipse.ui.console.IPatternMatchListener#getPattern()
-     */
-    public String getPattern() {
-      return BRIDGE_ELEMENT_COMBINED_PATTERN;
-    }
-
-    /**
-     * @see org.eclipse.ui.console.IPatternMatchListener#getCompilerFlags()
-     */
-    public int getCompilerFlags() {
-      return Pattern.DOTALL;
-    }
-
-    /**
-     * @see org.eclipse.ui.console.IPatternMatchListener#getLineQualifier()
-     */
-    public String getLineQualifier() {
-      return null;
-    }
   }
+  
 }

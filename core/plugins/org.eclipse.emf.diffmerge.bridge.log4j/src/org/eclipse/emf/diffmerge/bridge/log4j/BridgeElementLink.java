@@ -37,63 +37,27 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IHyperlink;
 
+
 /**
- * A hyper link displayed in the console which points to a model element
+ * A hyper link displayed in the console which points to a model element.
  */
 public class BridgeElementLink implements IHyperlink {
- 
-  /**
-   * The logger for this class
-   */
-  static final Logger logger = Logger.getLogger(BridgeElementLink.class);
-  /**
-   * The URI backed by this element link
-   */
+  
+  /** The logger for this class */
+  protected static final Logger logger = Logger.getLogger(BridgeElementLink.class);
+  
+  /** The non-null URI backed by this element link */
   private final URI _uri;
-
+  
+  
   /**
    * Default constructor
-   * 
-   * @param uri_p (non-null) URI with fragment 
+   * @param uri_p the non-null URI with fragment 
    */
   public BridgeElementLink(URI uri_p) {
-    this._uri = normalize(uri_p);
+    _uri = normalize(uri_p);
   }
   
-  /**
-   * Normalize the URI: handle specific cases, e.g. bridges which target Capella
-   * models create a temporary model in memory, which is then compared to the
-   * existing target model during the matching phase. The in-memory model has
-   * the same URI with the existing model except the scheme which is by default
-   * set to "dummy". See
-   * {@link org.eclipse.emf.diffmerge.bridge.capella.integration.CapellaBridgeJob#createEmptyProject(IEditableModelScope)}
-   * 
-   * @param uri_p
-   *          (non-null) uri with fragment
-   * @return the normalized uri.
-   */
-  private URI normalize(URI uri_p) {
-    if (uri_p.scheme().equals("dummy")) { //$NON-NLS-1$
-      //create platform resource URI to be able to point to the object in the real target model.
-      return URI.createPlatformResourceURI(uri_p.path(), true).appendFragment(uri_p.fragment());
-    }
-    return uri_p;
-  }
-  
-  /**
-   * @see org.eclipse.ui.console.IHyperlink#linkEntered()
-   */
-  public void linkEntered() {
-    //do nothing
-  }
-
-  /**
-   * @see org.eclipse.ui.console.IHyperlink#linkExited()
-   */
-  public void linkExited() {
-    //do nothing
-  }
-
   /**
    * @see org.eclipse.ui.console.IHyperlink#linkActivated()
    */
@@ -129,10 +93,41 @@ public class BridgeElementLink implements IHyperlink {
   }
   
   /**
+   * @see org.eclipse.ui.console.IHyperlink#linkEntered()
+   */
+  public void linkEntered() {
+    //do nothing
+  }
+  
+  /**
+   * @see org.eclipse.ui.console.IHyperlink#linkExited()
+   */
+  public void linkExited() {
+    //do nothing
+  }
+  
+  /**
+   * Normalize the URI: handle specific cases, e.g. bridges which target Capella
+   * models create a temporary model in memory, which is then compared to the
+   * existing target model during the matching phase. The in-memory model has
+   * the same URI with the existing model except the scheme which is by default
+   * set to "dummy". See
+   * {@link org.eclipse.emf.diffmerge.bridge.capella.integration.CapellaBridgeJob#createEmptyProject(IEditableModelScope)}
+   * @param uri_p the (non-null) URI with fragment
+   * @return the non-null normalized URI
+   */
+  private URI normalize(URI uri_p) {
+    if (uri_p.scheme().equals("dummy")) { //$NON-NLS-1$
+      //create platform resource URI to be able to point to the object in the real target model.
+      return URI.createPlatformResourceURI(uri_p.path(), true).appendFragment(uri_p.fragment());
+    }
+    return uri_p;
+  }
+  
+  /**
    * Open the default EMF editor for the file name given as input.
-   * 
-   * @param fileName_p the file name to open the editor on
-   * @return the (possibly-null) editor opened on the file name given as input
+   * @param fileName_p the potentially null file name to open the editor on
+   * @return the potentially null editor opened on the file name given as input
    * @throws PartInitException
    */
   public IEditorPart openInEditor(String fileName_p) throws PartInitException {
@@ -148,4 +143,5 @@ public class BridgeElementLink implements IHyperlink {
     }
     return editor;
   }
+  
 }

@@ -250,6 +250,7 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
    */
 	@Override
 	public <T> void putInTrace(ICause<?, T> cause_p, T target_p) {
+	  // Increases visibility
 		super.putInTrace(cause_p, target_p);
 	}
 	

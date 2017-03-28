@@ -14,8 +14,8 @@
  */
 package org.eclipse.emf.diffmerge.bridge.integration.transposer;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.emf.diffmerge.bridge.api.ICause;
 import org.eclipse.emf.diffmerge.bridge.api.ISymbolFunction;
@@ -82,6 +82,13 @@ public class TransposerBridgeCause implements ICause.Symbolic<Object, Object> {
   }
   
   /**
+   * @see org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic#getSourceElements()
+   */
+  public Collection<Object> getSourceElements() {
+    return Collections.singleton(getSource());
+  }
+  
+  /**
    * @see org.eclipse.emf.diffmerge.bridge.api.ISymbolProvider#getSymbol(org.eclipse.emf.diffmerge.bridge.api.ISymbolFunction)
    */
   public Object getSymbol(ISymbolFunction function_p) {
@@ -106,11 +113,5 @@ public class TransposerBridgeCause implements ICause.Symbolic<Object, Object> {
   public int hashCode() {
     return _transformationKey.hashCode();
   }
-
-  /**
-   * @see org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic#getSourceElements()
-   */
-  public List<Object> getSourceElements() {
-    return Collections.singletonList(getTransformationKey().getSourceObject());
-  }
+  
 }

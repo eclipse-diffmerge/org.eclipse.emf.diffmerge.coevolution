@@ -14,16 +14,14 @@
  */
 package org.eclipse.emf.diffmerge.bridge.mapping.impl;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.emf.diffmerge.bridge.api.ISymbolFunction;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingCause;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IRule;
 import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
-import org.eclipse.emf.ecore.EObject;
 
 
 /**
@@ -95,16 +93,18 @@ public class MappingCause<S, T> implements IMappingCause<S, T> {
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic#getSourceElements()
+   * @see org.eclipse.emf.diffmerge.bridge.api.ICause#getSourceElements()
    */
-  public List<Object> getSourceElements() {
+  @SuppressWarnings("unchecked")
+  public Collection<S> getSourceElements() {
+    Collection<S> result;
     if (_source instanceof IPureStructure<?>)
-      return new ArrayList<Object>(((IPureStructure<?>)_source).asCollection());
-    else if (_source instanceof EObject)
-      return Collections.singletonList((Object)_source);
-    return Collections.emptyList();
+      result = ((IPureStructure<S>)_source).asCollection();
+    else
+      result = Collections.singletonList(getSource());
+    return result;
   }
-
+  
   /**
    * @see org.eclipse.emf.diffmerge.bridge.api.ISymbolProvider#getSymbol(org.eclipse.emf.diffmerge.bridge.api.ISymbolFunction)
    */

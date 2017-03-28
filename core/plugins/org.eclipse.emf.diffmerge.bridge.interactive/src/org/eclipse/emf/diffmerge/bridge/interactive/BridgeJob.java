@@ -54,14 +54,11 @@ import org.eclipse.ui.progress.IProgressConstants;
  */
 public abstract class BridgeJob<SD> extends Job {
   
-  /**
-   * The bridge job logger
-   */
-  static final Logger logger = Logger.getLogger(BridgeJob.class);
-  /**
-   * The model size beyond which the logger shall be disabled.
-   */
-  protected static final long LOGGING_TRESHOLD =  20971520; //20MB
+  /**The bridge job logger */
+  protected static final Logger logger = Logger.getLogger(BridgeJob.class);
+  
+  /** The model size beyond which the logger shall be disabled */
+  protected static final long LOGGING_THRESHOLD =  20971520; //20MB
   
   /** The non-null source data set */
   protected final SD _sourceDataSet;
@@ -308,7 +305,7 @@ public abstract class BridgeJob<SD> extends Job {
   		dataSetSize = ResourceUtil.getFileForResource((Resource) _sourceDataSet).getLocation().toFile().length();
   	else if (_sourceDataSet instanceof EObject)
   		dataSetSize = ResourceUtil.getFileForResource(((EObject) _sourceDataSet).eResource()).getLocation().toFile().length();
-  	if (dataSetSize < LOGGING_TRESHOLD) {
+  	if (dataSetSize < LOGGING_THRESHOLD) {
   		LogManager.resetConfiguration();
   		Properties properties = new Properties();
   		properties.setProperty(Messages.BridgeLoggerConfig_LoggerKey, Messages.BridgeLoggerConfig_LoggerValue);

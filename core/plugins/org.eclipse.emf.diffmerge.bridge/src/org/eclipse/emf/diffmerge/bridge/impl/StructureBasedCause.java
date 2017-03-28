@@ -14,8 +14,10 @@
  */
 package org.eclipse.emf.diffmerge.bridge.impl;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
 
+import org.eclipse.emf.diffmerge.bridge.api.ICause;
 import org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic;
 import org.eclipse.emf.diffmerge.bridge.api.ISymbolFunction;
 import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
@@ -27,8 +29,8 @@ import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
  */
 public class StructureBasedCause implements Symbolic<Object, Object> {
   
-  /** The non-null base cause */
-  private final Symbolic<?,?> _baseCause;
+  /** The non-null base cause or a symbol that represents it */
+  private final Object _baseCause;
   
   /** The non-null slot */
   private final Object _slot;
@@ -39,31 +41,74 @@ public class StructureBasedCause implements Symbolic<Object, Object> {
    * @param baseCause_p the non-null base cause
    * @param slot_p the non-null slot identifier
    */
-  public StructureBasedCause(Symbolic<?,?> baseCause_p, Object slot_p) {
+  public StructureBasedCause(Object baseCause_p, Object slot_p) {
     _baseCause = baseCause_p;
     _slot = slot_p;
+  }
+  
+  /**
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    StructureBasedCause other = (StructureBasedCause) obj;
+    if (_baseCause == null) {
+      if (other._baseCause != null)
+        return false;
+    } else if (!_baseCause.equals(other._baseCause))
+      return false;
+    if (_slot == null) {
+      if (other._slot != null)
+        return false;
+    } else if (!_slot.equals(other._slot))
+      return false;
+    return true;
   }
   
   /**
    * Return the base cause
    * @return a non-null object
    */
-  public Symbolic<?,?> getBaseCause() {
+  public Object getBaseCause() {
     return _baseCause;
   }
   
   /**
    * Return the slot
+   * @return a non-null object
    */
   public Object getSlot() {
     return _slot;
   }
   
   /**
+   * @see org.eclipse.emf.diffmerge.bridge.api.ICause#getSourceElements()
+   */
+  @SuppressWarnings("unchecked")
+  public Collection<Object> getSourceElements() {
+    Collection<Object> result;
+    if (_baseCause instanceof ICause<?,?>)
+      result = ((ICause<Object,?>)_baseCause).getSourceElements();
+    else
+      result = Collections.emptySet();
+    return result;
+  }
+  
+  /**
    * @see org.eclipse.emf.diffmerge.bridge.api.ISymbolProvider#getSymbol(org.eclipse.emf.diffmerge.bridge.api.ISymbolFunction)
    */
   public Object getSymbol(ISymbolFunction function_p) {
-    Object baseSymbol = _baseCause.getSymbol(function_p);
+    Object baseSymbol;
+    if (_baseCause instanceof ICause.Symbolic<?,?>)
+      baseSymbol = ((ICause.Symbolic<?,?>)_baseCause).getSymbol(function_p);
+    else
+      baseSymbol = function_p.getSymbol(_baseCause);
     Object slotSymbol = function_p.getSymbol(_slot);
     Object result;
     if (baseSymbol == null || slotSymbol == null)
@@ -72,12 +117,18 @@ public class StructureBasedCause implements Symbolic<Object, Object> {
       result = baseSymbol.toString() + '|' + slotSymbol;
     return result;
   }
-
+  
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic#getSourceElements()
+   * @see java.lang.Object#hashCode()
    */
-  public List<Object> getSourceElements() {
-    return _baseCause.getSourceElements();
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result
+        + ((_baseCause == null) ? 0 : _baseCause.hashCode());
+    result = prime * result + ((_slot == null) ? 0 : _slot.hashCode());
+    return result;
   }
   
 }

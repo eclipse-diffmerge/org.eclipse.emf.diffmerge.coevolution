@@ -28,9 +28,7 @@ import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.impl.StructureBasedCause;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingBridge;
-import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IRule;
-import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingCause;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingExecution.PendingDefinition;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.QueryExecution;
@@ -38,6 +36,7 @@ import org.eclipse.emf.diffmerge.bridge.mapping.operations.MappingBridgeOperatio
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.uml2.uml.Element;
 import org.eclipse.uml2.uml.Profile;
 import org.eclipse.uml2.uml.ProfileApplication;
 import org.eclipse.uml2.uml.util.UMLUtil;
@@ -188,18 +187,16 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
    * @param pendingDef_p a non-null object
    * @param execution_p a non-null object
    * @param application_p a non-null element related to a Profile
-   *          (Profile application, Stereotype application, Annotation...)
+   *          (Profile application or Stereotype application)
    */
-  @SuppressWarnings("unchecked")
   protected void registerProfileData(IUMLRule<?,?> rule_p, Object source_p,
       PendingDefinition pendingDef_p, MappingExecution execution_p, Object targetDataSet_p,
       EObject application_p) {
     checkProgress();
-    IQueryExecution queryExecution = pendingDef_p.getQueryExecution();
-    MappingCause<Object,Object> mappingCause = new MappingCause<Object,Object>(
-        queryExecution, source_p, (IRule<Object, Object>)rule_p);
+    EObject applicationTarget = getApplicationTarget(application_p);
+    Object applicationTargetCause = execution_p.getTrace().getCause(applicationTarget);
     Object slot = getProfileDataCauseSuffix(application_p);
-    StructureBasedCause cause = new StructureBasedCause(mappingCause, slot);
+    StructureBasedCause cause = new StructureBasedCause(applicationTargetCause, slot);
     if (!execution_p.isTolerantToDuplicates() || !execution_p.isRegistered(cause)) {
       // Registration in bridge execution
       execution_p.put(cause, application_p);
@@ -207,10 +204,31 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
       // Special case of UML annotation for profile applications, implicitly added, referencing EPackage
       if (application_p instanceof ProfileApplication) {
         EAnnotation umlAnnotation = ((EModelElement)application_p).getEAnnotation(UML_PROFILE_ANNOTATION);
-        if (umlAnnotation != null)
-          registerProfileData(rule_p, source_p, pendingDef_p, execution_p, targetDataSet_p, umlAnnotation);
+        if (umlAnnotation != null) {
+          Object annotationSlot = getProfileDataCauseSuffix(umlAnnotation);
+          StructureBasedCause annotationCause = new StructureBasedCause(cause, annotationSlot);
+          execution_p.putInTrace(annotationCause, umlAnnotation);
+        }
       }
     }
+  }
+  
+  /**
+   * Return the UML element that is the target of the given Profile application
+   * or Stereotype application
+   * @param application_p a non-null Profile application or Stereotype application
+   * @return a non-null element
+   */
+  protected Element getApplicationTarget(EObject application_p) {
+    Element result;
+    if (application_p instanceof ProfileApplication) {
+      ProfileApplication profileApplication = (ProfileApplication)application_p;
+      result = profileApplication.getApplyingPackage();
+    } else {
+      // Stereotype application
+      result = UMLUtil.getBaseElement(application_p);
+    }
+    return result;
   }
   
   /**

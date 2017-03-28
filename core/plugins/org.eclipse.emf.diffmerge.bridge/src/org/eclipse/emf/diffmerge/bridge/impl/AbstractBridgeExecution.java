@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 import org.eclipse.emf.diffmerge.bridge.api.ICause;
+import org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage;
 import org.eclipse.emf.diffmerge.bridge.util.BaseTraceLoggingMessage;
 import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
 import org.eclipse.emf.diffmerge.bridge.util.structures.Tuple2;
@@ -33,10 +34,8 @@ import org.eclipse.emf.diffmerge.bridge.util.structures.Tuple2;
  */
 public abstract class AbstractBridgeExecution implements IBridgeExecution.Editable {
   
-  /**
-   * The logger associated to this class.
-   */
-  static final Logger logger = Logger.getLogger(AbstractBridgeExecution.class);
+  /** The non-null logger associated to this class. */
+  protected static final Logger logger = Logger.getLogger(AbstractBridgeExecution.class);
   
   /** The potentially null status of the execution */
   private IStatus _status;
@@ -47,6 +46,17 @@ public abstract class AbstractBridgeExecution implements IBridgeExecution.Editab
    */
   public AbstractBridgeExecution() {
     _status = Status.OK_STATUS; // Arbitrary
+  }
+  
+  /**
+   * Create a default log message
+   * @param cause_p a non-null cause
+   * @param target_p a non-null target data element
+   * @return a non-null log message
+   */
+  protected AbstractLoggingMessage createTraceLoggingMessage(
+      Object target_p, ICause.Symbolic<?, ?> cause_p) {
+    return new BaseTraceLoggingMessage(target_p, cause_p);
   }
   
   /**
@@ -75,37 +85,35 @@ public abstract class AbstractBridgeExecution implements IBridgeExecution.Editab
    * Associate and register the given target data elements with the given cause
    * in the execution trace, if any
    * @param cause_p a non-null cause
-   * @param target_p a non-null target data element
+   * @param target_p a non-null target data element, or structure of data elements
    */
   protected <T> void putInTrace(ICause<?, T> cause_p, T target_p) {
-    IBridgeTrace.Editable trace = getTrace();
-    if (trace != null) {
-      // Decompose pure structures
-      if (target_p instanceof IPureStructure<?> && cause_p instanceof ICause.Symbolic<?,?>) {
-        Collection<? extends Tuple2<?,?>> contents = ((IPureStructure<?>)target_p).getContents();
-        ICause.Symbolic<?,?> cause = (ICause.Symbolic<?,?>) cause_p;
-        for (Tuple2<?,?> slotAndValue : contents) {
-          StructureBasedCause structCause = new StructureBasedCause(cause, slotAndValue.get1());
-          trace.putCause(structCause, slotAndValue.get2());
-          logger.info(createTraceLoggingMessage(slotAndValue.get2(), cause));
-        }
-      } else {
-        trace.putCause(cause_p, target_p);
-        if (cause_p instanceof ICause.Symbolic<?,?>)
-          logger.info(createTraceLoggingMessage(target_p, (ICause.Symbolic<?,?>) cause_p));
+    // Decompose pure structures
+    if (target_p instanceof IPureStructure<?> && cause_p instanceof ICause.Symbolic<?,?>) {
+      Collection<? extends Tuple2<?,?>> contents = ((IPureStructure<?>)target_p).getContents();
+      ICause.Symbolic<?,?> cause = (ICause.Symbolic<?,?>) cause_p;
+      for (Tuple2<?,?> slotAndValue : contents) {
+        StructureBasedCause structCause = new StructureBasedCause(cause, slotAndValue.get1());
+        putInTraceAtomic(structCause, slotAndValue.get2());
       }
+    } else {
+      putInTraceAtomic(cause_p, target_p);
     }
   }
-
+  
   /**
-   * Creates a default logging message
-   * 
-   * @param cause_p
-   * @param target_p
-   * @return the trace logging message
+   * Associate and register the given atomic target data element with the given cause
+   * in the execution trace, if any
+   * @param cause_p a non-null cause
+   * @param targetElement_p a non-null atomic target data element
    */
-  protected BaseTraceLoggingMessage createTraceLoggingMessage(Object target_p, ICause.Symbolic<?, ?> cause_p) {
-    return new BaseTraceLoggingMessage(target_p, cause_p);
+  protected <T> void putInTraceAtomic(ICause<?, T> cause_p, Object targetElement_p) {
+    IBridgeTrace.Editable trace = getTrace();
+    if (trace != null) {
+      trace.putCause(cause_p, targetElement_p);
+      if (cause_p instanceof ICause.Symbolic<?,?>)
+        logger.info(createTraceLoggingMessage(targetElement_p, (ICause.Symbolic<?,?>) cause_p));
+    }
   }
   
   /**
