@@ -23,7 +23,7 @@ import org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic;
  * @param <T> the type of target data elements
  * @author Olivier Constant
  */
-public interface IMappingCause<S, T> extends Symbolic<S, T> {
+public interface IMappingCause<S, T> extends Symbolic<S> {
   
   /**
    * Return the query execution that characterizes this ICause

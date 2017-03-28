@@ -27,7 +27,7 @@ import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
  * A symbolic cause that is further specified by a slot in a structure.
  * @see IPureStructure
  */
-public class StructureBasedCause implements Symbolic<Object, Object> {
+public class StructureBasedCause implements Symbolic<Object> {
   
   /** The non-null base cause or a symbol that represents it */
   private final Object _baseCause;
@@ -93,8 +93,8 @@ public class StructureBasedCause implements Symbolic<Object, Object> {
   @SuppressWarnings("unchecked")
   public Collection<Object> getSourceElements() {
     Collection<Object> result;
-    if (_baseCause instanceof ICause<?,?>)
-      result = ((ICause<Object,?>)_baseCause).getSourceElements();
+    if (_baseCause instanceof ICause<?>)
+      result = ((ICause<Object>)_baseCause).getSourceElements();
     else
       result = Collections.emptySet();
     return result;
@@ -105,8 +105,8 @@ public class StructureBasedCause implements Symbolic<Object, Object> {
    */
   public Object getSymbol(ISymbolFunction function_p) {
     Object baseSymbol;
-    if (_baseCause instanceof ICause.Symbolic<?,?>)
-      baseSymbol = ((ICause.Symbolic<?,?>)_baseCause).getSymbol(function_p);
+    if (_baseCause instanceof ICause.Symbolic<?>)
+      baseSymbol = ((ICause.Symbolic<?>)_baseCause).getSymbol(function_p);
     else
       baseSymbol = function_p.getSymbol(_baseCause);
     Object slotSymbol = function_p.getSymbol(_slot);

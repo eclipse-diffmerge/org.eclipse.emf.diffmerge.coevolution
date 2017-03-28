@@ -16,15 +16,17 @@ package org.eclipse.emf.diffmerge.bridge.api;
 
 
 /**
- * A trace model that, for every target data element, identifies the cause of its presence.
+ * A trace that identifies the cause of the presence of elements in a data set.
  * @author Olivier Constant
  */
 public interface IBridgeTrace {
   
   /**
-   * Return an object that uniquely identifies the cause of the presence
-   * of the given target data element. The cause may be an ICause or
-   * an abstract/simplified variant.
+   * Return an object that uniquely identifies the cause of the presence of the given
+   * target data element. The cause may be an ICause or any characterization of it.
+   * Class invariant: Given two target data elements e1 and e2,
+   *  if e1 != e2 && getCause(e1) != null && getCause(e2) != null
+   *  then !getCause(e1).equals(getCause(e2))
    * @param target_p a potentially null object
    * @return a potentially null object
    */
@@ -37,7 +39,7 @@ public interface IBridgeTrace {
   interface Editable extends IBridgeTrace {
     /**
      * Register the given cause as the cause of the presence of the given target data element.
-     * The cause may be an ICause or an abstract/simplified variant.
+     * The cause may be an ICause or any characterization of it.
      * @param cause_p a non-null object
      * @param target_p a non-null object
      * @return a potentially null object which was previously registered as cause
@@ -47,7 +49,7 @@ public interface IBridgeTrace {
     /**
      * Remove trace information related to the given target data element and return the cause
      * that was previously registered for it, if any.
-     * The cause may be an ICause or an abstract/simplified variant.
+     * The cause may be an ICause or any characterization of it.
      * @param target_p a non-null object
      * @return a potentially null object
      */

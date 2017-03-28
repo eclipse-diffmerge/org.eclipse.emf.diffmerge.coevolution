@@ -18,18 +18,12 @@ import org.eclipse.core.runtime.IStatus;
 
 
 /**
- * The result of the execution of an IBridge that maps target data elements to
- * causes of their presence defined in the source data.
+ * The execution of an IBridge.
+ * It provides a trace that maps elements in the target data set to the cause of
+ * their presence in the source data set.
  * @author Olivier Constant
  */
 public interface IBridgeExecution {
-  
-  /**
-   * Return the target data element that is associated to the given cause
-   * @param cause_p a non-null cause
-   * @return an object which is not null if the cause is applicable
-   */
-  <T> T get(ICause<?, T> cause_p);
   
   /**
    * Return the status of the execution
@@ -52,13 +46,6 @@ public interface IBridgeExecution {
      * @see org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution#getTrace()
      */
     IBridgeTrace.Editable getTrace();
-    
-    /**
-     * Associate and register the given target data with the given cause
-     * @param cause_p a non-null cause
-     * @param target_p a non-null target data element
-     */
-    <T> void put(ICause<?, T> cause_p, T target_p);
   }
   
 }

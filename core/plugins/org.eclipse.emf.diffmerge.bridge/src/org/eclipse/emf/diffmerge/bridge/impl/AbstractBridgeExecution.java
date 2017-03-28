@@ -55,7 +55,7 @@ public abstract class AbstractBridgeExecution implements IBridgeExecution.Editab
    * @return a non-null log message
    */
   protected AbstractLoggingMessage createTraceLoggingMessage(
-      Object target_p, ICause.Symbolic<?, ?> cause_p) {
+      Object target_p, ICause<?> cause_p) {
     return new BaseTraceLoggingMessage(target_p, cause_p);
   }
   
@@ -70,14 +70,15 @@ public abstract class AbstractBridgeExecution implements IBridgeExecution.Editab
    * Handle the fact that the given cause is not supported by this execution
    * @param cause_p a non-null cause
    */
-  protected void handleWrongCause(ICause<?, ?> cause_p) {
+  protected void handleWrongCause(ICause<?> cause_p) {
     throw new IllegalArgumentException("Wrong type of cause: " + cause_p); //$NON-NLS-1$
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution.Editable#put(org.eclipse.emf.diffmerge.bridge.api.ICause, java.lang.Object)
+   * @see org.eclipse.emf.diffmerge.bridge.api.INavigableBridgeExecution.Editable#put(org.eclipse.emf.diffmerge.bridge.api.ICause, java.lang.Object)
    */
-  public <T> void put(ICause<?, T> cause_p, T target_p) {
+  protected void put(ICause<?> cause_p, Object target_p) {
+    // Extend visibility in subclasses if relevant
     putInTrace(cause_p, target_p);
   }
   
@@ -87,11 +88,11 @@ public abstract class AbstractBridgeExecution implements IBridgeExecution.Editab
    * @param cause_p a non-null cause
    * @param target_p a non-null target data element, or structure of data elements
    */
-  protected <T> void putInTrace(ICause<?, T> cause_p, T target_p) {
+  protected void putInTrace(ICause<?> cause_p, Object target_p) {
     // Decompose pure structures
-    if (target_p instanceof IPureStructure<?> && cause_p instanceof ICause.Symbolic<?,?>) {
+    if (target_p instanceof IPureStructure<?> && cause_p instanceof ICause.Symbolic<?>) {
       Collection<? extends Tuple2<?,?>> contents = ((IPureStructure<?>)target_p).getContents();
-      ICause.Symbolic<?,?> cause = (ICause.Symbolic<?,?>) cause_p;
+      ICause.Symbolic<?> cause = (ICause.Symbolic<?>) cause_p;
       for (Tuple2<?,?> slotAndValue : contents) {
         StructureBasedCause structCause = new StructureBasedCause(cause, slotAndValue.get1());
         putInTraceAtomic(structCause, slotAndValue.get2());
@@ -107,12 +108,12 @@ public abstract class AbstractBridgeExecution implements IBridgeExecution.Editab
    * @param cause_p a non-null cause
    * @param targetElement_p a non-null atomic target data element
    */
-  protected <T> void putInTraceAtomic(ICause<?, T> cause_p, Object targetElement_p) {
+  protected void putInTraceAtomic(ICause<?> cause_p, Object targetElement_p) {
     IBridgeTrace.Editable trace = getTrace();
     if (trace != null) {
       trace.putCause(cause_p, targetElement_p);
-      if (cause_p instanceof ICause.Symbolic<?,?>)
-        logger.info(createTraceLoggingMessage(targetElement_p, (ICause.Symbolic<?,?>) cause_p));
+      if (cause_p instanceof ICause.Symbolic<?>)
+        logger.info(createTraceLoggingMessage(targetElement_p, cause_p));
     }
   }
   

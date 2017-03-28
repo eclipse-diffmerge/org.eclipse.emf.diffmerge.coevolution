@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014-2016 Thales Global Services S.A.S.
+ * Copyright (c) 2017 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,38 +17,36 @@ package org.eclipse.emf.diffmerge.bridge.util;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+
 /**
- * An abstract logging message with default formatting
+ * An abstract logging message with default formatting.
  */
 public abstract class AbstractLoggingMessage {
   
-  /**
-   * An internal mapping from objects to their labels
-   */
-  private LinkedHashMap<Object, String> _objectToLabel = new LinkedHashMap<Object, String>();
+  /** An non-null internal mapping from objects to their labels */
+  private Map<Object, String> _objectToLabel;
+  
   
   /**
    * Default constructor
-   * 
-   * @param object_p (non-null) the object to be serialized
+   * @param object_p the (non-null) object to be serialized
    */
   protected AbstractLoggingMessage(Object object_p) {
+    _objectToLabel = new LinkedHashMap<Object, String>();
     // by default map object to its default serialization unless a label
     // provider is used through mapObjectToLabel(object, label)
     _objectToLabel.put(object_p, object_p.toString());
   }
-
+  
   /**
-   * Returns the logging message prefix
-   * 
-   * @return (non-null) possibly empty string
+   * Return the logging message prefix
+   * @return the (non-null) possibly empty string
    */
   protected abstract String getPrefix();
-
+  
   /**
-   * Returns the logging message additional info as suffix
-   * 
-   * @return (non-null) possibly empty string
+   * Return the logging message additional info as suffix
+   * @return a (non-null) possibly empty string
    */
   protected abstract String getAdditionalInfo();
   
@@ -59,17 +57,15 @@ public abstract class AbstractLoggingMessage {
   public String toString() {
     return getPrefix() + getMessageBody() + getAdditionalInfo();
   }
-
+  
   /**
-   * Returns the message boy, this is where objects are serialized.
-   * 
+   * Return the message boy, this is where objects are serialized.
    * @return the (non-null) message body
    */
   protected abstract String getMessageBody();
-
+  
   /**
-   * Returns the object to label map
-   * 
+   * Return the object to label map
    * @return the (non-null) object to label map
    */
   protected Map<Object, String> getObjectToLabel() {
@@ -77,8 +73,7 @@ public abstract class AbstractLoggingMessage {
   }
   
   /**
-   * Maps an object to a label
-   * 
+   * Map an object to a label
    * @param object_p the (non-null) object to map
    * @param objectLabel_p the (non-null) object label
    */
@@ -87,8 +82,7 @@ public abstract class AbstractLoggingMessage {
   }
   
   /**
-   * Returns the label mapped to the object given as input
-   * 
+   * Return the label mapped to the object given as input
    * @param object_p the (non-null) object
    * @return the (non-null) source label
    */
@@ -97,4 +91,5 @@ public abstract class AbstractLoggingMessage {
         return _objectToLabel.get(object_p);
     return object_p.toString();
   }
+  
 }

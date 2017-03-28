@@ -27,7 +27,7 @@ import org.polarsys.kitalpha.transposer.transformation.context.TransformationKey
  * It simply wraps a Transposer transformation key.
  * @see TransformationKey
  */
-public class TransposerBridgeCause implements ICause.Symbolic<Object, Object> {
+public class TransposerBridgeCause implements ICause.Symbolic<Object> {
   
   /** The non-null transformation key with non-null source and role */
   private final TransformationKey _transformationKey;

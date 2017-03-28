@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014-2016 Thales Global Services S.A.S.
+ * Copyright (c) 2017 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,27 +16,42 @@ package org.eclipse.emf.diffmerge.bridge.util;
 
 import org.eclipse.emf.diffmerge.bridge.api.ICause;
 
+
 /**
- * A basic logging message for incremental bridges.
+ * A basic logging message for bridge executions.
  */
 public class BaseTraceLoggingMessage extends AbstractLoggingMessage {
   
-  /**
-   * The cause of the presence of the target element
-   */
-  protected final ICause.Symbolic<?,?> _cause;
+  /** The non-null cause of the presence of a target data element */
+  protected final ICause<?> _cause;
+  
   
   /**
    * Default constructor
-   * 
-   * @param target_p the (non-null) target object
+   * @param target_p the (non-null) target data element
    * @param cause_p the (non-null) cause
    */
-  public BaseTraceLoggingMessage(Object target_p, ICause.Symbolic<?,?> cause_p) {
+  public BaseTraceLoggingMessage(Object target_p, ICause<?> cause_p) {
     super(target_p);
     _cause = cause_p;
   }
-
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage#getAdditionalInfo()
+   */
+  @Override
+  protected String getAdditionalInfo() {
+    return ""; //$NON-NLS-1$
+  }
+  
+  /**
+   * Return the cause of the presence of the target object
+   * @return the (non-null) cause
+   */
+  public ICause<?> getCause() {
+    return _cause;
+  }
+  
   /**
    * @see org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage#getMessageBody()
    */
@@ -49,26 +64,7 @@ public class BaseTraceLoggingMessage extends AbstractLoggingMessage {
     builder.append("]"); //$NON-NLS-1$
     return builder.toString();
   }
-
-  /**
-   * Returns the target object backed by this message, it is the first object
-   * added to the map.
-   * 
-   * @return the (non-null) target object
-   */
-  public Object getTarget() {
-    return getObjectToLabel().keySet().iterator().next();
-  }
-
-  /**
-   * Returns the cause of the presence of the target object
-   * 
-   * @return the (non-null) cause
-   */
-  public ICause.Symbolic<?, ?> getCause() {
-    return _cause;
-  }
-
+  
   /**
    * @see org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage#getPrefix()
    */
@@ -76,12 +72,14 @@ public class BaseTraceLoggingMessage extends AbstractLoggingMessage {
   protected String getPrefix() {
     return ""; //$NON-NLS-1$
   }
-
+  
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage#getAdditionalInfo()
+   * Return the target object backed by this message; it is the first object
+   * added to the map.
+   * @return the (non-null) target object
    */
-  @Override
-  protected String getAdditionalInfo() {
-    return ""; //$NON-NLS-1$
+  public Object getTarget() {
+    return getObjectToLabel().keySet().iterator().next();
   }
+  
 }

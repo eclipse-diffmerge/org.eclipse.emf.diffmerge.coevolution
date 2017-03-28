@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 import org.eclipse.emf.diffmerge.bridge.api.ICause;
-import org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic;
 import org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeTraceExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingCause;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
@@ -34,7 +33,7 @@ import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IRule;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IRuleIdentifier;
 import org.eclipse.emf.diffmerge.bridge.mapping.util.TraceLoggingMessage;
-import org.eclipse.emf.diffmerge.bridge.util.BaseTraceLoggingMessage;
+import org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage;
 
 
 /**
@@ -69,13 +68,13 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution#get(org.eclipse.emf.diffmerge.bridge.api.ICause)
+   * @see org.eclipse.emf.diffmerge.bridge.api.INavigableBridgeExecution#get(org.eclipse.emf.diffmerge.bridge.api.ICause)
    */
-  public <T> T get(ICause<?, T> cause_p) {
-    T result = null;
+  public Object get(ICause<?> cause_p) {
+    Object result = null;
     if (cause_p instanceof IMappingCause<?, ?>) {
       @SuppressWarnings("unchecked")
-      IMappingCause<Object, T> cause = (IMappingCause<Object, T>)cause_p;
+      IMappingCause<Object, Object> cause = (IMappingCause<Object, Object>)cause_p;
       result = get(cause.getSource(), cause.getRule());
     }
     return result;
@@ -189,7 +188,7 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
    * Return whether the given cause is already registered
    * @param cause_p a potentially null cause
    */
-  public boolean isRegistered(ICause<?,?> cause_p) {
+  public boolean isRegistered(ICause<?> cause_p) {
     return get(cause_p) != null;
   }
   
@@ -205,10 +204,10 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
    * @see org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeExecution#put(org.eclipse.emf.diffmerge.bridge.api.ICause, java.lang.Object)
    */
   @Override
-  public <T> void put(ICause<?, T> cause_p, T target_p) {
+  public void put(ICause<?> cause_p, Object target_p) {
     if (cause_p instanceof IMappingCause<?,?>) {
-      IMappingCause<?, T> cause = (IMappingCause<?, T>)cause_p;
-      IRule<?,T> rule = cause.getRule();
+      IMappingCause<?,?> cause = (IMappingCause<?,?>)cause_p;
+      IRule<?,?> rule = cause.getRule();
       // Register rule
       _ruleMap.put(rule.getID(), rule);
       Object source = cause.getSource();
@@ -249,16 +248,17 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
    * @see org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeExecution#putInTrace(org.eclipse.emf.diffmerge.bridge.api.ICause, java.lang.Object)
    */
 	@Override
-	public <T> void putInTrace(ICause<?, T> cause_p, T target_p) {
+	public void putInTrace(ICause<?> cause_p, Object target_p) {
 	  // Increases visibility
 		super.putInTrace(cause_p, target_p);
 	}
 	
 	/**
-	 * @see org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeExecution#createTraceLoggingMessage(java.lang.Object, org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic)
+	 * @see org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeExecution#createTraceLoggingMessage(java.lang.Object, org.eclipse.emf.diffmerge.bridge.api.ICause)
 	 */
 	@Override
-	protected BaseTraceLoggingMessage createTraceLoggingMessage(Object target_p, Symbolic<?, ?> cause_p) {
+	protected AbstractLoggingMessage createTraceLoggingMessage(
+	    Object target_p, ICause<?> cause_p) {
 	  return new TraceLoggingMessage(target_p, cause_p);
 	}
   

@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014-2016 Thales Global Services S.A.S.
+ * Copyright (c) 2017 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
 import org.eclipse.emf.diffmerge.ui.EMFDiffMergeUIPlugin;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -108,6 +109,14 @@ public class BridgeLogger implements IBridgeLogListener {
   }
   
   /**
+   * Return the label provider for representing elements
+   * @return a non-null label provider
+   */
+  private ILabelProvider getLabelProvider() {
+    return EMFDiffMergeUIPlugin.getDefault().getAdapterFactoryLabelProvider();
+  }
+  
+  /**
    * Handle a debug event
    * @param event_p (non-null) logging event
    */
@@ -168,8 +177,7 @@ public class BridgeLogger implements IBridgeLogListener {
   }
   
   /**
-   * Handles a query logging message by appending additional data.
-   * 
+   * Handle a query logging message by appending additional data
    * @param message_p the (non-null) query logging message
    */
   private void handleQueryLoggingMessage(QueryLoggingMessage message_p) {
@@ -177,13 +185,13 @@ public class BridgeLogger implements IBridgeLogListener {
     Object queryResult = message_p.getQueryResult();
     if (queryResult instanceof EObject) {
       registerObject(console, queryResult);
-      String objectLabel = EMFDiffMergeUIPlugin.getDefault().getAdapterFactoryLabelProvider().getText(queryResult);
+      String objectLabel = getLabelProvider().getText(queryResult);
       message_p.mapObjectToLabel(queryResult, objectLabel); 
     } else if (queryResult instanceof IPureStructure<?>) {
       Collection<?> objects = ((IPureStructure<?>) queryResult).asCollection();
       for (Object object : objects) {
         registerObject(console, object);
-        String sourceName = EMFDiffMergeUIPlugin.getDefault().getAdapterFactoryLabelProvider().getText(object);
+        String sourceName = getLabelProvider().getText(object);
         message_p.mapObjectToLabel(object, sourceName);
       }
     }
@@ -206,11 +214,11 @@ public class BridgeLogger implements IBridgeLogListener {
     Collection<?> sources = message_p.getCause().getSourceElements();
     Object target = message_p.getTarget();
     registerObject(console, target);
-    String targetName = EMFDiffMergeUIPlugin.getDefault().getAdapterFactoryLabelProvider().getText(target);
+    String targetName = getLabelProvider().getText(target);
     message_p.mapObjectToLabel(target, targetName);
     for (Object source : sources) {
       registerObject(console, source);
-      String sourceName = EMFDiffMergeUIPlugin.getDefault().getAdapterFactoryLabelProvider().getText(source);
+      String sourceName = getLabelProvider().getText(source);
       message_p.mapObjectToLabel(source, sourceName);
     }
   }
@@ -231,11 +239,9 @@ public class BridgeLogger implements IBridgeLogListener {
   private void info(final Object message_p) {
     if (message_p instanceof BaseTraceLoggingMessage) {
       handleTraceLoggingMessage((BaseTraceLoggingMessage) message_p);
-    }
-    else if (message_p instanceof QueryLoggingMessage) {
+    } else if (message_p instanceof QueryLoggingMessage) {
       handleQueryLoggingMessage((QueryLoggingMessage) message_p);
-    }
-    else if (message_p instanceof RuleLoggingMessage) {
+    } else if (message_p instanceof RuleLoggingMessage) {
       handleRuleLoggingMessage((RuleLoggingMessage) message_p);
     }
     findConsole().getInfoStream().println(message_p.toString());

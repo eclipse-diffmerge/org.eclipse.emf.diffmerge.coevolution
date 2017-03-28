@@ -18,7 +18,7 @@ import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 
 
 /**
- * An implementation of IBridgeExecution with an explicit trace.
+ * An implementation of IBridgeExecution with a directly owned trace.
  * @author Olivier Constant
  */
 public abstract class AbstractBridgeTraceExecution extends AbstractBridgeExecution {

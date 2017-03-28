@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014-2016 Thales Global Services S.A.S.
+ * Copyright (c) 2017 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,28 +14,29 @@
  */
 package org.eclipse.emf.diffmerge.bridge.integration.transposer;
 
-import org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic;
+import org.eclipse.emf.diffmerge.bridge.api.ICause;
 import org.eclipse.emf.diffmerge.bridge.impl.emf.EMFSymbolFunction;
 import org.eclipse.emf.diffmerge.bridge.util.BaseTraceLoggingMessage;
 import org.eclipse.emf.ecore.EObject;
 import org.polarsys.kitalpha.transposer.transformation.context.ContextHelper;
 
+
 /**
- * A trace logging message where objects are serialized using symbol functions.
+ * A trace logging message for Transposer bridge executions.
  */
 public class TransposerTraceLoggingMessage extends BaseTraceLoggingMessage {
-
+  
   /**
    * Default constructor
-   * 
    * @param context_p the (non-null) Transposer context 
    * @param target_p the (non-null) target object
    * @param cause_p the (non-null) presence cause
    */
-  public TransposerTraceLoggingMessage(TransposerBridgeContext context_p, Object target_p, Symbolic<?, ?> cause_p) {
+  public TransposerTraceLoggingMessage(
+      TransposerBridgeContext context_p, Object target_p, ICause<?> cause_p) {
     super(target_p, cause_p);
   }
-
+  
   /**
    * @see org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage#getPrefix()
    */
@@ -43,7 +44,7 @@ public class TransposerTraceLoggingMessage extends BaseTraceLoggingMessage {
   protected String getPrefix() {
     return "\t|\t|__Produced "; //$NON-NLS-1$
   }
-
+  
   /**
    * @see org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage#getMessageBody()
    */
@@ -71,4 +72,5 @@ public class TransposerTraceLoggingMessage extends BaseTraceLoggingMessage {
     builder.append("}"); //$NON-NLS-1$
     return builder.toString();
   }
+  
 }

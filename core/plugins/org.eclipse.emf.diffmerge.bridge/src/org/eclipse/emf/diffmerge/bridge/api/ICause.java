@@ -19,11 +19,12 @@ import java.util.Collection;
 
 /**
  * The cause of the presence of target data elements in terms of source data.
+ * The explicit identification of source elements allows for better support
+ * for basic features such as logging.
  * @param <S> the type of source data elements
- * @param <T> the type of target data elements
  * @author Olivier Constant
  */
-public interface ICause<S, T> {
+public interface ICause<S> {
   
   /**
    * Return the source data elements involved in this cause
@@ -35,9 +36,8 @@ public interface ICause<S, T> {
   /**
    * A cause that can be represented as a symbol.
    * @param <S> the type of source data elements
-   * @param <T> the type of target data elements
    */
-  interface Symbolic<S, T> extends ICause<S, T>, ISymbolProvider {
+  interface Symbolic<S> extends ICause<S>, ISymbolProvider {
     // Nothing needed
   }
   

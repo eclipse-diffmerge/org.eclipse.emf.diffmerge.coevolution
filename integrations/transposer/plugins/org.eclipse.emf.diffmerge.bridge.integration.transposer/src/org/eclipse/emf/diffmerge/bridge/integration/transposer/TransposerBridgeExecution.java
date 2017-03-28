@@ -21,9 +21,9 @@ import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 import org.eclipse.emf.diffmerge.bridge.api.ICause;
-import org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic;
+import org.eclipse.emf.diffmerge.bridge.api.INavigableBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeTraceExecution;
-import org.eclipse.emf.diffmerge.bridge.util.BaseTraceLoggingMessage;
+import org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage;
 import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
 import org.eclipse.emf.ecore.EObject;
 import org.polarsys.kitalpha.transposer.transformation.context.TransformationKey;
@@ -34,7 +34,8 @@ import org.polarsys.kitalpha.transposer.transformation.context.TransformationKey
  * @see TransposerBridge
  * @see IBridgeExecution
  */
-public class TransposerBridgeExecution extends AbstractBridgeTraceExecution {
+public class TransposerBridgeExecution extends AbstractBridgeTraceExecution
+implements INavigableBridgeExecution.Editable {
   
   /** The (initially null, then non-null after a call to setup(...))
    * Transposer context associated to this execution */
@@ -93,6 +94,14 @@ public class TransposerBridgeExecution extends AbstractBridgeTraceExecution {
   }
   
   /**
+   * @see org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeExecution#createTraceLoggingMessage(java.lang.Object, org.eclipse.emf.diffmerge.bridge.api.ICause)
+   */
+  @Override
+  protected AbstractLoggingMessage createTraceLoggingMessage(Object target_p, ICause<?> cause_p) {
+    return new TransposerTraceLoggingMessage(_context, target_p, cause_p);
+  }
+  
+  /**
    * Associate and register the given target data with the given transformation key as cause,
    * without reflecting this change on the Transposer context
    * @param key_p a non-null Transposer transformation key
@@ -115,14 +124,13 @@ public class TransposerBridgeExecution extends AbstractBridgeTraceExecution {
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution#get(org.eclipse.emf.diffmerge.bridge.api.ICause)
+   * @see org.eclipse.emf.diffmerge.bridge.api.INavigableBridgeExecution#get(org.eclipse.emf.diffmerge.bridge.api.ICause)
    */
-  @SuppressWarnings("unchecked")
-  public <T> T get(ICause<?, T> cause_p) {
-    T result = null;
+  public Object get(ICause<?> cause_p) {
+    Object result = null;
     if (cause_p instanceof TransposerBridgeCause) {
       TransposerBridgeCause transposerBridgeCause = (TransposerBridgeCause)cause_p;
-      result = (T)_context.get(transposerBridgeCause.getTransformationKey());
+      result = _context.get(transposerBridgeCause.getTransformationKey());
     }
     return result;
   }
@@ -139,7 +147,7 @@ public class TransposerBridgeExecution extends AbstractBridgeTraceExecution {
    * @see org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeExecution#put(org.eclipse.emf.diffmerge.bridge.api.ICause, java.lang.Object)
    */
   @Override
-  public <T> void put(ICause<?, T> cause_p, T target_p) {
+  public void put(ICause<?> cause_p, Object target_p) {
     if (cause_p instanceof TransposerBridgeCause) {
       TransposerBridgeCause transposerBridgeCause = (TransposerBridgeCause)cause_p;
       _context.doPut(transposerBridgeCause.getTransformationKey(), target_p);
@@ -159,11 +167,4 @@ public class TransposerBridgeExecution extends AbstractBridgeTraceExecution {
     _context = context_p;
   }
   
-  /**
-   * @see org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeExecution#createTraceLoggingMessage(java.lang.Object, org.eclipse.emf.diffmerge.bridge.api.ICause.Symbolic)
-   */
-  @Override
-  protected BaseTraceLoggingMessage createTraceLoggingMessage(Object target_p, Symbolic<?, ?> cause_p) {
-    return new TransposerTraceLoggingMessage(_context, target_p, cause_p);
-  }
 }

@@ -17,15 +17,15 @@ package org.eclipse.emf.diffmerge.bridge.mapping.api;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.api.ICause;
+import org.eclipse.emf.diffmerge.bridge.api.INavigableBridgeExecution;
 
 
 /**
  * The execution of a mapping bridge.
  * @author Olivier Constant
  */
-public interface IMappingExecution extends IBridgeExecution {
+public interface IMappingExecution extends INavigableBridgeExecution {
   
   /**
    * Return the target data element defined by the given rule on the given source data element
@@ -93,7 +93,7 @@ public interface IMappingExecution extends IBridgeExecution {
   /**
    * Modifiable extension of IMappingExecution.
    */
-  interface Editable extends IMappingExecution {
+  interface Editable extends IMappingExecution, INavigableBridgeExecution.Editable {
 	
 	  /**
 	   * Register the given target data elements with the given cause
@@ -101,7 +101,7 @@ public interface IMappingExecution extends IBridgeExecution {
 	   * @param cause_p a non-null cause
 	   * @param target_p a non-null target data element
 	   */
-	  <T> void putInTrace(ICause<?, T> cause_p, T target_p) ;
+	  void putInTrace(ICause<?> cause_p, Object target_p) ;
   }
   
 }

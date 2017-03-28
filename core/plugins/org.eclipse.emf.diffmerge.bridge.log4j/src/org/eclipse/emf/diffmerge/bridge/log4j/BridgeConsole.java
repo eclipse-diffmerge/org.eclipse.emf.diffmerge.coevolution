@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014-2016 Thales Global Services S.A.S.
+ * Copyright (c) 2017 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,8 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IPatternMatchListener;
@@ -83,18 +83,23 @@ public class BridgeConsole extends MessageConsole {
     super.dispose();
     try {
       removePatternMatchListener(_notifier);
-      _infoStream.getColor().dispose();
       _infoStream.flush();
       _infoStream.close();
-      _warningStream.getColor().dispose();
       _warningStream.flush();
       _warningStream.close();
-      _errorStream.getColor().dispose();
       _errorStream.flush();
       _errorStream.close();
     } catch (IOException ex) {
       logger.error(ex.getStackTrace(), ex);
     }
+  }
+  
+  /**
+   * Return the console error stream
+   * @return the (non-null) error stream
+   */
+  public MessageConsoleStream getErrorStream() {
+    return _errorStream;
   }
   
   /**
@@ -122,19 +127,11 @@ public class BridgeConsole extends MessageConsole {
   }
   
   /**
-   * Return the console error stream
-   * @return the (non-null) error stream
-   */
-  public MessageConsoleStream getErrorStream() {
-    return _errorStream;
-  }
-  
-  /**
    * Create and initialize the info stream with color and font style
    * @param display_p (non-null) the device on which to allocate the color
    */
   private void initializeInfoStream(Display display_p) {
-    Color color = new Color(display_p, new RGB(0, 0, 0));
+    Color color = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
     _infoStream = newMessageStream();
     _infoStream.setColor(color);
   }
@@ -144,7 +141,7 @@ public class BridgeConsole extends MessageConsole {
    * @param display_p (non-null) the device on which to allocate the color
    */
   private void initializeWarningStream(Display display_p) {
-    Color color = new Color(display_p, new RGB(255, 127, 80));
+    Color color = Display.getDefault().getSystemColor(SWT.COLOR_DARK_YELLOW);
     _warningStream = newMessageStream();
     _warningStream.setColor(color);
   }
@@ -154,7 +151,7 @@ public class BridgeConsole extends MessageConsole {
    * @param display_p (non-null) the device on which to allocate the color
    */
   private void initializeErrorStream(Display display_p) {
-    Color color = new Color(display_p, new RGB(255, 0, 0));
+    Color color = Display.getDefault().getSystemColor(SWT.COLOR_RED);
     _errorStream = newMessageStream();
     _errorStream.setColor(color);
   }

@@ -16,12 +16,11 @@ package org.eclipse.emf.diffmerge.bridge.impl;
 
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
-import org.eclipse.emf.diffmerge.bridge.api.ICause;
 import org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridgeExecution;
 
 
 /**
- * An execution for incremental wrapping bridges.
+ * An execution for incremental bridges that wraps a non-incremental execution.
  * @see IIncrementalBridgeExecution
  * @author Olivier Constant
  */
@@ -61,13 +60,6 @@ implements IIncrementalBridgeExecution.Editable {
    */
   public boolean canBeIncremental() {
     return getTrace() != null && getReferenceTrace() != null;
-  }
-  
-  /**
-   * @see org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution#get(org.eclipse.emf.diffmerge.bridge.api.ICause)
-   */
-  public <T> T get(ICause<?, T> cause_p) {
-    return getTransformationExecution().get(cause_p);
   }
   
   /**
@@ -111,14 +103,6 @@ implements IIncrementalBridgeExecution.Editable {
    */
   public boolean mustDeferInteractiveMerge() {
     return _mustDeferInteractiveMerge;
-  }
-  
-  /**
-   * @see org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeExecution#put(org.eclipse.emf.diffmerge.bridge.api.ICause, java.lang.Object)
-   */
-  @Override
-  public <T> void put(ICause<?, T> cause_p, T target_p) {
-    getTransformationExecution().put(cause_p, target_p);
   }
   
   /**

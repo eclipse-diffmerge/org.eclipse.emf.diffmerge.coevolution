@@ -18,9 +18,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 
 /**
- * An executable bridge from a source data sets to a target data set.
- * The result of the execution maps target data elements to causes in the
- * source data set.
+ * An executable bridge from a source data set to a target data set.
+ * As a result of its execution, a bridge maps target data elements to the corresponding
+ * cause of their presence in the source data set, via a trace.
+ * Under these sole assumptions, a bridge can be made incremental.
  * @param <SD> the type of the source data set
  * @param <TD> the type of the target data set
  * @author Olivier Constant
@@ -28,7 +29,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IBridge<SD, TD> {
   
   /**
-   * Create and return a new execution for the bridge
+   * Create and return a new execution for the bridge based on the given trace
    * @param trace_p an optional trace in which to record
    * @return a non-null object
    */

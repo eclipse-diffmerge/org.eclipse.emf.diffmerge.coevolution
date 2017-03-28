@@ -23,8 +23,9 @@ import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 
 /**
  * An incremental bridge between two data sets.
- * Incrementality is realized by creating an intermediate target data set which is
- * then merged with the provided one.
+ * Incrementality is achieved by creating an intermediate target data set which is
+ * populated according to the source data set and then merged with the actual target
+ * data set.
  * @param <SD> the type of the source data set
  * @param <TD> the type of the target data set
  * @param <ID> the type of the intermediate target data set
