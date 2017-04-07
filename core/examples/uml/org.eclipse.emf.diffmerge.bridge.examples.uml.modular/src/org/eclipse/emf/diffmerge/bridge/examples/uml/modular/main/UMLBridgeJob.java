@@ -46,9 +46,11 @@ public class UMLBridgeJob extends BridgeJob<PhysicalArchitecture> {
   protected EMFInteractiveBridge<PhysicalArchitecture, IEditableModelScope> getBridge() {
     UMLBridge mappingBridge = new UMLBridge();
     // Make the mapping bridge incremental
+    GMFDiffPolicy diffPolicy = new GMFDiffPolicy();
+    diffPolicy.setIgnoreOrders(true);
     EMFInteractiveBridge<PhysicalArchitecture, IEditableModelScope> result = 
         new EMFInteractiveBridge<PhysicalArchitecture, IEditableModelScope>(
-            mappingBridge, new GMFDiffPolicy(), new UMLMergePolicy(), null);
+            mappingBridge, diffPolicy, new UMLMergePolicy(), null);
     return result;
   }
   

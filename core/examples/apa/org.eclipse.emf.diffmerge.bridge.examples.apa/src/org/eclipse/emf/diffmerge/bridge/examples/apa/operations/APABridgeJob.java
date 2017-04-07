@@ -35,6 +35,7 @@ import org.eclipse.emf.diffmerge.bridge.mapping.api.IRule;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.Query;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.Rule;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.emf.EMFMappingBridge;
+import org.eclipse.emf.diffmerge.impl.policies.ConfigurableDiffPolicy;
 import org.eclipse.emf.ecore.EObject;
 import org.polarsys.capella.core.data.capellacore.Type;
 import org.polarsys.capella.core.data.cs.DeployableElement;
@@ -240,9 +241,11 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
         return ApaFactory.eINSTANCE.createAExchange();
       }
     };
+    ConfigurableDiffPolicy diffPolicy = new ConfigurableDiffPolicy();
+    diffPolicy.setIgnoreOrders(true);
     EMFInteractiveBridge<PhysicalArchitecture, IEditableModelScope> result = 
         new EMFInteractiveBridge<PhysicalArchitecture, IEditableModelScope>(
-            mapping, null, null, null);
+            mapping, diffPolicy, null, null);
     return result;
 	}
 	

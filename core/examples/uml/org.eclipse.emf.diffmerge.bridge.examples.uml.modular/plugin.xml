@@ -18,7 +18,7 @@
                class="org.eclipse.emf.diffmerge.bridge.examples.uml.modular.actions.UMLBridgeAction"
                enablesFor="1"
                id="org.eclipse.emf.diffmerge.bridge.examples.uml.actions.GoUp"
-               label="To UML (demo)"
+               label="To UML with Mapping (demo)"
                menubarPath="org.eclipse.emf.diffmerge.bridge.examples.menu/group">
          </action>
       </objectContribution>
