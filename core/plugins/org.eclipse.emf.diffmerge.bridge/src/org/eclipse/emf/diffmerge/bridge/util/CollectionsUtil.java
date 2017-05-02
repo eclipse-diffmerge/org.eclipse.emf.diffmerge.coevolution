@@ -15,10 +15,13 @@
 package org.eclipse.emf.diffmerge.bridge.util;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -139,6 +142,33 @@ public final class CollectionsUtil {
   @SuppressWarnings("unchecked")
   public static <T> Iterator<T> emptyIterator() {
     return (Iterator<T>)EmptyIterator.INSTANCE;
+  }
+  
+  /**
+   * Return an ordered set that contains all atomic elements which are
+   * recursively contained by the given object via the Iterable interface.
+   * Cycles are supported.
+   * @param object_p a non-null object
+   * @return a non-null, non-empty ordered set
+   */
+  public static Collection<Object> flatten(Object object_p) {
+    Collection<Object> result = new LinkedHashSet<Object>();
+    LinkedList<Object> toExplore = new LinkedList<Object>();
+    Collection<Object> explored = new HashSet<Object>();
+    toExplore.add(object_p);
+    while (!toExplore.isEmpty()) {
+      Object current = toExplore.removeFirst();
+      explored.add(current);
+      if (current instanceof Iterable<?>) {
+        for (Object currentPart : ((Iterable<?>)current)) {
+          if (!explored.contains(currentPart))
+            toExplore.add(currentPart);
+        }
+      } else {
+        result.add(current);
+      }
+    }
+    return Collections.unmodifiableCollection(result);
   }
   
   /**

@@ -51,7 +51,7 @@ public class TraceLoggingMessage extends BaseTraceLoggingMessage {
     builder.append(getTarget().getClass().getSimpleName()).append(" \""); //$NON-NLS-1$
     builder.append(getObjectLabel(getTarget())).append("\""); //$NON-NLS-1$
     final EMFSymbolFunction function = EMFSymbolFunction.getInstance();
-    //append the identifier inside the message using symbol function. 
+    //append the identifier inside the message using symbol function.
     builder.append("[").append(function.getSymbol(getTarget())).append("]");//$NON-NLS-1$ //$NON-NLS-2$
     //source however can be a single object or a tuple
     builder.append(") From {"); //$NON-NLS-1$

@@ -19,7 +19,7 @@ import java.util.Collection;
 
 /**
  * The cause of the presence of target data elements in terms of source data.
- * The explicit identification of source elements allows for better support
+ * The explicit identification of atomic source elements allows for better support
  * for basic features such as logging.
  * @param <S> the type of source data elements
  * @author Olivier Constant
@@ -27,10 +27,10 @@ import java.util.Collection;
 public interface ICause<S> {
   
   /**
-   * Return the source data elements involved in this cause
+   * Return the atomic source data elements involved in this cause
    * @return a non-null, unmodifiable ordered set
    */
-  Collection<S> getSourceElements();
+  Collection<?> getSourceElements();
   
   
   /**

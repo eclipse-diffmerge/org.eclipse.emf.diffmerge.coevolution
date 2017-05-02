@@ -15,13 +15,12 @@
 package org.eclipse.emf.diffmerge.bridge.mapping.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import org.eclipse.emf.diffmerge.bridge.api.ISymbolFunction;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingCause;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IRule;
-import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
+import org.eclipse.emf.diffmerge.bridge.util.CollectionsUtil;
 
 
 /**
@@ -95,13 +94,8 @@ public class MappingCause<S, T> implements IMappingCause<S, T> {
   /**
    * @see org.eclipse.emf.diffmerge.bridge.api.ICause#getSourceElements()
    */
-  @SuppressWarnings("unchecked")
-  public Collection<S> getSourceElements() {
-    Collection<S> result;
-    if (_source instanceof IPureStructure<?>)
-      result = ((IPureStructure<S>)_source).asCollection();
-    else
-      result = Collections.singletonList(getSource());
+  public Collection<?> getSourceElements() {
+    Collection<?> result = CollectionsUtil.flatten(_source);
     return result;
   }
   

@@ -90,11 +90,10 @@ public class StructureBasedCause implements Symbolic<Object> {
   /**
    * @see org.eclipse.emf.diffmerge.bridge.api.ICause#getSourceElements()
    */
-  @SuppressWarnings("unchecked")
-  public Collection<Object> getSourceElements() {
-    Collection<Object> result;
+  public Collection<?> getSourceElements() {
+    Collection<?> result;
     if (_baseCause instanceof ICause<?>)
-      result = ((ICause<Object>)_baseCause).getSourceElements();
+      result = ((ICause<?>)_baseCause).getSourceElements();
     else
       result = Collections.emptySet();
     return result;

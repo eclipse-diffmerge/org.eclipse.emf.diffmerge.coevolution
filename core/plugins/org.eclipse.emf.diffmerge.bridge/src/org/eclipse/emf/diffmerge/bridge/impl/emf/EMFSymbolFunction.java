@@ -21,11 +21,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
  * An implementation of ISymbolFunction for EMF.
+ * @author Olivier Constant
  */
 public class EMFSymbolFunction extends BaseSymbolFunction {
   
   /** The singleton instance */
-  protected static final EMFSymbolFunction INSTANCE = new EMFSymbolFunction();
+  private static final EMFSymbolFunction INSTANCE = new EMFSymbolFunction();
   
   
   /**
@@ -33,6 +34,20 @@ public class EMFSymbolFunction extends BaseSymbolFunction {
    */
   protected EMFSymbolFunction() {
     // Stateless
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.impl.BaseSymbolFunction#getAtomSymbol(java.lang.Object)
+   */
+  @Override
+  public Object getAtomSymbol(Object object_p) {
+    Object result;
+    if (object_p instanceof EObject)
+      // Assumes that no EClass implements Iterable 
+      result = getEObjectSymbol((EObject)object_p);
+    else
+      result = super.getAtomSymbol(object_p);
+    return result;
   }
   
   /** 
@@ -56,19 +71,6 @@ public class EMFSymbolFunction extends BaseSymbolFunction {
    */
   public static EMFSymbolFunction getInstance() {
     return INSTANCE;
-  }
-  
-  /**
-   * @see org.eclipse.emf.diffmerge.bridge.impl.BaseSymbolFunction#getSymbol(java.lang.Object)
-   */
-  @Override
-  public Object getSymbol(Object object_p) {
-    Object result;
-    if (object_p instanceof EObject)
-      result = getEObjectSymbol((EObject)object_p);
-    else
-      result = super.getSymbol(object_p);
-    return result;
   }
   
 }
