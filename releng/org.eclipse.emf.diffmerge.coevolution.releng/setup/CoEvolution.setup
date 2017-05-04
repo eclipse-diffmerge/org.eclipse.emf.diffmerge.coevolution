@@ -110,7 +110,8 @@
       </repositoryList>
     </targlet>
     <targlet
-        name="EMF DiffMerge Co-Evolution Capella">
+        name="EMF DiffMerge Co-Evolution Capella"
+        activeRepositoryList="${eclipse.target.platform}">
       <requirement
           name="org.polarsys.kitalpha.sdk.feature.feature.group"/>
       <requirement
@@ -119,7 +120,23 @@
           name="org.polarsys.capella.core.model.skeleton"/>
       <requirement
           name="org.polarsys.capella.core.compare"/>
-      <repositoryList>
+      <repositoryList
+          name="Neon">
+        <repository
+            url="https://hudson.polarsys.org/capella/job/capella-master/lastSuccessfulBuild/artifact/releng/plugins/org.polarsys.capella.rcp.site/target/repository"/>
+        <repository
+            url="http://download.eclipse.org/sirius/updates/legacy/1.1.0"/>
+        <repository
+            url="http://download.eclipse.org/sirius/updates/milestones/5.0.0M6/neon"/>
+        <repository
+            url="https://hudson.polarsys.org/kitalpha/job/Kitalpha_master/lastSuccessfulBuild/artifact/result/publish/kitalpha_runtime/site.p2"/>
+        <repository
+            url="https://hudson.polarsys.org/kitalpha/job/Kitalpha_master/lastSuccessfulBuild/artifact/result/publish/kitalpha_sdk/site.p2"/>
+        <repository
+            url="http://download.eclipse.org/modeling/amalgam/updates/nightly/1.8.0-N20170328-042916/mars"/>
+      </repositoryList>
+      <repositoryList
+          name="Mars">
         <repository
             url="https://hudson.polarsys.org/kitalpha/job/Kitalpha_master/7/artifact/result/publish/kitalpha_runtime/site.p2"/>
         <repository
@@ -127,7 +144,7 @@
         <repository
             url="http://download.eclipse.org/modeling/amalgam/updates/nightly/1.8.0-N20161007-040549/mars"/>
         <repository
-            url="https://hudson.polarsys.org/capella/job/capella-master/lastSuccessfulBuild/artifact/releng/plugins/org.polarsys.capella.rcp.site/target/repository/"/>
+            url="https://hudson.polarsys.org/capella/job/capella-v1.1.x/93/artifact/result/publish/org.polarsys.capella/site.p2"/>
       </repositoryList>
     </targlet>
   </setupTask>
