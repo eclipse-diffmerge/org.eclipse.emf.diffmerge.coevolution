@@ -14,6 +14,11 @@
  */
 package org.eclipse.emf.diffmerge.bridge.capella.integration;
 
+import static org.eclipse.emf.diffmerge.impl.policies.ConfigurableMatchPolicy.CRITERION_SEMANTICS_DEFAULTCONTENTS;
+import static org.eclipse.emf.diffmerge.impl.policies.ConfigurableMatchPolicy.CRITERION_STRUCTURE_ROOTS;
+import static org.eclipse.emf.diffmerge.impl.policies.ConfigurableMatchPolicy.MatchCriterionKind.SEMANTICS;
+import static org.eclipse.emf.diffmerge.impl.policies.ConfigurableMatchPolicy.MatchCriterionKind.STRUCTURE;
+
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -26,7 +31,6 @@ import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridge;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace.Editable;
-import org.eclipse.emf.diffmerge.bridge.capella.integration.policies.CapellaConfigurableMatchPolicy;
 import org.eclipse.emf.diffmerge.bridge.capella.integration.policies.DelegatingTraceBasedMatchPolicy;
 import org.eclipse.emf.diffmerge.bridge.capella.integration.scopes.CapellaIntermediateUpdateScope;
 import org.eclipse.emf.diffmerge.bridge.capella.integration.scopes.CapellaUpdateScope;
@@ -47,6 +51,7 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.polarsys.capella.common.ef.ExecutionManager;
 import org.polarsys.capella.common.ef.ExecutionManagerRegistry;
 import org.polarsys.capella.common.ef.command.ICommand;
+import org.polarsys.capella.core.compare.CapellaMatchPolicy;
 import org.polarsys.capella.core.data.capellamodeller.Project;
 import org.polarsys.capella.core.model.handler.helpers.CapellaProjectHelper.ProjectApproach;
 import org.polarsys.capella.core.model.skeleton.EngineeringDomain;
@@ -186,9 +191,11 @@ public class CapellaBridgeJob<SD> extends BridgeJob<SD> {
 	 * @return the match policy to delegate to.
 	 */
 	protected IMatchPolicy createMatchPolicyDelegate() {
-	  CapellaConfigurableMatchPolicy delegate = new CapellaConfigurableMatchPolicy();
-		delegate.setUseFineGrainedMatchCriterion(CapellaConfigurableMatchPolicy.CRITERION_STRUCTURE_ROOTS, true);
-		delegate.setUseFineGrainedMatchCriterion(CapellaConfigurableMatchPolicy.CRITERION_SEMANTICS_DEFAULTCONTENTS, true);
+	  CapellaMatchPolicy delegate = new CapellaMatchPolicy();
+	  delegate.setUseCriterion(STRUCTURE, true);
+    delegate.setUseCriterion(SEMANTICS, true);
+		delegate.setUseFineGrainedCriterion(CRITERION_STRUCTURE_ROOTS, true);
+		delegate.setUseFineGrainedCriterion(CRITERION_SEMANTICS_DEFAULTCONTENTS, true);
 		return delegate;
 	}
 	
