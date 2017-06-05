@@ -258,6 +258,7 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
     for (Entry<IRule<?,?>, PendingDefinition> entry : pendingDefinitions.entrySet()) {
       handleRuleForTargetDefinition(
           entry.getKey(), source_p, entry.getValue(), execution_p);
+      registerTarget(entry.getValue(), source_p, entry.getKey(), execution_p);
     }
   }
   
@@ -273,16 +274,30 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
   protected void handleRuleForTargetDefinition(IRule<?,?> rule_p,
       Object source_p, PendingDefinition pendingDef_p, MappingExecution execution_p) {
     checkProgress();
-    logger.info(new RuleLoggingMessage(rule_p, RuleLoggingMessage.Step.TargetDefinition,  pendingDef_p.getQueryExecution())); 
+    logger.info(new RuleLoggingMessage(
+        rule_p, RuleLoggingMessage.Step.TargetDefinition,  pendingDef_p.getQueryExecution())); 
     ((IRule<Object,Object>)rule_p).defineTarget(
         source_p,
         pendingDef_p.getTarget(),
         pendingDef_p.getQueryExecution(),
         execution_p);
+    getMonitor().worked(1);
+  }
+  
+  /**
+   * Register the target of the given pending definition originating from the given
+   * source and rule in the context of the given execution
+   * @param pendingDef_p a non-null object
+   * @param source_p a non-null object
+   * @param rule_p a non-null object
+   * @param execution_p a non-null object
+   */
+  @SuppressWarnings("unchecked")
+  protected void registerTarget(PendingDefinition pendingDef_p, Object source_p,
+      IRule<?, ?> rule_p, MappingExecution execution_p) {
     MappingCause<Object,Object> cause = new MappingCause<Object,Object>(
         pendingDef_p.getQueryExecution(), source_p, (IRule<Object, Object>)rule_p);
     execution_p.putInTrace(cause, pendingDef_p.getTarget());
-    getMonitor().worked(1);
   }
   
   /**
