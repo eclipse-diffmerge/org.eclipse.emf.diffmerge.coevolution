@@ -134,6 +134,8 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
     // Handle all pending definitions
     for (Entry<IRule<?,?>, PendingDefinition> entry : pendingDefinitions.entrySet()) {
       IRule<?,?> rule = entry.getKey();
+      if (phase_p == Phase.PROFILE_APPLICATION) // Registering targets
+        registerTarget(entry.getValue(), source_p, entry.getKey(), execution_p);
       if (rule instanceof IUMLRule<?,?>) {
         handleRuleForProfileApplication((IUMLRule<?,?>)rule,
             source_p, entry.getValue(), execution_p, targetDataSet_p, phase_p);
@@ -158,7 +160,6 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
     IUMLRule<Object,Object> rule = (IUMLRule<Object,Object>)rule_p;
     switch (phase_p) {
     case PROFILE_APPLICATION:
-      registerTarget(pendingDef_p, source_p, rule_p, execution_p);
       Collection<EObject> profileApps = rule.createProfileApplications(
           source_p, pendingDef_p.getTarget(), pendingDef_p.getQueryExecution(), execution_p);
       for (EObject application : profileApps) {
