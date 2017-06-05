@@ -158,6 +158,7 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
     IUMLRule<Object,Object> rule = (IUMLRule<Object,Object>)rule_p;
     switch (phase_p) {
     case PROFILE_APPLICATION:
+      registerTarget(pendingDef_p, source_p, rule_p, execution_p);
       Collection<EObject> profileApps = rule.createProfileApplications(
           source_p, pendingDef_p.getTarget(), pendingDef_p.getQueryExecution(), execution_p);
       for (EObject application : profileApps) {
@@ -177,6 +178,22 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
       rule.defineStereotypeApplications(
           source_p, pendingDef_p.getTarget(), pendingDef_p.getQueryExecution(), execution_p);
       break;
+    }
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.mapping.operations.MappingBridgeOperation#handleRuleForTargetDefinitions(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingExecution)
+   */
+  @Override
+  protected void handleRuleForTargetDefinitions(Object source_p,
+      MappingExecution execution_p) {
+    Map<IRule<?,?>, PendingDefinition> pendingDefinitions =
+        execution_p.getPendingDefinitions(source_p);
+    // Handle all pending definitions
+    for (Entry<IRule<?,?>, PendingDefinition> entry : pendingDefinitions.entrySet()) {
+      handleRuleForTargetDefinition(
+          entry.getKey(), source_p, entry.getValue(), execution_p);
+      // Do not register target yet
     }
   }
   
