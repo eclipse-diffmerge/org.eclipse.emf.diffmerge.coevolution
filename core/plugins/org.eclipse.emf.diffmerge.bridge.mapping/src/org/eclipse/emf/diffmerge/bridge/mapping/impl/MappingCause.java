@@ -14,13 +14,14 @@
  */
 package org.eclipse.emf.diffmerge.bridge.mapping.impl;
 
+import static org.eclipse.emf.diffmerge.bridge.util.CollectionsUtil.flatten;
+
 import java.util.Collection;
 
 import org.eclipse.emf.diffmerge.bridge.api.ISymbolFunction;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingCause;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IRule;
-import org.eclipse.emf.diffmerge.bridge.util.CollectionsUtil;
 
 
 /**
@@ -95,7 +96,7 @@ public class MappingCause<S, T> implements IMappingCause<S, T> {
    * @see org.eclipse.emf.diffmerge.bridge.api.ICause#getSourceElements()
    */
   public Collection<?> getSourceElements() {
-    Collection<?> result = CollectionsUtil.flatten(_source);
+    Collection<?> result = flatten(_source);
     return result;
   }
   

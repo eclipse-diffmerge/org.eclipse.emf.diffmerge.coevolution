@@ -45,41 +45,6 @@ public final class CollectionsUtil {
   }
   
   /**
-   * A trivial empty iterator. 
-   */
-  private static class EmptyIterator implements Iterator<Object> {
-    /**
-     * Singleton pattern
-     */
-    public static final EmptyIterator INSTANCE = new EmptyIterator();
-    /**
-     * Default constructor
-     */
-    private EmptyIterator() {
-      // Nothing
-    }
-    /**
-     * @see java.util.Iterator#hasNext()
-     */
-    public boolean hasNext() {
-      return false;
-    }
-    /**
-     * @see java.util.Iterator#next()
-     */
-    public Object next() {
-      throw new IllegalArgumentException("Empty iterator"); //$NON-NLS-1$
-    }
-    /**
-     * @see java.util.Iterator#remove()
-     */
-    public void remove() {
-      throw new IllegalArgumentException("Empty iterator"); //$NON-NLS-1$
-    }
-  }
-  
-  
-  /**
    * Return whether the two given objects are equal
    * @param o1_p a possibly null object
    * @param o2_p a possibly null object
@@ -136,12 +101,11 @@ public final class CollectionsUtil {
   }
   
   /**
-   * Return an iterator over the (virtual) empty set
+   * Return an iterator over an empty set
    * @return a non-null iterator
    */
-  @SuppressWarnings("unchecked")
   public static <T> Iterator<T> emptyIterator() {
-    return (Iterator<T>)EmptyIterator.INSTANCE;
+    return Collections.<T>emptySet().iterator();
   }
   
   /**
@@ -169,6 +133,78 @@ public final class CollectionsUtil {
       }
     }
     return Collections.unmodifiableCollection(result);
+  }
+  
+  /**
+   * Find and return all elements of the given type in the flattened variant of
+   * the given object, where flattening is defined as in flatten(Object).
+   * If an element conforming to the given type is found that is also an Iterable,
+   * then priority is given to returning the element rather than further decomposing
+   * it, except if the given type is Object. In this case, all non-Iterable elements
+   * are returned.
+   * @param object_p a non-null object
+   * @param type_p a non-null type
+   * @return a potentially null object
+   */
+  public static <T> Collection<T> flattenFindAll(Object object_p, Class<T> type_p) {
+    Collection<T> result = new LinkedHashSet<T>();
+    LinkedList<Object> toExplore = new LinkedList<Object>();
+    Collection<Object> explored = new HashSet<Object>();
+    toExplore.add(object_p);
+    boolean typeIsObject = type_p.equals(Object.class);
+    while (!toExplore.isEmpty()) {
+      Object current = toExplore.removeFirst();
+      boolean isIterable = current instanceof Iterable<?>;
+      if (type_p.isInstance(current) && (!typeIsObject || !isIterable)) {
+        @SuppressWarnings("unchecked") // OK because of check above
+        T elected = (T)current;
+        result.add(elected);
+        isIterable = false; // Consider atomic since it will be returned
+      }
+      explored.add(current);
+      if (isIterable) {
+        for (Object currentPart : ((Iterable<?>)current)) {
+          if (!explored.contains(currentPart))
+            toExplore.add(currentPart);
+        }
+      }
+    }
+    return result;
+  }
+  
+  /**
+   * Find and return the first element, if any, of the given type in the flattened
+   * variant of the given object, where flattening is defined as in flatten(Object).
+   * If an element conforming to the given type is found that is also an Iterable,
+   * then priority is given to returning the element rather than further decomposing
+   * it, except if the given type is Object. In this case, the first non-Iterable
+   * element is returned.
+   * @param object_p a non-null object
+   * @param type_p a non-null type
+   * @return a potentially null object
+   */
+  public static <T> T flattenFindOne(Object object_p, Class<T> type_p) {
+    LinkedList<Object> toExplore = new LinkedList<Object>();
+    Collection<Object> explored = new HashSet<Object>();
+    toExplore.add(object_p);
+    boolean typeIsObject = type_p.equals(Object.class);
+    while (!toExplore.isEmpty()) {
+      Object current = toExplore.removeFirst();
+      boolean isIterable = current instanceof Iterable<?>;
+      if (type_p.isInstance(current) && (!typeIsObject || !isIterable)) {
+        @SuppressWarnings("unchecked") // OK because of check above
+        T result = (T)current;
+        return result;
+      }
+      explored.add(current);
+      if (isIterable) {
+        for (Object currentPart : ((Iterable<?>)current)) {
+          if (!explored.contains(currentPart))
+            toExplore.add(currentPart);
+        }
+      }
+    }
+    return null;
   }
   
   /**

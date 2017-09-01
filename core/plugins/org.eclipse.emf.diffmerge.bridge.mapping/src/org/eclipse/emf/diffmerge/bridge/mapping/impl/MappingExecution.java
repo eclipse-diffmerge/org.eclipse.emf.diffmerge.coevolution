@@ -14,10 +14,13 @@
  */
 package org.eclipse.emf.diffmerge.bridge.mapping.impl;
 
+import static org.eclipse.emf.diffmerge.bridge.util.CollectionsUtil.flattenFindAll;
+import static org.eclipse.emf.diffmerge.bridge.util.CollectionsUtil.flattenFindOne;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -123,17 +126,33 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#getOne(java.lang.Object)
+   * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#getAll(java.lang.Object, java.lang.Class)
    */
-  @SuppressWarnings("unchecked")
-  public <T> T getOne(Object source_p) {
-    T result = null;
+  public <T> List<T> getAll(Object source_p, Class<T> type_p) {
+    List<T> result = Collections.emptyList();
     Map<IRule<?,?>, PendingDefinition> ruleToDef = _content.get(source_p);
-    if (ruleToDef != null && ruleToDef.size() == 1) {
-      PendingDefinition pendingDef = ruleToDef.values().iterator().next();
-      result = (T)pendingDef.getTarget();
+    if (ruleToDef != null) {
+      result = new ArrayList<T>();
+      for (PendingDefinition pendingDef : ruleToDef.values()) {
+        result.addAll(flattenFindAll(pendingDef.getTarget(), type_p));
+      }
     }
     return result;
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#getOne(java.lang.Object, java.lang.Class)
+   */
+  public <T> T getOne(Object source_p, Class<T> type_p) {
+    Map<IRule<?,?>, PendingDefinition> ruleToDef = _content.get(source_p);
+    if (ruleToDef != null) {
+      for (PendingDefinition pendingDef : ruleToDef.values()) {
+        T result = flattenFindOne(pendingDef.getTarget(), type_p);
+        if (result != null)
+          return result;
+      }
+    }
+    return null;
   }
   
   /**
@@ -156,15 +175,15 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#getRuleInputs(org.eclipse.emf.diffmerge.bridge.mapping.api.IRule, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
-  public <S> Iterator<S> getRuleInputs(IRule<S, ?> rule_p, IQueryExecution context_p) {
-    Iterator<S> result = getRuleInputs(rule_p.getID(), context_p);
+  public <S> Collection<S> getRuleInputs(IRule<S, ?> rule_p, IQueryExecution context_p) {
+    Collection<S> result = getRuleInputs(rule_p.getID(), context_p);
     return result;
   }
   
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#getRuleInputs(org.eclipse.emf.diffmerge.bridge.mapping.api.IRuleIdentifier, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
-  public <S> Iterator<S> getRuleInputs(IRuleIdentifier<S, ?> ruleID_p,
+  public <S> Collection<S> getRuleInputs(IRuleIdentifier<S, ?> ruleID_p,
       IQueryExecution context_p) {
     List<S> result = new LinkedList<S>(); //Content uniqueness guaranteed by construction below
     IRule<?,?> rule = _ruleMap.get(ruleID_p);
@@ -181,7 +200,7 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
         }
       }
     }
-    return result.iterator();
+    return result;
   }
   
   /**
@@ -219,7 +238,7 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
       }
       Object squatter = ruleToTarget.put(rule,
           new PendingDefinition(cause.getQueryExecution(), target_p));
-      if (squatter != null && !_isTolerantToDuplicates)
+      if (squatter != null && !isTolerantToDuplicates())
         throw new IllegalArgumentException(
             String.format(
                 "A pending definition is already registered for rule [%1$s] on source [%2$s]: [%3$s] replaced by [%4$s].", //$NON-NLS-1$

@@ -14,7 +14,7 @@
  */
 package org.eclipse.emf.diffmerge.bridge.mapping.api;
 
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.emf.diffmerge.bridge.api.ICause;
@@ -28,7 +28,8 @@ import org.eclipse.emf.diffmerge.bridge.api.INavigableBridgeExecution;
 public interface IMappingExecution extends INavigableBridgeExecution {
   
   /**
-   * Return the target data element defined by the given rule on the given source data element
+   * Return the target data element or structure defined by the given rule on the given
+   * source data element
    * @param source_p a non-null object
    * @param rule_p a non-null object
    * @return an object which is not null if the rule of the given identifier applies to the given data element
@@ -36,7 +37,7 @@ public interface IMappingExecution extends INavigableBridgeExecution {
   <S, T> T get(S source_p, IRule<S, T> rule_p);
   
   /**
-   * Return the target data element defined by the rule of the given identifier
+   * Return the target data element or structure defined by the rule of the given identifier
    * on the given source data element
    * @param source_p a non-null object
    * @param ruleID_p a non-null object
@@ -45,19 +46,33 @@ public interface IMappingExecution extends INavigableBridgeExecution {
   <S, T> T get(S source_p, IRuleIdentifier<S, T> ruleID_p);
   
   /**
-   * Return all target data elements or structures that are associated to the given source
+   * Return all target data elements or structures that are associated to the given source.
+   * Structures are not flattened in the resulting list, contrary to getAll(Object, Class).
    * @param source_p a potentially null object
    * @return a non-null, potentially empty, unmodifiable collection
    */
   List<Object> getAll(Object source_p);
   
   /**
-   * Return the unique target data element associated to the given source, if indeed unique
-   * @param <T> the type of the target (Object if unknown or unsure)
+   * Return all target data elements of the given type that are associated to the
+   * given source
+   * @param source_p a potentially null object
+   * @param type_p a non-null type
+   * @param <T> the type of the expected result
+   * @return a non-null, potentially empty, unmodifiable collection
+   */
+  <T> List<T> getAll(Object source_p, Class<T> type_p);
+  
+  /**
+   * Return a target data element of the given type that are associated to the given
+   * source, if any. If more than one such element exist, then which one is returned
+   * is undefined.
    * @param source_p a non-null object
+   * @param type_p a non-null type
+   * @param <T> the type of the expected result
    * @return a potentially null object
    */
-  <T> T getOne(Object source_p);
+  <T> T getOne(Object source_p, Class<T> type_p);
   
   /**
    * Return the source data elements that are inputs of the given rule, restricted to the given
@@ -65,9 +80,9 @@ public interface IMappingExecution extends INavigableBridgeExecution {
    * @param <S> the type of the source data elements
    * @param rule_p a non-null rule
    * @param context_p an optional query execution
-   * @return a non-null iterator
+   * @return a non-null iterable
    */
-  <S> Iterator<S> getRuleInputs(IRule<S,?> rule_p, IQueryExecution context_p);
+  <S> Collection<S> getRuleInputs(IRule<S,?> rule_p, IQueryExecution context_p);
   
   /**
    * Return the source data elements that are inputs of rules of the given identifier,
@@ -75,9 +90,9 @@ public interface IMappingExecution extends INavigableBridgeExecution {
    * @param <S> the type of the source data elements
    * @param ruleID_p a non-null rule ID
    * @param context_p an optional query execution
-   * @return a non-null iterator
+   * @return a non-null iterable
    */
-  <S> Iterator<S> getRuleInputs(IRuleIdentifier<S,?> ruleID_p, IQueryExecution context_p);
+  <S> Collection<S> getRuleInputs(IRuleIdentifier<S,?> ruleID_p, IQueryExecution context_p);
   
   /**
    * Return the target scope from the mapping execution. It may only be used for
