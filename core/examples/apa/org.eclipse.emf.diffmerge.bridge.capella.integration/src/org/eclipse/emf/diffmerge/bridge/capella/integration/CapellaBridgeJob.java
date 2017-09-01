@@ -58,6 +58,7 @@ import org.polarsys.capella.core.model.skeleton.EngineeringDomain;
 import org.polarsys.capella.core.model.skeleton.impl.SkeletonServicesImpl;
 import org.polarsys.capella.core.model.skeleton.impl.cmd.CreateCapellaProjectCmd;
 
+
 /**
  * A bridge job pre-configured for Capella models as targets.
  *
