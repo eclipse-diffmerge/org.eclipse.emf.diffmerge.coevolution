@@ -14,6 +14,7 @@
  */
 package org.eclipse.emf.diffmerge.bridge.util;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -63,6 +64,12 @@ public abstract class AbstractLoggingMessage {
    * @return the (non-null) message body
    */
   protected abstract String getMessageBody();
+  
+  /**
+   * Return the set of objects that need a label
+   * @return a non-null, potentially empty collection
+   */
+  public abstract Collection<?> getObjects();
   
   /**
    * Return the object to label map

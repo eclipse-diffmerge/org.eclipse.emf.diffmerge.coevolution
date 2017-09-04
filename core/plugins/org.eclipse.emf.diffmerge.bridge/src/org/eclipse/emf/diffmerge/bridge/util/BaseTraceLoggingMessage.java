@@ -14,6 +14,9 @@
  */
 package org.eclipse.emf.diffmerge.bridge.util;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
 import org.eclipse.emf.diffmerge.bridge.api.ICause;
 
 
@@ -63,6 +66,20 @@ public class BaseTraceLoggingMessage extends AbstractLoggingMessage {
     builder.append(getObjectLabel(getCause()));
     builder.append("]"); //$NON-NLS-1$
     return builder.toString();
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage#getObjects()
+   */
+  @Override
+  public Collection<?> getObjects() {
+    Collection<?> sourceElements = getCause().getSourceElements();
+    Collection<Object> result = new LinkedHashSet<Object>(sourceElements.size() +1);
+    result.addAll(sourceElements);
+    Object target = getTarget();
+    if (target != null)
+      result.add(target);
+    return result;
   }
   
   /**

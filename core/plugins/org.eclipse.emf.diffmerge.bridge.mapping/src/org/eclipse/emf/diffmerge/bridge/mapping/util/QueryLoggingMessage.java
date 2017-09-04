@@ -15,6 +15,7 @@
 package org.eclipse.emf.diffmerge.bridge.mapping.util;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.diffmerge.bridge.impl.AbstractNamedElement;
@@ -23,6 +24,7 @@ import org.eclipse.emf.diffmerge.bridge.mapping.Messages;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryIdentifier;
 import org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage;
+import org.eclipse.emf.diffmerge.bridge.util.CollectionsUtil;
 import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
 import org.eclipse.emf.ecore.EObject;
 
@@ -75,6 +77,17 @@ public class QueryLoggingMessage extends AbstractLoggingMessage{
     }
     builder.append("}"); //$NON-NLS-1$
     return builder.toString();
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage#getObjects()
+   */
+  @Override
+  public Collection<?> getObjects() {
+    Object qResult = getQueryResult();
+    Collection<?> result = (qResult == null)?
+        Collections.emptySet(): CollectionsUtil.flatten(qResult);
+    return result;
   }
   
   /**
@@ -132,7 +145,7 @@ public class QueryLoggingMessage extends AbstractLoggingMessage{
    * @return the (possibly-null) query result
    */
   public Object getQueryResult() {
-    if (getQueryIdentifier()!=null)
+    if (getQueryIdentifier() != null)
       return ((IQueryExecution) getQueryObject()).get(getQueryIdentifier());
     return null;
   }

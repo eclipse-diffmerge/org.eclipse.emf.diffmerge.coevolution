@@ -21,10 +21,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 import org.apache.log4j.spi.LoggingEvent;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.diffmerge.bridge.mapping.util.QueryLoggingMessage;
-import org.eclipse.emf.diffmerge.bridge.mapping.util.RuleLoggingMessage;
-import org.eclipse.emf.diffmerge.bridge.util.BaseTraceLoggingMessage;
-import org.eclipse.emf.diffmerge.bridge.util.structures.IPureStructure;
+import org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage;
 import org.eclipse.emf.diffmerge.ui.EMFDiffMergeUIPlugin;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -55,7 +52,7 @@ public class BridgeLogger implements IBridgeLogListener {
   /**
    * Internal constructor
    */
-  private BridgeLogger() {
+  protected BridgeLogger() {
     setupConsole();
   }
   
@@ -64,7 +61,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * @param consoleManager_p the (non-null) console manager
    * @return a non-null new bridge console
    */
-  private BridgeConsole createNewConsole(IConsoleManager consoleManager_p) {
+  protected BridgeConsole createNewConsole(IConsoleManager consoleManager_p) {
     BridgeConsole console = new BridgeConsole(Messages.BridgeLogger_ConsoldeId, null);
     consoleManager_p.addConsoles(new IConsole[] { console });
     console.activate();
@@ -75,7 +72,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * Print the given input message in the console error stream
    * @param message_p (non-null) message
    */
-  private void error(final String message_p) {
+  protected void error(final String message_p) {
     final BridgeConsole console = findConsole();
     console.getErrorStream().println(message_p);
   }
@@ -84,7 +81,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * Get or create and return the bridge logging console
    * @return a non-null logging console
    */
-  private BridgeConsole findConsole() {
+  protected BridgeConsole findConsole() {
     IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
     IConsole[] existing = consoleManager.getConsoles();
     for (int i = 0; i < existing.length; i++) {
@@ -112,7 +109,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * Return the label provider for representing elements
    * @return a non-null label provider
    */
-  private ILabelProvider getLabelProvider() {
+  protected ILabelProvider getLabelProvider() {
     return EMFDiffMergeUIPlugin.getDefault().getAdapterFactoryLabelProvider();
   }
   
@@ -120,7 +117,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * Handle a debug event
    * @param event_p (non-null) logging event
    */
-  private void handleDebugEvent(LoggingEvent event_p) {
+  protected void handleDebugEvent(LoggingEvent event_p) {
     //disabled.
   }
   
@@ -128,7 +125,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * Handle an error event
    * @param event_p (non-null) logging event
    */
-  private void handleErrorEvent(LoggingEvent event_p) {
+  protected void handleErrorEvent(LoggingEvent event_p) {
     String message = event_p.getMessage().toString();
     error(message);
   }
@@ -137,7 +134,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * Handle a fatal event
    * @param event_p (non-null) logging event
    */
-  private void handleFatalEvent(LoggingEvent event_p) {
+  protected void handleFatalEvent(LoggingEvent event_p) {
     String message = event_p.getMessage().toString();
     error(message);
   }
@@ -146,7 +143,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * Handle an information event
    * @param event_p (non-null) logging event
    */
-  private void handleInfoEvent(LoggingEvent event_p) {
+  protected void handleInfoEvent(LoggingEvent event_p) {
     Object message = event_p.getMessage();
     info(message);
   }
@@ -177,49 +174,16 @@ public class BridgeLogger implements IBridgeLogListener {
   }
   
   /**
-   * Handle a query logging message by appending additional data
+   * Handle a logging message by appending additional data
    * @param message_p the (non-null) query logging message
    */
-  private void handleQueryLoggingMessage(QueryLoggingMessage message_p) {
+  protected void handleLoggingMessage(AbstractLoggingMessage message_p) {
     final BridgeConsole console = findConsole();
-    Object queryResult = message_p.getQueryResult();
-    if (queryResult instanceof EObject) {
-      registerObject(console, queryResult);
-      String objectLabel = getLabelProvider().getText(queryResult);
-      message_p.mapObjectToLabel(queryResult, objectLabel); 
-    } else if (queryResult instanceof IPureStructure<?>) {
-      Collection<?> objects = ((IPureStructure<?>) queryResult).asCollection();
-      for (Object object : objects) {
-        registerObject(console, object);
-        String sourceName = getLabelProvider().getText(object);
-        message_p.mapObjectToLabel(object, sourceName);
-      }
-    }
-  }
-  
-  /**
-   * Handle a rule logging message by appending additional data
-   * @param message_p the (non-null) rule logging message
-   */
-  private void handleRuleLoggingMessage(RuleLoggingMessage message_p) {
-    //do nothing.
-  }
-  
-  /**
-   * Build a custom logging message for EMF-based bridge traces
-   * @param message_p (non-null) base logging message
-   */
-  private void handleTraceLoggingMessage(final BaseTraceLoggingMessage message_p) {
-    final BridgeConsole console = findConsole();
-    Collection<?> sources = message_p.getCause().getSourceElements();
-    Object target = message_p.getTarget();
-    registerObject(console, target);
-    String targetName = getLabelProvider().getText(target);
-    message_p.mapObjectToLabel(target, targetName);
-    for (Object source : sources) {
-      registerObject(console, source);
-      String sourceName = getLabelProvider().getText(source);
-      message_p.mapObjectToLabel(source, sourceName);
+    Collection<?> objects = message_p.getObjects();
+    for (Object object : objects) {
+      registerObject(console, object);
+      String sourceName = getLabelProvider().getText(object);
+      message_p.mapObjectToLabel(object, sourceName);
     }
   }
   
@@ -227,7 +191,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * Handle a warning event
    * @param event_p (non-null) logging event
    */
-  private void handleWarningEvent(LoggingEvent event_p) {
+  protected void handleWarningEvent(LoggingEvent event_p) {
     String message = event_p.getMessage().toString();
     warn(message);
   }
@@ -236,14 +200,9 @@ public class BridgeLogger implements IBridgeLogListener {
    * Print the given input message in the console info stream
    * @param message_p (non-null) message
    */
-  private void info(final Object message_p) {
-    if (message_p instanceof BaseTraceLoggingMessage) {
-      handleTraceLoggingMessage((BaseTraceLoggingMessage) message_p);
-    } else if (message_p instanceof QueryLoggingMessage) {
-      handleQueryLoggingMessage((QueryLoggingMessage) message_p);
-    } else if (message_p instanceof RuleLoggingMessage) {
-      handleRuleLoggingMessage((RuleLoggingMessage) message_p);
-    }
+  protected void info(final Object message_p) {
+    if (message_p instanceof AbstractLoggingMessage)
+      handleLoggingMessage((AbstractLoggingMessage) message_p);
     findConsole().getInfoStream().println(message_p.toString());
   }
   
@@ -251,7 +210,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * Set the default console water marks, by default use the settings of the standard debug console
    * @param console_p the (non-null) bridge console
    */
-  private void initLimitOutput(BridgeConsole console_p) {
+  protected void initLimitOutput(BridgeConsole console_p) {
     console_p.setWaterMarks(0, 80000); //limit console output
     console_p.setConsoleWidth(0); //unlimited width
   }
@@ -272,7 +231,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * Set up the bridge console
    * @return a non-null console
    */
-  private BridgeConsole setupConsole() {
+  protected BridgeConsole setupConsole() {
     BridgeConsole console = findConsole();
     initLimitOutput(console);
     IWorkbench workbench = PlatformUI.getWorkbench();
@@ -293,7 +252,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * Print the given input message in the console warning stream
    * @param message_p (non-null) message
    */
-  private void warn(final String message_p) {
+  protected void warn(final String message_p) {
     final BridgeConsole console = findConsole();
     console.getWarningStream().println(message_p);
   }

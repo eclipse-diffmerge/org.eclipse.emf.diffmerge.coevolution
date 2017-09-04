@@ -14,6 +14,9 @@
  */
 package org.eclipse.emf.diffmerge.bridge.mapping.util;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.eclipse.emf.diffmerge.bridge.api.ISymbolProvider;
 import org.eclipse.emf.diffmerge.bridge.mapping.Messages;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery;
@@ -101,6 +104,14 @@ public class RuleLoggingMessage extends AbstractLoggingMessage {
     Object rule = getRuleObject();      
     builder.append("[").append(getRuleName(rule)).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
     return builder.toString();
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage#getObjects()
+   */
+  @Override
+  public Collection<?> getObjects() {
+    return Collections.emptySet();
   }
   
   /**

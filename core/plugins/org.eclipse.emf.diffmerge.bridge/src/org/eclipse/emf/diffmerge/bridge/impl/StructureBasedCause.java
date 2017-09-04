@@ -95,7 +95,7 @@ public class StructureBasedCause implements Symbolic<Object> {
     if (_baseCause instanceof ICause<?>)
       result = ((ICause<?>)_baseCause).getSourceElements();
     else
-      result = Collections.emptySet();
+      result = Collections.singleton(_baseCause);
     return result;
   }
   
