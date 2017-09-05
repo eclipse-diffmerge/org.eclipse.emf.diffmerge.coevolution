@@ -15,11 +15,11 @@
 package org.eclipse.emf.diffmerge.bridge.uml.incremental;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.emf.diffmerge.api.scopes.IFeaturedModelScope;
 import org.eclipse.emf.diffmerge.gmf.GMFMergePolicy;
-import org.eclipse.emf.diffmerge.util.structures.FHashSet;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -123,7 +123,7 @@ public class UMLMergePolicy extends GMFMergePolicy {
     EAnnotation subsetsAnnotation =
         UML2Util.getEAnnotation(reference_p, "subsets", false); //$NON-NLS-1$
     if (subsetsAnnotation != null) {
-      result = new FHashSet<EReference>();
+      result = new HashSet<EReference>();
       for (EObject referenced : subsetsAnnotation.getReferences()) {
         if (referenced instanceof EReference)
           result.add((EReference)referenced);
