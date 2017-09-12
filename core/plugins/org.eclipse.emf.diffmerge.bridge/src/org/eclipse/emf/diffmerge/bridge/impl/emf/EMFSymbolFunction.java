@@ -32,7 +32,7 @@ public class EMFSymbolFunction extends BaseSymbolFunction {
   /**
    * Constructor
    */
-  protected EMFSymbolFunction() {
+  public EMFSymbolFunction() {
     // Stateless
   }
   
