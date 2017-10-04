@@ -67,6 +67,14 @@ public class TransposerBridgeContext implements IContext{
   }
   
   /**
+   * Return the bridge execution associated to this Transposer context
+   * @return a non-null object
+   */
+  public TransposerBridgeExecution getBridgeExecution() {
+    return _execution;
+  }
+  
+  /**
    * @see org.polarsys.kitalpha.transposer.rules.handler.rules.api.IContext#getKeys()
    */
   public List<Object> getKeys() {

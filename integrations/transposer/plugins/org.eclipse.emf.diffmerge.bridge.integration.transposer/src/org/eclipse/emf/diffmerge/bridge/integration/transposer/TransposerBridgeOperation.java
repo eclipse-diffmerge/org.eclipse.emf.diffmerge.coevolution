@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.api.scopes.IPersistentModelScope;
 import org.eclipse.emf.diffmerge.bridge.operations.AbstractBridgeOperation;
+import org.eclipse.emf.diffmerge.bridge.util.INormalizableModelScope;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.polarsys.kitalpha.transposer.api.ITransposer;
@@ -86,6 +87,8 @@ public class TransposerBridgeOperation extends AbstractBridgeOperation {
       logger.info(Messages.BridgeLogger_TransposerRunStepMessage);  
       transposer.transpose(sourceElements, configuration, null, getMonitor());
       // End
+      if (getTargetDataSet() instanceof INormalizableModelScope)
+        ((INormalizableModelScope)getTargetDataSet()).normalize();
       transposer.dispose();
       getMonitor().worked(1);
       result = Status.OK_STATUS;

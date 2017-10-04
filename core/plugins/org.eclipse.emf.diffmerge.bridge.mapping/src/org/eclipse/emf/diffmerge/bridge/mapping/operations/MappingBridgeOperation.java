@@ -38,6 +38,7 @@ import org.eclipse.emf.diffmerge.bridge.mapping.impl.QueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.util.QueryLoggingMessage;
 import org.eclipse.emf.diffmerge.bridge.mapping.util.RuleLoggingMessage;
 import org.eclipse.emf.diffmerge.bridge.operations.AbstractBridgeOperation;
+import org.eclipse.emf.diffmerge.bridge.util.INormalizableModelScope;
 
 /**
  * An operation that executes a mapping bridge between data scopes.
@@ -117,8 +118,11 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
         sourceDataSet_p, targetDataSet_p, rootQueryEnv, execution_p);
     ((IMappingBridge)bridge_p).targetsCreated(targetDataSet_p);
     // Second iteration: target definitions
-    logger.info(Messages.BridgeLogger_TargetDefinitionStepMessage); 
+    logger.info(Messages.BridgeLogger_TargetDefinitionStepMessage);
     handleTargetDefinitions(execution_p);
+    // Finishing
+    if (targetDataSet_p instanceof INormalizableModelScope)
+      ((INormalizableModelScope)targetDataSet_p).normalize();
     ((IMappingBridge)bridge_p).targetsDefined(targetDataSet_p);
     execution_p.setStatus(Status.OK_STATUS);
   }

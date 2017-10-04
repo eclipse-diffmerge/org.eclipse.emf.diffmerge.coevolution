@@ -33,6 +33,7 @@ import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingExecution.PendingDefinition;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.QueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.operations.MappingBridgeOperation;
+import org.eclipse.emf.diffmerge.bridge.util.INormalizableModelScope;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
@@ -100,6 +101,9 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
     getMonitor().worked(1);
     // Fifth iteration: Stereotype application definitions
     handleProfileData(execution_p, targetDataSet_p, STEREOTYPE_APPLICATION_DEFINITION);
+    // Finishing
+    if (targetDataSet_p instanceof INormalizableModelScope)
+      ((INormalizableModelScope)targetDataSet_p).normalize();
     ((IMappingBridge)bridge_p).targetsDefined(targetDataSet_p);
     getMonitor().worked(1);
     execution_p.setStatus(Status.OK_STATUS);
