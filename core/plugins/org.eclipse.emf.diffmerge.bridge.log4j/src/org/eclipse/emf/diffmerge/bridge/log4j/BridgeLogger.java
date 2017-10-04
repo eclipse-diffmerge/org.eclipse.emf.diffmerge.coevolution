@@ -239,7 +239,8 @@ public class BridgeLogger implements IBridgeLogListener {
     if (activeWorkbenchWindow != null) {
       IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
       try {
-        IConsoleView view = (IConsoleView) activePage.showView(Messages.BridgeLogger_ConsoldeId);
+        IConsoleView view = (IConsoleView) activePage.showView(
+            Messages.BridgeLogger_ConsoldeId, null, IWorkbenchPage.VIEW_CREATE);
         view.display(console);
       } catch (PartInitException ex) {
         logger.error(ex.getStackTrace(), ex);
