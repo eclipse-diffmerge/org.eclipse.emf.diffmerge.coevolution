@@ -19,7 +19,7 @@ import org.eclipse.osgi.util.NLS;
 @SuppressWarnings("javadoc")
 public class Messages extends NLS {
   private static final String BUNDLE_NAME = "org.eclipse.emf.diffmerge.bridge.log4j.messages"; //$NON-NLS-1$
-  public static String BridgeLogger_ConsoldeId;
+  public static String BridgeLogger_ConsoleId;
 
   static {
     // initialize resource bundle

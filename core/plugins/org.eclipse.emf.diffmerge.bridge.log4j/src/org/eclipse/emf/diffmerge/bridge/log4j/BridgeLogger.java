@@ -26,15 +26,10 @@ import org.eclipse.emf.diffmerge.ui.EMFDiffMergeUIPlugin;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
-import org.eclipse.ui.console.IConsoleView;
 
 
 /**
@@ -53,7 +48,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * Internal constructor
    */
   protected BridgeLogger() {
-    setupConsole();
+    // Nothing needed
   }
   
   /**
@@ -62,9 +57,9 @@ public class BridgeLogger implements IBridgeLogListener {
    * @return a non-null new bridge console
    */
   protected BridgeConsole createNewConsole(IConsoleManager consoleManager_p) {
-    BridgeConsole console = new BridgeConsole(Messages.BridgeLogger_ConsoldeId, null);
+    BridgeConsole console = new BridgeConsole(Messages.BridgeLogger_ConsoleId, null);
     consoleManager_p.addConsoles(new IConsole[] { console });
-    console.activate();
+    initLimitOutput(console);
     return console;
   }
   
@@ -82,16 +77,27 @@ public class BridgeLogger implements IBridgeLogListener {
    * @return a non-null logging console
    */
   protected BridgeConsole findConsole() {
-    IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
-    IConsole[] existing = consoleManager.getConsoles();
-    for (int i = 0; i < existing.length; i++) {
-      if (Messages.BridgeLogger_ConsoldeId.equals(existing[i].getName())) {
-        BridgeConsole console = (BridgeConsole) existing[i];
-        consoleManager.showConsoleView(console);
-        return console;
+    final BridgeConsole[] result = new BridgeConsole[1];
+    Display.getDefault().syncExec(new Runnable() {
+      /**
+       * @see java.lang.Runnable#run()
+       */
+      public void run() {
+        BridgeConsole console = null;
+        IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
+        IConsole[] existing = consoleManager.getConsoles();
+        for (int i = 0; i < existing.length; i++) {
+          if (Messages.BridgeLogger_ConsoleId.equals(existing[i].getName())) {
+            console = (BridgeConsole) existing[i];
+            break;
+          }
+        }
+        if (console == null)
+          console = createNewConsole(consoleManager);
+        result[0] = console;
       }
-    }
-    return createNewConsole(consoleManager);
+    });
+    return result[0];
   }
   
   /**
@@ -225,28 +231,6 @@ public class BridgeLogger implements IBridgeLogListener {
       URI objectURI = EcoreUtil.getURI((EObject) object_p);
       console_p.getFragmentToURIMap().put(objectURI.fragment(), objectURI.trimFragment());
     }
-  }
-  
-  /**
-   * Set up the bridge console
-   * @return a non-null console
-   */
-  protected BridgeConsole setupConsole() {
-    BridgeConsole console = findConsole();
-    initLimitOutput(console);
-    IWorkbench workbench = PlatformUI.getWorkbench();
-    IWorkbenchWindow activeWorkbenchWindow = workbench.getActiveWorkbenchWindow();
-    if (activeWorkbenchWindow != null) {
-      IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-      try {
-        IConsoleView view = (IConsoleView) activePage.showView(
-            Messages.BridgeLogger_ConsoldeId, null, IWorkbenchPage.VIEW_CREATE);
-        view.display(console);
-      } catch (PartInitException ex) {
-        logger.error(ex.getStackTrace(), ex);
-      }
-    }
-    return console;
   }
   
   /**
