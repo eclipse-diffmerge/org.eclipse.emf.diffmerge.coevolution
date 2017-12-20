@@ -40,7 +40,6 @@ public class Messages extends NLS {
   public static String BridgeLoggerConfig_TresholdKey;
   public static String BridgeLoggerConfig_TresholdValue;
   public static String InteractiveEMFBridge_DefaultDialogTitle;
-  public static String UpdateDialog_Defer;
   public static String UpdateDialog_OpenEditorButton;
   
   static {

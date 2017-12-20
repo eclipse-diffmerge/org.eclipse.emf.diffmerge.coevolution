@@ -140,10 +140,6 @@ extends EMFIncrementalBridge<SD, TD> {
       case IDialogConstants.OK_ID:
         result = Status.OK_STATUS;
         break;
-      case UpdateDialog.DEFER_ID:
-        result = new Status(
-            IStatus.INFO, InteractiveBridgePlugin.getDefault().getPluginId(), "ongoing");  //$NON-NLS-1$
-        break;
       case UpdateDialog.OPEN_EDITOR_ID:
         openInEditor(execution_p, diffNode, selectionWrapper[0]);
         result = new Status(

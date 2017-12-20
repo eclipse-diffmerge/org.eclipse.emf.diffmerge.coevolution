@@ -39,10 +39,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
-import org.eclipse.jface.action.Action;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.progress.IProgressConstants;
 
 
@@ -165,50 +161,52 @@ public abstract class BridgeJob<SD> extends Job {
   }
   
   /**
-   * Perform the deferrable part of the bridge process
+   * Perform the interactive part of the bridge execution process
    * @param bridge_p the non-null bridge
    * @param execution_p the non-null current bridge execution
-   * @param targetResource_p the non-null target resource
-   * @param traceResource_p the non-null trace resource
    * @param monitor_p a non-null progress monitor
    */
-  protected void handleDeferrablePart(IIncrementalBridge<?,?,?> bridge_p,
-      final IIncrementalBridgeExecution execution_p, Resource targetResource_p,
-      Resource traceResource_p, final SubMonitor monitor_p) {
+  protected IStatus handleInteractivePart(IIncrementalBridge<?,?,?> bridge_p,
+      IIncrementalBridgeExecution execution_p, SubMonitor monitor_p) {
     monitor_p.subTask(Messages.BridgeJob_Step_InteractiveUpdate);
-    // Defining the remaining part of the bridge process in a deferrable action
-    DeferredBridgeExecutionAction deferrableAction = new DeferredBridgeExecutionAction(
-        bridge_p, execution_p, targetResource_p, traceResource_p, isSaveAndCloseTarget(),
-        monitor_p);
-    setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
-    setProperty(IProgressConstants.ACTION_PROPERTY, deferrableAction);
-    if (isModal()) {
-      // The user has waited: immediate execution
-      logger.info(Messages.BridgeLogger_InteractiveMergeStepMessage);
-      deferrableAction.run();
-      IStatus status = deferrableAction.getStatus();
-      if (status != null) {
-        if (status.getSeverity() == IStatus.CANCEL) {
-          deferrableAction.dispose();
-        } else if (status.getSeverity() == IStatus.INFO) {
-          // Still ongoing: show progress view if possible
-          final Display display = Display.getDefault();
-          display.syncExec(new Runnable() {
-            /**
-             * @see java.lang.Runnable#run()
-             */
-            public void run() {
-              try {
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(
-                    IProgressConstants.PROGRESS_VIEW_ID);
-              } catch (Exception e) {
-                // Proceed
-              }
-            }
-          });
-        }
+    logger.info(Messages.BridgeLogger_InteractiveMergeStepMessage);
+    // Interactive merge
+    IStatus result = bridge_p.mergeInteractively(execution_p, monitor_p);
+    if (execution_p instanceof IIncrementalBridgeExecution.Editable)
+      ((IIncrementalBridgeExecution.Editable)execution_p).setInteractiveMergeData(null);
+    return result;
+  }
+  
+  /**
+   * Perform the main part of the bridge execution process
+   * @param bridge_p the non-null bridge to execute
+   * @param targetResource_p the non-null target resource
+   * @param existingTrace_p the optional existing trace
+   * @param monitor_p a non-null monitor
+   * @return a non-null bridge execution
+   */
+  protected IIncrementalBridgeExecution handleMainPart(
+      final IIncrementalBridge<SD, IEditableModelScope, ?> bridge_p,
+      Resource targetResource_p, final IBridgeTrace existingTrace_p,
+      SubMonitor monitor_p) {
+    final SubMonitor bridgeMonitor = monitor_p.newChild(8);
+    final IEditableModelScope targetScope = getTargetScope(targetResource_p);
+    EditingDomain domain = getTargetEditingDomain();
+    final IIncrementalBridgeExecution[] executionWrapper = new IIncrementalBridgeExecution[1];
+    Runnable runnable = new Runnable() {
+      /**
+       * @see java.lang.Runnable#run()
+       */
+      public void run() {
+        IIncrementalBridgeExecution localExecution = bridge_p.executeOn(
+            _sourceDataSet, targetScope, null, existingTrace_p, true, bridgeMonitor);
+        executionWrapper[0] = localExecution;
       }
-    }
+    };
+    MiscUtil.execute(domain, getName(), runnable, true);
+    IIncrementalBridgeExecution result = executionWrapper[0];
+    bridgeMonitor.done();
+    return result;
   }
   
   /**
@@ -259,29 +257,41 @@ public abstract class BridgeJob<SD> extends Job {
     monitor.worked(1);
     // Trace and target scope
     monitor.subTask(Messages.BridgeJob_Step_Execution);
-    final SubMonitor bridgeMonitor = monitor.newChild(8);
     final IBridgeTrace existingTrace = getTrace(traceResource);
-    final IEditableModelScope targetScope = getTargetScope(targetResource);
     // Execution
     final EMFInteractiveBridge<SD, IEditableModelScope> bridge = getBridge();
-    EditingDomain domain = getTargetEditingDomain();
-    final IIncrementalBridgeExecution[] executionWrapper = new IIncrementalBridgeExecution[1];
-    Runnable runnable = new Runnable() {
-      /**
-       * @see java.lang.Runnable#run()
-       */
-      public void run() {
-        IIncrementalBridgeExecution localExecution = bridge.executeOn(
-            _sourceDataSet, targetScope, null, existingTrace, true, bridgeMonitor);
-        executionWrapper[0] = localExecution;
-      }
-    };
-    MiscUtil.execute(domain, getName(), runnable, true);
-    IIncrementalBridgeExecution execution = executionWrapper[0];
-    bridgeMonitor.done();
+    IIncrementalBridgeExecution execution =
+        handleMainPart(bridge, targetResource, existingTrace, monitor);
     // User interactions and completion
-    handleDeferrablePart(bridge, execution, targetResource, traceResource, monitor);
-    return execution.getStatus();
+    IStatus result = handleInteractivePart(bridge, execution, monitor);
+    // Saving
+    if (result.isOK())
+      saveAndClose(execution, targetResource, traceResource, monitor_p);
+    monitor_p.done();
+    return result;
+  }
+  
+  /**
+   * Save and close the give resource according to the given execution
+   * @param execution_p the non-null ongoing execution
+   * @param targetResource_p the non-null target resource
+   * @param traceResource_p the non-null trace resource
+   * @param monitor_p a non-null progress monitor
+   */
+  protected void saveAndClose(IIncrementalBridgeExecution execution_p, Resource targetResource_p,
+      Resource traceResource_p, IProgressMonitor monitor_p) {
+    // Save and unload
+    monitor_p.subTask(Messages.BridgeJob_Step_Completion);
+    monitor_p.worked(1);
+    if (!execution_p.isActuallyIncremental())
+      setTrace(traceResource_p, execution_p.getTrace());
+    if (!traceResource_p.getContents().isEmpty())
+      ResourceUtil.makePersistent(traceResource_p);
+    ResourceUtil.closeResource(traceResource_p);
+    if (isSaveAndCloseTarget()) {
+      ResourceUtil.makePersistent(targetResource_p);
+      ResourceUtil.closeResource(targetResource_p);
+    }
   }
   
   /**
@@ -289,13 +299,13 @@ public abstract class BridgeJob<SD> extends Job {
    * @param traceResource_p a non-null resource
    * @param trace_p a non-null trace
    */
-  protected static void setTrace(Resource traceResource_p, IBridgeTrace trace_p) {
+  protected void setTrace(Resource traceResource_p, IBridgeTrace trace_p) {
     if (trace_p instanceof EObject) {
       traceResource_p.getContents().clear();
       traceResource_p.getContents().add((EObject)trace_p);
     }
   }
-
+  
   /**
    * Enable/disable logging facility according to source data set size.
    */
@@ -319,95 +329,6 @@ public abstract class BridgeJob<SD> extends Job {
   		LogManager.resetConfiguration();
   		LogManager.getRootLogger().setLevel(Level.OFF);
   	}
-  }
-
-
-  /**
-   * An action that triggers the deferred completion of the execution of a bridge.
-   */
-  protected static class DeferredBridgeExecutionAction extends Action
-  implements ActionFactory.IWorkbenchAction {
-    /** The initially non-null bridge */
-    private IIncrementalBridge<?,?,?> _bridge;
-    /** The initially non-null ongoing execution */
-    private IIncrementalBridgeExecution _execution;
-    /** The initially non-null target resource */
-    private Resource _targetResource;
-    /** The initially non-null trace resource */
-    private Resource _traceResource;
-    /** Whether the target must be saved and closed when done */
-    private boolean _isSaveAndCloseTarget;
-    /** The initially null execution status */
-    private IStatus _status;
-    /** The initially non-null progress monitor */
-    private SubMonitor _monitor;
-    /**
-     * Constructor
-     * @param bridge_p the non-null bridge whose execution has to be completed
-     * @param execution_p the non-null ongoing execution of the bridge
-     * @param monitor_p a non-null progress monitor
-     */
-    public DeferredBridgeExecutionAction(IIncrementalBridge<?,?,?> bridge_p,
-        IIncrementalBridgeExecution execution_p, Resource targetResource_p,
-        Resource traceResource_p, boolean isSaveAndCloseTarget_p, SubMonitor monitor_p) {
-      super(Messages.BridgeJob_ActionText);
-      _bridge = bridge_p;
-      _execution = execution_p;
-      _targetResource = targetResource_p;
-      _traceResource = traceResource_p;
-      _isSaveAndCloseTarget = isSaveAndCloseTarget_p;
-      _status = null;
-      _monitor = monitor_p;
-    }
-    /**
-     * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
-     */
-    public void dispose() {
-      if (_execution instanceof IIncrementalBridgeExecution.Editable)
-        ((IIncrementalBridgeExecution.Editable)_execution).setInteractiveMergeData(null);
-      _bridge = null;
-      _execution = null;
-      _targetResource = null;
-      _traceResource = null;
-      _monitor = null;
-      _status = null;
-      setEnabled(false);
-    }
-    /**
-     * Return the status of the execution of the action
-     * @return a potentially null object
-     */
-    public IStatus getStatus() {
-      return _status;
-    }
-    /**
-     * @see org.eclipse.jface.action.Action#run()
-     */
-    @Override
-    public void run() {
-      // Interactive merge
-      _status = _bridge.mergeInteractively(_execution, _monitor);
-      if (_status.isOK()) {
-        // Save and unload
-        _monitor.subTask(Messages.BridgeJob_Step_Completion);
-        _monitor.worked(1);
-        if (!_execution.isActuallyIncremental())
-          setTrace(_traceResource, _execution.getTrace());
-        if (!_traceResource.getContents().isEmpty())
-          ResourceUtil.makePersistent(_traceResource);
-        ResourceUtil.closeResource(_traceResource);
-        if (_isSaveAndCloseTarget) {
-          ResourceUtil.makePersistent(_targetResource);
-          ResourceUtil.closeResource(_targetResource);
-        }
-      }
-      if (_status.isOK() || _status.getSeverity() == IStatus.CANCEL ||
-          _status.getSeverity() == IStatus.INFO &&
-              EMFInteractiveBridge.STATUS_SWITCH_TO_EDITOR.equals(_status.getMessage())) {
-        _monitor.done();
-        dispose();
-      }
-    }
   }
   
 }

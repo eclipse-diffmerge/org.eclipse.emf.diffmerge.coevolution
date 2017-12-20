@@ -33,11 +33,8 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class UpdateDialog extends DiffMergeDialog implements ISelectionChangedListener{
   
-  /** The ID of the 'defer' button */
-  public static final int DEFER_ID = 2;
-  
   /** The ID of the 'open editor' button */
-  public static final int OPEN_EDITOR_ID = 3;
+  public static final int OPEN_EDITOR_ID = 2;
   
   /** The current non-null, potentially empty viewer selection */
   protected IStructuredSelection _selection;
@@ -59,7 +56,7 @@ public class UpdateDialog extends DiffMergeDialog implements ISelectionChangedLi
    */
   @Override
   protected void buttonPressed(int buttonId_p) {
-    if (DEFER_ID == buttonId_p || OPEN_EDITOR_ID == buttonId_p) {
+    if (OPEN_EDITOR_ID == buttonId_p) {
       setReturnCode(buttonId_p);
       close();
     } else {
@@ -73,8 +70,6 @@ public class UpdateDialog extends DiffMergeDialog implements ISelectionChangedLi
   @Override
   protected void createButtonsForButtonBar(Composite parent_p) {
     createOpenEditorButton(parent_p);
-    if (isEditable())
-      createDeferButton(parent_p);
     super.createButtonsForButtonBar(parent_p);
   }
   
@@ -89,24 +84,12 @@ public class UpdateDialog extends DiffMergeDialog implements ISelectionChangedLi
   }
   
   /**
-   * Create a 'defer' button
-   * @param parent_p a non-null composite
-   */
-  protected Button createDeferButton(Composite parent_p) {
-    Button result = createButton(
-        parent_p, DEFER_ID, Messages.UpdateDialog_Defer, false);
-    result.setEnabled(_input.getActualComparison().hasRemainingDifferences());
-    return result;
-  }
-  
-  /**
    * Create an 'open editor' button
    * @param parent_p a non-null composite
    */
   protected Button createOpenEditorButton(Composite parent_p) {
     Button result = createButton(
         parent_p, OPEN_EDITOR_ID, Messages.UpdateDialog_OpenEditorButton, false);
-    result.setEnabled(_input.getActualComparison().hasRemainingDifferences());
     return result;
   }
   

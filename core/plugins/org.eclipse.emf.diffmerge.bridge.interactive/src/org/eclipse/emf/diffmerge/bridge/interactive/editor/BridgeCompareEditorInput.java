@@ -86,6 +86,17 @@ public class BridgeCompareEditorInput extends EMFDiffMergeEditorInput {
   }
   
   /**
+   * @see org.eclipse.emf.diffmerge.ui.setup.EMFDiffMergeEditorInput#disposeResources()
+   */
+  @Override
+  protected void disposeResources() {
+    super.disposeResources();
+    Resource traceResource = getTraceResource();
+    if (traceResource != null)
+      ResourceUtil.closeResource(traceResource);
+  }
+  
+  /**
    * @see org.eclipse.emf.diffmerge.ui.setup.EMFDiffMergeEditorInput#initializeCompareConfiguration()
    */
   @Override
@@ -101,6 +112,19 @@ public class BridgeCompareEditorInput extends EMFDiffMergeEditorInput {
    */
   protected EMFDiffNode getDiffNode() {
     return ((BridgeComparisonMethod)_comparisonMethod).getDiffNode();
+  }
+  
+  /**
+   * Return the trace resource if any
+   * @return a potentially null resource
+   */
+  protected Resource getTraceResource() {
+    Resource result = null;
+    IBridgeTrace referenceTrace = _execution.getReferenceTrace();
+    if (referenceTrace instanceof EObject) {
+      result = ((EObject)referenceTrace).eResource();
+    }
+    return result;
   }
   
   /**
@@ -124,17 +148,14 @@ public class BridgeCompareEditorInput extends EMFDiffMergeEditorInput {
     super.saveChanges(monitor_p);
     IComparison comparison = getDiffNode().getActualComparison();
     try {
-      updateTrace(comparison, _execution.getTrace(), _execution.getReferenceTrace());
+      IBridgeTrace currentTrace = _execution.getTrace();
+      updateTrace(comparison, currentTrace, _execution.getReferenceTrace());
       if (getDiffNode().isModified(false)) {
-        IBridgeTrace referenceTrace = _execution.getReferenceTrace();
-        if (referenceTrace instanceof EObject) {
-          Resource traceResource = ((EObject)referenceTrace).eResource();
-          if (!_execution.isActuallyIncremental()) // Otherwise updateTrace(...) has done the job
-            setTrace(traceResource, _execution.getTrace());
-          if (!traceResource.getContents().isEmpty())
-            ResourceUtil.makePersistent(traceResource);
-          ResourceUtil.closeResource(traceResource);
-        }
+        Resource traceResource = getTraceResource();
+        if (!_execution.isActuallyIncremental()) // Otherwise updateTrace(...) has done the job
+          setTrace(traceResource, currentTrace);
+        if (!traceResource.getContents().isEmpty())
+          ResourceUtil.makePersistent(traceResource);
       }
     } catch (Exception e) {
       MessageDialog.openError(getShell(), EMFDiffMergeUIPlugin.LABEL,
