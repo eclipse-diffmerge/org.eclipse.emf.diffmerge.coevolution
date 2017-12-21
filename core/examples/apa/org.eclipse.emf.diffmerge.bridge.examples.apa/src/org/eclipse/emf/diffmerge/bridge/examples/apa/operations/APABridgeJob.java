@@ -52,7 +52,7 @@ import org.polarsys.capella.core.data.pa.deployment.PartDeploymentLink;
 
 /**
  * A job that turns certain types of Capella physical architectures into models of a simplified metamodel.
- * @author O. CONSTANT
+ * @author Olivier Constant
  */
 public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
   
