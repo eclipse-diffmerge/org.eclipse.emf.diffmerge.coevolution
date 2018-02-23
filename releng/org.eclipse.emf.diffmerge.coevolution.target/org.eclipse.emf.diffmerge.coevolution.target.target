@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="org.eclipse.emf.diffmerge.coevolution" sequenceNumber="40">
+<?pde version="3.8"?><target name="org.eclipse.emf.diffmerge.coevolution" sequenceNumber="55">
 <locations>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.polarsys.capella.core.common.feature.feature.group" version="1.3.0.201802222018"/>
+<repository location="https://ci.polarsys.org/capella/view/Capella-master/job/capella-master/lastSuccessfulBuild/artifact/releng/plugins/org.polarsys.capella.rcp.site/target/repository/"/>
+</location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.apache.commons.lang" version="2.6.0.v201404270220"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20160221192158/repository/"/>
@@ -21,13 +25,8 @@
 <repository location="http://download.eclipse.org/releases/mars"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.polarsys.kitalpha.ad.integration.emde.feature.feature.group" version="1.2.0.v20180202-0643"/>
-<repository location="https://ci.polarsys.org/kitalpha/job/Kitalpha_master/lastSuccessfulBuild/artifact/result/publish/kitalpha_runtime/site.p2/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.polarsys.capella.common.feature.feature.group" version="1.3.0.201802011542"/>
-<unit id="org.polarsys.capella.core.common.feature.feature.group" version="1.3.0.201802011542"/>
-<repository location="https://ci.polarsys.org/capella/view/Capella-master/job/capella-master/lastSuccessfulBuild/artifact/releng/plugins/org.polarsys.capella.rcp.site/target/repository/"/>
+<unit id="org.polarsys.kitalpha.ad.metadata.feature.feature.group" version="1.2.1.v20180221-0539"/>
+<repository location="https://ci.polarsys.org/kitalpha/view/Kitalpha-master/job/Kitalpha_master/697/artifact/result/publish/kitalpha_runtime/site.p2/"/>
 </location>
 </locations>
 </target>
