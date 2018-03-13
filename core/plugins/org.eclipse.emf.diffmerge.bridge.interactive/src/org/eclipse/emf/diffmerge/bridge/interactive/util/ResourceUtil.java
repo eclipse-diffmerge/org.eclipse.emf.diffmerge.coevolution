@@ -95,7 +95,12 @@ public final class ResourceUtil {
    * @return an Eclipse file which exists physically, or null
    */
   public static IFile getFileForResource(Resource resource_p) {
-    return getFileForUri(resource_p.getURI());
+    IFile result = null;
+    URI uri = resource_p.getURI();
+    if (uri != null) {
+    	result = getFileForUri(uri);
+    }
+    return result;
   }
   
   /**

@@ -20,6 +20,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubMonitor;
@@ -311,10 +312,13 @@ public abstract class BridgeJob<SD> extends Job {
    */
   protected void setupLogger() {
     long dataSetSize = 0;
-  	if (_sourceDataSet instanceof Resource)
-  		dataSetSize = ResourceUtil.getFileForResource((Resource) _sourceDataSet).getLocation().toFile().length();
-  	else if (_sourceDataSet instanceof EObject)
-  		dataSetSize = ResourceUtil.getFileForResource(((EObject) _sourceDataSet).eResource()).getLocation().toFile().length();
+    if (_sourceDataSet instanceof Resource)
+      dataSetSize = ResourceUtil.getFileForResource((Resource) _sourceDataSet).getLocation().toFile().length();
+    else if (_sourceDataSet instanceof EObject) {
+      IFile fileForResource = ResourceUtil.getFileForResource(((EObject) _sourceDataSet).eResource());
+      if (fileForResource != null)
+        dataSetSize = fileForResource.getLocation().toFile().length();
+    }
   	if (dataSetSize < LOGGING_THRESHOLD) {
   		LogManager.resetConfiguration();
   		Properties properties = new Properties();
