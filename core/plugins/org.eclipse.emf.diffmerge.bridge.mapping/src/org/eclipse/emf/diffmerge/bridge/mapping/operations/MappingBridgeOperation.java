@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014-2017 Thales Global Services S.A.S.
+ * Copyright (c) 2014-2018 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -199,7 +199,7 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
       QueryExecution queryExecution_p, MappingExecution execution_p) {
     logger.info(new QueryLoggingMessage(queryExecution_p));
     // Execution of local rules
-    for (IRule<?, ?> rule : query_p.getRules()) {
+    for (IRule<?,?,?> rule : query_p.getRules()) {
       handleRuleForTargetCreation(rule, bridge_p, source_p, targetDataSet_p,
           queryExecution_p, execution_p);
     }
@@ -217,16 +217,16 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
    * @param execution_p a non-null object
    */
   @SuppressWarnings("unchecked")
-  protected void handleRuleForTargetCreation(IRule<?,?> rule_p, IBridge<?,?> bridge_p,
+  protected void handleRuleForTargetCreation(IRule<?,?,?> rule_p, IBridge<?,?> bridge_p,
       Object source_p, Object targetDataSet_p, QueryExecution queryExecution_p,
       MappingExecution execution_p) {
     checkProgress();
     MappingCause<Object,Object> cause = new MappingCause<Object,Object>(
-        queryExecution_p, source_p, (IRule<Object, Object>)rule_p);
+        queryExecution_p, source_p, (IRule<Object, Object, Object>)rule_p);
     if (!execution_p.isTolerantToDuplicates() || !execution_p.isRegistered(cause)) {
       // Target creation
       logger.info(new RuleLoggingMessage(rule_p, RuleLoggingMessage.Step.TargetCreation, queryExecution_p)); 
-      Object target = ((IRule<Object, Object>)rule_p).createTarget(source_p, queryExecution_p);
+      Object target = ((IRule<Object, Object, Object>)rule_p).createTarget(source_p, queryExecution_p);
       // Target registration in bridge execution
       execution_p.put(cause, target);
     }
@@ -239,8 +239,8 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
   protected void handleTargetDefinitions(MappingExecution execution_p) {
     Set<Object> pendingSources = execution_p.getPendingSources();
     // Handle all pending rules
-    for (Object source : pendingSources) {
-      handleRuleForTargetDefinitions(source, execution_p);
+    for (Object traceSource : pendingSources) {
+      handleRuleForTargetDefinitions(traceSource, execution_p);
     }
     // Handle progress for non-executed rules
     int nbPendingSources = pendingSources.size();
@@ -254,14 +254,14 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
    * @param source_p a non-null object
    * @param execution_p a non-null object
    */
-  protected void handleRuleForTargetDefinitions(Object source_p,
-      MappingExecution execution_p) {
-    Map<IRule<?,?>, PendingDefinition> pendingDefinitions =
+  protected void handleRuleForTargetDefinitions(Object source_p, MappingExecution execution_p) {
+    Map<IRule<?,?,?>, PendingDefinition> pendingDefinitions =
         execution_p.getPendingDefinitions(source_p);
     // Handle all pending definitions
-    for (Entry<IRule<?,?>, PendingDefinition> entry : pendingDefinitions.entrySet()) {
+    for (Entry<IRule<?,?,?>, PendingDefinition> entry : pendingDefinitions.entrySet()) {
+      PendingDefinition pendingDef = entry.getValue();
       handleRuleForTargetDefinition(
-          entry.getKey(), source_p, entry.getValue(), execution_p);
+          entry.getKey(), pendingDef, execution_p);
       registerTarget(entry.getValue(), source_p, entry.getKey(), execution_p);
     }
   }
@@ -270,18 +270,17 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
    * Execute the given rule for target definition, based on the given query and bridge
    * executions
    * @param rule_p a non-null object
-   * @param source_p a non-null object
    * @param pendingDef_p a non-null object
    * @param execution_p a non-null object
    */
   @SuppressWarnings("unchecked")
-  protected void handleRuleForTargetDefinition(IRule<?,?> rule_p,
-      Object source_p, PendingDefinition pendingDef_p, MappingExecution execution_p) {
+  protected void handleRuleForTargetDefinition(IRule<?,?,?> rule_p,
+      PendingDefinition pendingDef_p, MappingExecution execution_p) {
     checkProgress();
     logger.info(new RuleLoggingMessage(
         rule_p, RuleLoggingMessage.Step.TargetDefinition,  pendingDef_p.getQueryExecution())); 
-    ((IRule<Object,Object>)rule_p).defineTarget(
-        source_p,
+    ((IRule<Object,Object, Object>)rule_p).defineTarget(
+        pendingDef_p.getQueryExecution().getLast(),
         pendingDef_p.getTarget(),
         pendingDef_p.getQueryExecution(),
         execution_p);
@@ -298,9 +297,9 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
    */
   @SuppressWarnings("unchecked")
   protected void registerTarget(PendingDefinition pendingDef_p, Object source_p,
-      IRule<?, ?> rule_p, MappingExecution execution_p) {
+      IRule<?,?,?> rule_p, MappingExecution execution_p) {
     MappingCause<Object,Object> cause = new MappingCause<Object,Object>(
-        pendingDef_p.getQueryExecution(), source_p, (IRule<Object, Object>)rule_p);
+        pendingDef_p.getQueryExecution(), source_p, (IRule<Object, Object, Object>)rule_p);
     execution_p.putInTrace(cause, pendingDef_p.getTarget());
   }
   

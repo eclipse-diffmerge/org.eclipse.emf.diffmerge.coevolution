@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2016-2017 Thales Global Services S.A.S.
+ * Copyright (c) 2016-2018 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ import org.eclipse.uml2.uml.Stereotype;
  * @param <T> the type of target data elements
  * @author Olivier Constant
  */
-public abstract class UMLRule<S, T> extends Rule<S, T> implements IUMLRule<S, T> {
+public abstract class UMLRule<S, T> extends Rule<S, T> implements IUMLRule<S, S, T> {
   
   /**
    * Default constructor for a randomly generated ID

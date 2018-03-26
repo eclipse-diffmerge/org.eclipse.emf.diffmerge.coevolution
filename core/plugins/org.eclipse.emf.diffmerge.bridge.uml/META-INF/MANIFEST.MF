@@ -7,7 +7,8 @@ Bundle-Activator: org.eclipse.emf.diffmerge.bridge.uml.UMLBridgePlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.diffmerge.bridge.mapping;visibility:=reexport,
  org.eclipse.emf.diffmerge.gmf;visibility:=reexport,
- org.eclipse.uml2.uml;visibility:=reexport
+ org.eclipse.uml2.uml;visibility:=reexport,
+ org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName

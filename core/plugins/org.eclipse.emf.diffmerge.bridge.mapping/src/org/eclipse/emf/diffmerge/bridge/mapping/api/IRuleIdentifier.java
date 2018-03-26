@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014-2017 Thales Global Services S.A.S.
+ * Copyright (c) 2014-2018 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,11 @@ import org.eclipse.emf.diffmerge.bridge.api.ISymbolProvider;
 /**
  * An identifier for rules.
  * @param <S> the type of the source data of the rule
+ * @param <TRS> the type of the source subset that traces the target
  * @param <T> the type of the target data of the rule
  * @author Olivier Constant
  */
-public interface IRuleIdentifier<S, T> extends ISymbolProvider {
+public interface IRuleIdentifier<S, TRS, T> extends ISymbolProvider {
   
   /**
    * Must be redefined.

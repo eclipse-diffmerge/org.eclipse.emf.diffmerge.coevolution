@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014-2017 Thales Global Services S.A.S.
+ * Copyright (c) 2014-2018 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class MappingCause<S, T> implements IMappingCause<S, T> {
   private final S _source;
   
   /** The non-null rule */
-  private final IRule<? super S, T> _rule;
+  private final IRule<? super S, ?, T> _rule;
   
   
   /**
@@ -49,7 +49,7 @@ public class MappingCause<S, T> implements IMappingCause<S, T> {
    * @param source_p a non-null source
    * @param rule_p a non-null rule
    */
-  public MappingCause(IQueryExecution queryExecution_p, S source_p, IRule<? super S, T> rule_p) {
+  public MappingCause(IQueryExecution queryExecution_p, S source_p, IRule<? super S, ?, T> rule_p) {
     _queryExecution = queryExecution_p;
     _source = source_p;
     _rule = rule_p;
@@ -81,7 +81,7 @@ public class MappingCause<S, T> implements IMappingCause<S, T> {
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingCause#getRule()
    */
-  public IRule<? super S, T> getRule() {
+  public IRule<? super S, ?, T> getRule() {
     return _rule;
   }
   

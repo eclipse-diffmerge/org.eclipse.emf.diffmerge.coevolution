@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014-2017 Thales Global Services S.A.S.
+ * Copyright (c) 2014-2018 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,6 @@ import org.eclipse.emf.diffmerge.bridge.interactive.EMFInteractiveBridge;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
-import org.eclipse.emf.diffmerge.bridge.mapping.api.IRule;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.Query;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.Rule;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.emf.EMFMappingBridge;
@@ -144,7 +143,7 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
         };
     //******** RULES ********
     // Rule: main PhysicalComponent -> AScope
-    final IRule<PhysicalComponent, AScope> mainRule =
+    final Rule<PhysicalComponent, AScope> mainRule =
         new Rule<PhysicalComponent, AScope>(mainPCQuery, "PC2AScope") { //$NON-NLS-1$
       public void defineTarget(PhysicalComponent source_p,
           AScope target_p, IQueryExecution queryEnv_p,
@@ -160,7 +159,7 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
       }
     };
     // Rule: Node Part -> ANode
-    final IRule<Part, ANode> nodeRule = new Rule<Part, ANode>(nodesQuery, "Part2ANode") { //$NON-NLS-1$
+    final Rule<Part, ANode> nodeRule = new Rule<Part, ANode>(nodesQuery, "Part2ANode") { //$NON-NLS-1$
       public void defineTarget(Part source_p,
           ANode target_p, IQueryExecution queryEnv_p,
           IMappingExecution ruleEnv_p) {
@@ -177,7 +176,7 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
       }
     };
     // Rule: Behavior PartDeploymentLink -> ABehavior
-    final IRule<PartDeploymentLink, ABehavior> behaviorRule =
+    final Rule<PartDeploymentLink, ABehavior> behaviorRule =
         new Rule<PartDeploymentLink, ABehavior>(deploymentsQuery, "DeploymentLink2ABehavior") { //$NON-NLS-1$
       public void defineTarget(PartDeploymentLink source_p,
           ABehavior target_p, IQueryExecution queryEnv_p,
@@ -197,7 +196,7 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
       }
     };
     // Rule: AbstractFunction -> AFunction
-    final IRule<AbstractFunction, AFunction> functionRule =
+    final Rule<AbstractFunction, AFunction> functionRule =
         new Rule<AbstractFunction, AFunction>(allocationsQuery, "Function2AFunction") { //$NON-NLS-1$
       public void defineTarget(AbstractFunction source_p,
           AFunction target_p, IQueryExecution queryEnv_p,

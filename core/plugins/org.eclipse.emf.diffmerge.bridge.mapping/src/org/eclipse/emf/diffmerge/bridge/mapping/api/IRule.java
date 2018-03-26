@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014-2017 Thales Global Services S.A.S.
+ * Copyright (c) 2014-2018 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,16 +21,16 @@ import org.eclipse.emf.diffmerge.bridge.api.ISymbolProvider;
 /**
  * A transformation rule.
  * A transformation rule takes existing data as input and returns expected
- * data as output.
+ * new data as output, yielding a trace between a subset of the input data and
+ * the output data.
  * The input data is provided by a query.
- * That definition is described according to the data returned by the query,
- * which plays the role of source for the rule.
  * A rule also has a unique persistable identifier.
  * @param <S> the type of source data elements
+ * @param <TRS> the type of the source subset that traces the target
  * @param <T> the type of target data elements
  * @author Olivier Constant
  */
-public interface IRule<S, T> extends IIdentifiedWithType<IRuleIdentifier<S, T>>,
+public interface IRule<S, TRS, T> extends IIdentifiedWithType<IRuleIdentifier<S, TRS, T>>,
 IDataFunction<S, T>, ISymbolProvider {
   
   /**
@@ -57,6 +57,13 @@ IDataFunction<S, T>, ISymbolProvider {
    */
   void defineTarget(S source_p, T target_p, IQueryExecution queryExecution_p,
       IMappingExecution mappingExecution_p);
+  
+  /**
+   * Return the subset of data in source_p that allows tracing the target data element
+   * @param source_p a non-null object
+   * @return a non-null object which can be source_p
+   */
+  TRS traceSource(S source_p);
   
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IDataConsumer#getInputProvider()

@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2016-2017 Thales Global Services S.A.S.
+ * Copyright (c) 2016-2018 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,9 @@ import org.eclipse.osgi.util.NLS;
 @SuppressWarnings("javadoc")
 public class Messages extends NLS {
   private static final String BUNDLE_NAME = "org.eclipse.emf.diffmerge.bridge.uml.messages"; //$NON-NLS-1$
+  public static String BridgeLogger_ProfileApplicationStepMessage;
+  public static String BridgeLogger_StereotypeApplicationStepMessage;
+  public static String BridgeLogger_StereotypeApplicationDefinitionStepMessage;
   static {
     // initialize resource bundle
     NLS.initializeMessages(BUNDLE_NAME, Messages.class);

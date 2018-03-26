@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014-2017 Thales Global Services S.A.S.
+ * Copyright (c) 2014-2018 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,11 +45,11 @@ import org.eclipse.emf.diffmerge.bridge.util.AbstractLoggingMessage;
  */
 public class MappingExecution extends AbstractBridgeTraceExecution implements IMappingExecution.Editable {
   
-  /** The content of the rule environment: source data -> rule -> (query execution, target data) */
-  protected final Map<Object, Map<IRule<?,?>, PendingDefinition>> _content;
+  /** The content of the rule environment: trace source data -> rule -> (query execution, target data) */
+  protected final Map<Object, Map<IRule<?,?,?>, PendingDefinition>> _content;
   
   /** The map from (used) rule identifiers to rules */
-  protected final Map<IRuleIdentifier<?,?>, IRule<?,?>> _ruleMap;
+  protected final Map<IRuleIdentifier<?,?,?>, IRule<?,?,?>> _ruleMap;
   
   /** Whether duplicate pending definitions are tolerated (only one among the duplicates will be processed) */
   private boolean _isTolerantToDuplicates;
@@ -65,20 +65,22 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
   public MappingExecution(IBridgeTrace.Editable trace_p) {
     super(trace_p);
     // LinkedHashMap to preserve rule order
-    _content = new LinkedHashMap<Object, Map<IRule<?,?>, PendingDefinition>>();
-    _ruleMap = new HashMap<IRuleIdentifier<?,?>, IRule<?,?>>();
+    _content = new LinkedHashMap<Object, Map<IRule<?,?,?>, PendingDefinition>>();
+    _ruleMap = new HashMap<IRuleIdentifier<?,?,?>, IRule<?,?,?>>();
     _isTolerantToDuplicates = true;
   }
   
   /**
    * @see org.eclipse.emf.diffmerge.bridge.api.INavigableBridgeExecution#get(org.eclipse.emf.diffmerge.bridge.api.ICause)
    */
+  @SuppressWarnings("unchecked")
   public Object get(ICause<?> cause_p) {
     Object result = null;
     if (cause_p instanceof IMappingCause<?, ?>) {
-      @SuppressWarnings("unchecked")
       IMappingCause<Object, Object> cause = (IMappingCause<Object, Object>)cause_p;
-      result = get(cause.getSource(), cause.getRule());
+      IRule<Object, Object, Object> rule = (IRule<Object, Object, Object>)cause.getRule();
+      Object traceSource = rule.traceSource(cause.getSource());
+      result = get(traceSource, rule);
     }
     return result;
   }
@@ -86,7 +88,7 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#get(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IRule)
    */
-  public <S, T> T get(S source_p, IRule<S, T> rule_p) {
+  public <TRS, T> T get(TRS source_p, IRule<?, TRS, T> rule_p) {
     return get(source_p, rule_p.getID());
   }
   
@@ -94,11 +96,11 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#get(java.lang.Object, org.eclipse.emf.diffmerge.bridge.mapping.api.IRuleIdentifier)
    */
   @SuppressWarnings("unchecked")
-  public <S, T> T get(S source_p, IRuleIdentifier<S, T> ruleID_p) {
+  public <TRS, T> T get(TRS source_p, IRuleIdentifier<?, TRS, T> ruleID_p) {
     T result = null;
-    IRule<?,?> rule = _ruleMap.get(ruleID_p);
+    IRule<?,?,?> rule = _ruleMap.get(ruleID_p);
     if (rule != null) {
-      Map<IRule<?,?>, PendingDefinition> ruleToTarget =
+      Map<IRule<?,?,?>, PendingDefinition> ruleToTarget =
           _content.get(source_p);
       if (ruleToTarget != null) {
         PendingDefinition pendingDef = ruleToTarget.get(rule);
@@ -114,7 +116,7 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
    */
   public List<Object> getAll(Object source_p) {
     List<Object> result = Collections.emptyList();
-    Map<IRule<?,?>, PendingDefinition> ruleToDef = _content.get(source_p);
+    Map<IRule<?,?,?>, PendingDefinition> ruleToDef = _content.get(source_p);
     if (ruleToDef != null) {
       result = new ArrayList<Object>(ruleToDef.size());
       for (PendingDefinition pendingDef : ruleToDef.values()) {
@@ -130,7 +132,7 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
    */
   public <T> List<T> getAll(Object source_p, Class<T> type_p) {
     List<T> result = Collections.emptyList();
-    Map<IRule<?,?>, PendingDefinition> ruleToDef = _content.get(source_p);
+    Map<IRule<?,?,?>, PendingDefinition> ruleToDef = _content.get(source_p);
     if (ruleToDef != null) {
       result = new ArrayList<T>();
       for (PendingDefinition pendingDef : ruleToDef.values()) {
@@ -144,7 +146,7 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#getOne(java.lang.Object, java.lang.Class)
    */
   public <T> T getOne(Object source_p, Class<T> type_p) {
-    Map<IRule<?,?>, PendingDefinition> ruleToDef = _content.get(source_p);
+    Map<IRule<?,?,?>, PendingDefinition> ruleToDef = _content.get(source_p);
     if (ruleToDef != null) {
       for (PendingDefinition pendingDef : ruleToDef.values()) {
         T result = flattenFindOne(pendingDef.getTarget(), type_p);
@@ -156,16 +158,16 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
   }
   
   /**
-   * Return the pending definitions associated with the given source
+   * Return the pending definitions associated with the given trace source
    * @param source_p a non-null object
    * @return a possibly null object
    */
-  public Map<IRule<?,?>, PendingDefinition> getPendingDefinitions(Object source_p) {
+  public Map<IRule<?,?,?>, PendingDefinition> getPendingDefinitions(Object source_p) {
     return _content.get(source_p);
   }
   
   /**
-   * Return the set of registered sources in deterministic order
+   * Return the set of registered trace sources in deterministic order
    * @return a non-null, possibly empty set
    */
   public Set<Object> getPendingSources() {
@@ -175,7 +177,7 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#getRuleInputs(org.eclipse.emf.diffmerge.bridge.mapping.api.IRule, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
-  public <S> Collection<S> getRuleInputs(IRule<S, ?> rule_p, IQueryExecution context_p) {
+  public <S> Collection<S> getRuleInputs(IRule<S, ?, ?> rule_p, IQueryExecution context_p) {
     Collection<S> result = getRuleInputs(rule_p.getID(), context_p);
     return result;
   }
@@ -183,19 +185,19 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution#getRuleInputs(org.eclipse.emf.diffmerge.bridge.mapping.api.IRuleIdentifier, org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution)
    */
-  public <S> Collection<S> getRuleInputs(IRuleIdentifier<S, ?> ruleID_p,
+  public <S> Collection<S> getRuleInputs(IRuleIdentifier<S, ?, ?> ruleID_p,
       IQueryExecution context_p) {
     List<S> result = new LinkedList<S>(); //Content uniqueness guaranteed by construction below
-    IRule<?,?> rule = _ruleMap.get(ruleID_p);
+    IRule<?,?,?> rule = _ruleMap.get(ruleID_p);
     if (rule != null) {
       // Focus is not on performance here since we navigate through map entries
       QueryExecution context = (context_p instanceof QueryExecution)? (QueryExecution)context_p: null;
-      for (Map.Entry<Object, Map<IRule<?,?>, PendingDefinition>> sourceEntry : _content.entrySet()) {
+      for (Map.Entry<Object, Map<IRule<?,?,?>, PendingDefinition>> sourceEntry : _content.entrySet()) {
         PendingDefinition pendingDef = sourceEntry.getValue().get(rule);
         if (pendingDef != null && (context == null ||
             context.isAncestorOrEquals(pendingDef.getQueryExecution()))) {
           @SuppressWarnings("unchecked")
-          S source = (S)sourceEntry.getKey();
+          S source = (S)pendingDef.getQueryExecution().getLast();
           result.add(source);
         }
       }
@@ -226,15 +228,17 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
   public void put(ICause<?> cause_p, Object target_p) {
     if (cause_p instanceof IMappingCause<?,?>) {
       IMappingCause<?,?> cause = (IMappingCause<?,?>)cause_p;
-      IRule<?,?> rule = cause.getRule();
+      IRule<?,?,?> rule = cause.getRule();
       // Register rule
       _ruleMap.put(rule.getID(), rule);
       Object source = cause.getSource();
-      Map<IRule<?,?>, PendingDefinition> ruleToTarget = _content.get(source);
+      Map<IRule<?,?,?>, PendingDefinition> ruleToTarget = _content.get(source);
       if (ruleToTarget == null) {
         // Use LinkedHashMap to preserve order and thus determinism of execution
-        ruleToTarget = new LinkedHashMap<IRule<?,?>, PendingDefinition>();
-        _content.put(source, ruleToTarget);
+        ruleToTarget = new LinkedHashMap<IRule<?,?,?>, PendingDefinition>();
+        @SuppressWarnings("unchecked")
+        Object traceSource = ((IRule<Object,Object,Object>)rule).traceSource(source);
+        _content.put(traceSource, ruleToTarget);
       }
       Object squatter = ruleToTarget.put(rule,
           new PendingDefinition(cause.getQueryExecution(), target_p));

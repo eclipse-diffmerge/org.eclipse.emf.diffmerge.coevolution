@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2016-2017 Thales Global Services S.A.S.
+ * Copyright (c) 2016-2018 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.MappingExecution.PendingDefinition;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.QueryExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.operations.MappingBridgeOperation;
+import org.eclipse.emf.diffmerge.bridge.uml.Messages;
 import org.eclipse.emf.diffmerge.bridge.util.INormalizableModelScope;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EModelElement;
@@ -88,18 +89,23 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
     // Root query execution definition
     QueryExecution rootQueryEnv = createQueryExecution();
     // First iteration: target creations
+    logger.info(org.eclipse.emf.diffmerge.bridge.mapping.Messages.BridgeLogger_TargetCreationStepMessage); 
     handleQueriesForTargetCreationRec(bridge_p.getQueries(), bridge_p,
         sourceDataSet_p, targetDataSet_p, rootQueryEnv, execution_p);
     // Second iteration: target definitions
+    logger.info(org.eclipse.emf.diffmerge.bridge.mapping.Messages.BridgeLogger_TargetDefinitionStepMessage);
     handleTargetDefinitions(execution_p);
     // Third iteration: Profile applications
+    logger.info(Messages.BridgeLogger_ProfileApplicationStepMessage);
     handleProfileData(execution_p, targetDataSet_p, PROFILE_APPLICATION);
     getMonitor().worked(1);
     // Fourth iteration: Stereotype applications
+    logger.info(Messages.BridgeLogger_StereotypeApplicationStepMessage);
     handleProfileData(execution_p, targetDataSet_p, STEREOTYPE_APPLICATION);
     ((IMappingBridge)bridge_p).targetsCreated(targetDataSet_p);
     getMonitor().worked(1);
     // Fifth iteration: Stereotype application definitions
+    logger.info(Messages.BridgeLogger_StereotypeApplicationDefinitionStepMessage);
     handleProfileData(execution_p, targetDataSet_p, STEREOTYPE_APPLICATION_DEFINITION);
     // Finishing
     if (targetDataSet_p instanceof INormalizableModelScope)
@@ -133,15 +139,15 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
    */
   protected void handleRuleForProfileApplications(Object source_p,
       MappingExecution execution_p, Object targetDataSet_p, Phase phase_p) {
-    Map<IRule<?,?>, PendingDefinition> pendingDefinitions =
+    Map<IRule<?,?,?>, PendingDefinition> pendingDefinitions =
         execution_p.getPendingDefinitions(source_p);
     // Handle all pending definitions
-    for (Entry<IRule<?,?>, PendingDefinition> entry : pendingDefinitions.entrySet()) {
-      IRule<?,?> rule = entry.getKey();
+    for (Entry<IRule<?,?,?>, PendingDefinition> entry : pendingDefinitions.entrySet()) {
+      IRule<?,?,?> rule = entry.getKey();
       if (phase_p == Phase.PROFILE_APPLICATION) // Registering targets
         registerTarget(entry.getValue(), source_p, entry.getKey(), execution_p);
-      if (rule instanceof IUMLRule<?,?>) {
-        handleRuleForProfileApplication((IUMLRule<?,?>)rule,
+      if (rule instanceof IUMLRule<?,?,?>) {
+        handleRuleForProfileApplication((IUMLRule<?,?,?>)rule,
             source_p, entry.getValue(), execution_p, targetDataSet_p, phase_p);
       }
     }
@@ -157,11 +163,11 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
    * @param phase_p the non-null phase for Profile data construction
    */
   @SuppressWarnings("unchecked")
-  protected void handleRuleForProfileApplication(IUMLRule<?,?> rule_p, Object source_p,
+  protected void handleRuleForProfileApplication(IUMLRule<?,?,?> rule_p, Object source_p,
       PendingDefinition pendingDef_p, MappingExecution execution_p, Object targetDataSet_p,
       Phase phase_p) {
     checkProgress();
-    IUMLRule<Object,Object> rule = (IUMLRule<Object,Object>)rule_p;
+    IUMLRule<Object,Object, Object> rule = (IUMLRule<Object,Object, Object>)rule_p;
     switch (phase_p) {
     case PROFILE_APPLICATION:
       Collection<EObject> profileApps = rule.createProfileApplications(
@@ -192,12 +198,12 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
   @Override
   protected void handleRuleForTargetDefinitions(Object source_p,
       MappingExecution execution_p) {
-    Map<IRule<?,?>, PendingDefinition> pendingDefinitions =
+    Map<IRule<?,?,?>, PendingDefinition> pendingDefinitions =
         execution_p.getPendingDefinitions(source_p);
     // Handle all pending definitions
-    for (Entry<IRule<?,?>, PendingDefinition> entry : pendingDefinitions.entrySet()) {
+    for (Entry<IRule<?,?,?>, PendingDefinition> entry : pendingDefinitions.entrySet()) {
       handleRuleForTargetDefinition(
-          entry.getKey(), source_p, entry.getValue(), execution_p);
+          entry.getKey(), entry.getValue(), execution_p);
       // Do not register target yet
     }
   }
@@ -211,7 +217,7 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
    * @param application_p a non-null element related to a Profile
    *          (Profile application or Stereotype application)
    */
-  protected void registerProfileData(IUMLRule<?,?> rule_p, Object source_p,
+  protected void registerProfileData(IUMLRule<?,?,?> rule_p, Object source_p,
       PendingDefinition pendingDef_p, MappingExecution execution_p, Object targetDataSet_p,
       EObject application_p) {
     checkProgress();

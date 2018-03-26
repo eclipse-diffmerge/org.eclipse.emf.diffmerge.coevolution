@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014-2017 Thales Global Services S.A.S.
+ * Copyright (c) 2014-2018 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,7 @@ implements IQuery<I, O> {
   private final IQueryHolder<? extends I> _holder;
   
   /** The non-null ordered set of rules */
-  private final Set<IRule<? super O, ?>> _rules;
+  private final Set<IRule<? super O, ?, ?>> _rules;
   
   
   /**
@@ -72,13 +72,13 @@ implements IQuery<I, O> {
     _holder = parent_p;
     parent_p.accept(this);
     _identifier = id_p != null? id_p: getDefaultID();
-    _rules = new LinkedHashSet<IRule<? super O, ?>>();
+    _rules = new LinkedHashSet<IRule<? super O, ?, ?>>();
   }
   
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#accept(org.eclipse.emf.diffmerge.bridge.mapping.api.IRule)
    */
-  public void accept(IRule<? super O, ?> rule_p) {
+  public void accept(IRule<? super O, ?, ?> rule_p) {
     _rules.add(rule_p);
   }
   
@@ -107,7 +107,7 @@ implements IQuery<I, O> {
   /**
    * @see org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery#getRules()
    */
-  public Collection<IRule<? super O, ?>> getRules() {
+  public Collection<IRule<? super O, ?, ?>> getRules() {
     return Collections.unmodifiableCollection(_rules);
   }
   

@@ -1,7 +1,7 @@
 /**
  * <copyright>
  * 
- * Copyright (c) 2014-2017 Thales Global Services S.A.S.
+ * Copyright (c) 2014-2018 Thales Global Services S.A.S.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,24 +29,24 @@ public interface IMappingExecution extends INavigableBridgeExecution {
   
   /**
    * Return the target data element or structure defined by the given rule on the given
-   * source data element
+   * trace source data element
    * @param source_p a non-null object
    * @param rule_p a non-null object
    * @return an object which is not null if the rule of the given identifier applies to the given data element
    */
-  <S, T> T get(S source_p, IRule<S, T> rule_p);
+  <TRS, T> T get(TRS source_p, IRule<?, TRS, T> rule_p);
   
   /**
    * Return the target data element or structure defined by the rule of the given identifier
-   * on the given source data element
+   * on the given trace source data element
    * @param source_p a non-null object
    * @param ruleID_p a non-null object
    * @return an object which is not null if the rule of the given identifier applies to the given data element
    */
-  <S, T> T get(S source_p, IRuleIdentifier<S, T> ruleID_p);
+  <TRS, T> T get(TRS source_p, IRuleIdentifier<?, TRS, T> ruleID_p);
   
   /**
-   * Return all target data elements or structures that are associated to the given source.
+   * Return all target data elements or structures that are associated to the given trace source.
    * Structures are not flattened in the resulting list, contrary to getAll(Object, Class).
    * @param source_p a potentially null object
    * @return a non-null, potentially empty, unmodifiable collection
@@ -55,7 +55,8 @@ public interface IMappingExecution extends INavigableBridgeExecution {
   
   /**
    * Return all target data elements of the given type that are associated to the
-   * given source
+   * given trace source.
+   * Target data elements are searched for inside target data structures.
    * @param source_p a potentially null object
    * @param type_p a non-null type
    * @param <T> the type of the expected result
@@ -64,9 +65,10 @@ public interface IMappingExecution extends INavigableBridgeExecution {
   <T> List<T> getAll(Object source_p, Class<T> type_p);
   
   /**
-   * Return a target data element of the given type that are associated to the given
-   * source, if any. If more than one such element exist, then which one is returned
+   * Return a target data element of the given type that is associated to the given
+   * traced source, if any. If more than one such element exist, then which one is returned
    * is undefined.
+   * Target data elements are searched for inside target data structures.
    * @param source_p a non-null object
    * @param type_p a non-null type
    * @param <T> the type of the expected result
@@ -82,7 +84,7 @@ public interface IMappingExecution extends INavigableBridgeExecution {
    * @param context_p an optional query execution
    * @return a non-null iterable
    */
-  <S> Collection<S> getRuleInputs(IRule<S,?> rule_p, IQueryExecution context_p);
+  <S> Collection<S> getRuleInputs(IRule<S,?,?> rule_p, IQueryExecution context_p);
   
   /**
    * Return the source data elements that are inputs of rules of the given identifier,
@@ -92,7 +94,7 @@ public interface IMappingExecution extends INavigableBridgeExecution {
    * @param context_p an optional query execution
    * @return a non-null iterable
    */
-  <S> Collection<S> getRuleInputs(IRuleIdentifier<S,?> ruleID_p, IQueryExecution context_p);
+  <S> Collection<S> getRuleInputs(IRuleIdentifier<S,?,?> ruleID_p, IQueryExecution context_p);
   
   /**
    * Return the target scope from the mapping execution. It may only be used for
