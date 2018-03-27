@@ -31,6 +31,7 @@ import org.eclipse.emf.diffmerge.bridge.interactive.EMFInteractiveBridge;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQueryExecution;
+import org.eclipse.emf.diffmerge.bridge.mapping.impl.CommonRule;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.Query;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.Rule;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.emf.EMFMappingBridge;
@@ -175,21 +176,24 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
         return ApaFactory.eINSTANCE.createANode();
       }
     };
-    // Rule: Behavior PartDeploymentLink -> ABehavior
-    final Rule<PartDeploymentLink, ABehavior> behaviorRule =
-        new Rule<PartDeploymentLink, ABehavior>(deploymentsQuery, "DeploymentLink2ABehavior") { //$NON-NLS-1$
+    // Rule: Behavior PartDeploymentLink -> ABehavior, trace on the deployed PhysicalComponent
+    final CommonRule<PartDeploymentLink, PhysicalComponent, ABehavior> behaviorRule =
+        new CommonRule<PartDeploymentLink, PhysicalComponent, ABehavior>(
+            deploymentsQuery, "DeploymentLink2ABehavior") { //$NON-NLS-1$
       public void defineTarget(PartDeploymentLink source_p,
           ABehavior target_p, IQueryExecution queryEnv_p,
           IMappingExecution ruleEnv_p) {
         pause(PAUSE);
         // Name
-        DeployableElement deployable = source_p.getDeployedElement();
-        Type type = ((Part)deployable).getType();
-        target_p.setName(type.getName());
+        PhysicalComponent tracedSource = traceSource(source_p);
+        target_p.setName(tracedSource.getName());
         // Container
         Part part = queryEnv_p.get(nodesQuery);
         ANode container = ruleEnv_p.get(part, nodeRule);
         target_p.setOwningNode(container);
+      }
+      public PhysicalComponent traceSource(PartDeploymentLink source_p) {
+        return (PhysicalComponent)((Part)source_p.getDeployedElement()).getType();
       }
       public ABehavior createTarget(PartDeploymentLink source_p, IQueryExecution queryExecution_p) {
         return ApaFactory.eINSTANCE.createABehavior();
@@ -206,7 +210,7 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
         target_p.setName(source_p.getName());
         // Container
         PartDeploymentLink dLink = queryEnv_p.get(deploymentsQuery);
-        ABehavior container = ruleEnv_p.get(dLink, behaviorRule);
+        ABehavior container = ruleEnv_p.get(behaviorRule.traceSource(dLink), behaviorRule);
         target_p.setOwningBehavior(container);
       }
       public AFunction createTarget(AbstractFunction source_p, IQueryExecution queryExecution_p) {
