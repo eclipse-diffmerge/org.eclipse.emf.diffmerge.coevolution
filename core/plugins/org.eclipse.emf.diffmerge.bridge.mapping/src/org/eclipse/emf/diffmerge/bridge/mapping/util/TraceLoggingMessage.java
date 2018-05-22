@@ -57,7 +57,12 @@ public class TraceLoggingMessage extends BaseTraceLoggingMessage {
     builder.append(") From {"); //$NON-NLS-1$
     for (Object source : getCause().getSourceElements()) {
       String sourceName = getObjectLabel(source);
-      String sourceType = ((EObject) source).eClass().getName();
+      String sourceType;
+      if (source instanceof EObject) {
+        sourceType = ((EObject) source).eClass().getName();
+      } else {
+        sourceType = source.getClass().getSimpleName();
+      }
       builder.append("("); //$NON-NLS-1$
       builder.append(sourceType).append(" \""); //$NON-NLS-1$
       builder.append(sourceName).append("\""); //$NON-NLS-1$
