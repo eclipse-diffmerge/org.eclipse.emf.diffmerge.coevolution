@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="org.eclipse.emf.diffmerge.coevolution" sequenceNumber="70">
+<?pde version="3.8"?><target name="org.eclipse.emf.diffmerge.coevolution" sequenceNumber="73">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 <unit id="org.apache.commons.lang" version="2.6.0.v201404270220"/>
@@ -21,11 +21,11 @@
 <repository location="http://download.eclipse.org/releases/mars"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.polarsys.kitalpha.ad.metadata.feature.feature.group" version="1.3.0.201805290400"/>
+<unit id="org.polarsys.kitalpha.ad.metadata.feature.feature.group" version="1.3.0.201805300401"/>
 <repository location="http://download.polarsys.org/kitalpha/updates/nightly/runtime/latest/?d"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.polarsys.capella.core.common.feature.feature.group" version="1.3.0.201805261918"/>
+<unit id="org.polarsys.capella.core.common.feature.feature.group" version="1.3.0.201805300821"/>
 <repository location="https://ci.polarsys.org/capella/view/Capella-master/job/capella-master/lastSuccessfulBuild/artifact/releng/plugins/org.polarsys.capella.rcp.site/target/repository/"/>
 </location>
 </locations>
