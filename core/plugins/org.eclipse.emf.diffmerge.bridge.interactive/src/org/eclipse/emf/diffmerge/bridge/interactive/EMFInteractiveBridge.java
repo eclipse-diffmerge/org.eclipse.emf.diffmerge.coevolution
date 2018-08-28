@@ -76,7 +76,6 @@ extends EMFIncrementalBridge<SD, TD> {
   protected EMFDiffNode createDiffNode(EComparison comparison_p,
       EditingDomain domain_p) {
     final EMFDiffNode diffNode = new EMFDiffNode(comparison_p, domain_p, true, false);
-    diffNode.setDefaultShowImpact(false);
     diffNode.setReferenceRole(TARGET_DATA_ROLE);
     diffNode.setDrivingRole(TARGET_DATA_ROLE);
     diffNode.setLeftRole(TARGET_DATA_ROLE.opposite()); // Left to right
