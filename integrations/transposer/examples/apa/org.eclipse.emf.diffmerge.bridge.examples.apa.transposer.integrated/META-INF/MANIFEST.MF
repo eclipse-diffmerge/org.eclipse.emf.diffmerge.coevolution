@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Transposer Integration Example Plug-In (Incubation)
 Bundle-SymbolicName: org.eclipse.emf.diffmerge.bridge.examples.apa.transposer.integrated;singleton:=true
-Bundle-Version: 0.10.0.qualifier
+Bundle-Version: 0.11.0.qualifier
 Bundle-Activator: org.eclipse.emf.diffmerge.bridge.examples.apa.transposer.integrated.TransposerIntegrationApaPlugin
 Bundle-Vendor: Eclipse Modeling Project
 Require-Bundle: org.eclipse.ui,
