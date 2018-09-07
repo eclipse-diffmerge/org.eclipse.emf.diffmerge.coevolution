@@ -22,3 +22,4 @@ Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.emf.diffmerge.bridge.examples.apa2capella,
  org.eclipse.emf.diffmerge.bridge.examples.apa2capella.util
 Bundle-Vendor: %providerName
+Automatic-Module-Name: org.eclipse.emf.diffmerge.bridge.examples.apa2capella

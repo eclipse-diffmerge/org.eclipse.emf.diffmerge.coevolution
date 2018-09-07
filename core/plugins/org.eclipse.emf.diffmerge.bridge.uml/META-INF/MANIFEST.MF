@@ -16,3 +16,4 @@ Export-Package: org.eclipse.emf.diffmerge.bridge.uml,
  org.eclipse.emf.diffmerge.bridge.uml.incremental,
  org.eclipse.emf.diffmerge.bridge.uml.mapping,
  org.eclipse.emf.diffmerge.bridge.uml.util
+Automatic-Module-Name: org.eclipse.emf.diffmerge.bridge.uml

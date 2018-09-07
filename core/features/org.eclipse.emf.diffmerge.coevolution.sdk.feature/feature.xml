@@ -1,35 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- <copyright>
- 
   Copyright (c) 2016-2018 Thales Global Services S.A.S.
-  All rights reserved. This program and the accompanying materials
-   are made available under the terms of the Eclipse Public License v1.0
-  which accompanies this distribution, and is available at
-  http://www.eclipse.org/legal/epl-v10.html
+  This program and the accompanying materials are made
+  available under the terms of the Eclipse Public License 2.0
+  which is available at https://www.eclipse.org/legal/epl-2.0/
+  
+  SPDX-License-Identifier: EPL-2.0
   
    Contributors:
   Thales Global Services S.A.S - initial API and implementation
-  
- </copyright>
 -->
 <feature
       id="org.eclipse.emf.diffmerge.coevolution.sdk.feature"
-      label="Model Co-Evolution Framework (Incubation)"
+      label="%featureName"
       version="0.10.0.qualifier"
-      provider-name="Eclipse Modeling Project">
+      provider-name="%providerName"
+      license-feature="org.eclipse.license"
+      license-feature-version="0.0.0">
 
    <description>
-      A technology that supports the synchronization and consistent co-evolution of models.
+      %description
    </description>
 
    <copyright>
-      Copyright (c) 2016-2018 Thales Global Services S.A.S.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Eclipse Public License
-v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/epl-v10.html
+      %copyright
    </copyright>
 
    <license url="%licenseURL">

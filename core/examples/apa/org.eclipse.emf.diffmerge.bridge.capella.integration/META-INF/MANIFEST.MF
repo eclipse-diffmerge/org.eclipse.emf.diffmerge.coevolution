@@ -16,3 +16,4 @@ Export-Package: org.eclipse.emf.diffmerge.bridge.capella.integration,
  org.eclipse.emf.diffmerge.bridge.capella.integration.scopes,
  org.eclipse.emf.diffmerge.bridge.capella.integration.util
 Bundle-Vendor: Eclipse Modeling Project
+Automatic-Module-Name: org.eclipse.emf.diffmerge.bridge.capella.integration

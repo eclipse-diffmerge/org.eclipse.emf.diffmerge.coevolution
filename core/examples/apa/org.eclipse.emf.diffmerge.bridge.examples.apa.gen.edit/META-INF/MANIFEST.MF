@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-Activator: org.eclipse.emf.diffmerge.bridge.examples.apa.provider.ApaEditPlugin$Implementation
+Automatic-Module-Name: org.eclipse.emf.diffmerge.bridge.examples.apa.gen.edit

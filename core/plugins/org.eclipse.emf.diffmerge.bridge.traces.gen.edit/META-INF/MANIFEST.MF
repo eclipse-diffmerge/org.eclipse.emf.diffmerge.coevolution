@@ -14,3 +14,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.diffmerge.bridge,
  org.eclipse.emf.diffmerge.bridge.traces.gen;visibility:=reexport
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.emf.diffmerge.bridge.traces.gen.edit

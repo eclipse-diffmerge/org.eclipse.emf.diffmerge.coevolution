@@ -13,3 +13,4 @@ Require-Bundle: org.eclipse.ui,
  org.polarsys.kitalpha.transposer.emf.toolbox
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: org.eclipse.emf.diffmerge.bridge.examples.apa.transposer
