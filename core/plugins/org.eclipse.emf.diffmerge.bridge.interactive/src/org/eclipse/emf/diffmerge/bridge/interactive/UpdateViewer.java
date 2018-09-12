@@ -16,11 +16,11 @@ import org.eclipse.emf.diffmerge.api.scopes.IModelScope;
 import org.eclipse.emf.diffmerge.ui.viewers.DirectedComparisonViewer;
 import org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode;
 import org.eclipse.emf.diffmerge.ui.viewers.EnhancedComparisonSideViewer;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 
 
@@ -49,10 +49,11 @@ public class UpdateViewer extends DirectedComparisonViewer {
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.ui.viewers.ComparisonViewer#createItemSupportUndoRedo(org.eclipse.swt.widgets.Menu)
+   * @see org.eclipse.emf.diffmerge.ui.viewers.ComparisonViewer#createItemSupportUndoRedo(org.eclipse.jface.action.IContributionManager)
    */
   @Override
-  protected Item createItemSupportUndoRedo(Menu context_p) {
+  protected ActionContributionItem createItemSupportUndoRedo(
+      IContributionManager context_p) {
     return null;
   }
   
