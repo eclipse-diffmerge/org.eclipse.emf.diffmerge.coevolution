@@ -13,11 +13,12 @@ package org.eclipse.emf.diffmerge.bridge.interactive;
 
 import org.eclipse.emf.diffmerge.api.Role;
 import org.eclipse.emf.diffmerge.api.scopes.IModelScope;
-import org.eclipse.emf.diffmerge.ui.viewers.DirectedComparisonViewer;
+import org.eclipse.emf.diffmerge.ui.viewers.ComparisonViewer;
 import org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode;
 import org.eclipse.emf.diffmerge.ui.viewers.EnhancedComparisonSideViewer;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -29,7 +30,7 @@ import org.eclipse.ui.IActionBars;
  * the update phase during the execution of an interactive, incremental bridge.
  * @author Olivier Constant
  */
-public class UpdateViewer extends DirectedComparisonViewer {
+public class UpdateViewer extends ComparisonViewer {
   
   /**
    * Constructor
@@ -46,6 +47,14 @@ public class UpdateViewer extends DirectedComparisonViewer {
    */
   public UpdateViewer(Composite parent_p, IActionBars actionBars_p) {
     super(parent_p, actionBars_p);
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.ui.viewers.ComparisonViewer#acceptContextMenuAdditions(org.eclipse.jface.viewers.Viewer)
+   */
+  @Override
+  protected boolean acceptContextMenuAdditions(Viewer viewer_p) {
+    return false;
   }
   
   /**
