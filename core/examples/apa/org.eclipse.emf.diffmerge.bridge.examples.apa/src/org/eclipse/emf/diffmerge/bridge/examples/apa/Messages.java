@@ -17,6 +17,7 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
   private static final String BUNDLE_NAME = "org.eclipse.emf.diffmerge.bridge.examples.apa.messages"; //$NON-NLS-1$
   public static String APABridgeAction_IncorrectSelection;
+  public static String APABridgeJob_Log;
   public static String APABridgeJob_Name;
   public static String APAExampleActivator_Label;
   static {

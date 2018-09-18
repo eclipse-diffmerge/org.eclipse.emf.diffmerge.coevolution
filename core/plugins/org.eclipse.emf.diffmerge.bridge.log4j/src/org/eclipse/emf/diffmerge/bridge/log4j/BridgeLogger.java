@@ -24,9 +24,15 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.IConsoleView;
 
 
 /**
@@ -45,7 +51,7 @@ public class BridgeLogger implements IBridgeLogListener {
    * Internal constructor
    */
   protected BridgeLogger() {
-    // Nothing needed
+    setupConsole();
   }
   
   /**
@@ -57,6 +63,7 @@ public class BridgeLogger implements IBridgeLogListener {
     BridgeConsole console = new BridgeConsole(Messages.BridgeLogger_ConsoleId, null);
     consoleManager_p.addConsoles(new IConsole[] { console });
     initLimitOutput(console);
+    console.activate();
     return console;
   }
   
@@ -89,8 +96,11 @@ public class BridgeLogger implements IBridgeLogListener {
             break;
           }
         }
-        if (console == null)
+        if (console == null) {
           console = createNewConsole(consoleManager);
+        } else {
+          consoleManager.showConsoleView(console);
+        }
         result[0] = console;
       }
     });
@@ -223,11 +233,33 @@ public class BridgeLogger implements IBridgeLogListener {
    * @param console_p the (non-null) bridge console
    * @param object_p the (non-null) object whose URI is to map
    */
-  private void registerObject(final BridgeConsole console_p, Object object_p) {
+  protected void registerObject(final BridgeConsole console_p, Object object_p) {
     if (object_p instanceof EObject) {
       URI objectURI = EcoreUtil.getURI((EObject) object_p);
       console_p.getFragmentToURIMap().put(objectURI.fragment(), objectURI.trimFragment());
     }
+  }
+  
+  /**
+   * Set up the bridge console
+   * @return a non-null console
+   */
+  protected BridgeConsole setupConsole() {
+    BridgeConsole console = findConsole();
+    initLimitOutput(console);
+    IWorkbench workbench = PlatformUI.getWorkbench();
+    IWorkbenchWindow activeWorkbenchWindow = workbench.getActiveWorkbenchWindow();
+    if (activeWorkbenchWindow != null) {
+      IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+      try {
+        IConsoleView view = (IConsoleView) activePage.showView(
+            Messages.BridgeLogger_ConsoleId, null, IWorkbenchPage.VIEW_CREATE);
+        view.display(console);
+      } catch (PartInitException ex) {
+        logger.error(ex.getStackTrace(), ex);
+      }
+    }
+    return console;
   }
   
   /**

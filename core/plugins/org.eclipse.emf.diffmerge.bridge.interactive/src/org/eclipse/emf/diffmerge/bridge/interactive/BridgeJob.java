@@ -11,13 +11,6 @@
  **********************************************************************/
 package org.eclipse.emf.diffmerge.bridge.interactive;
 
-import java.util.Properties;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubMonitor;
@@ -27,6 +20,7 @@ import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 import org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridge;
 import org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridgeExecution;
+import org.eclipse.emf.diffmerge.bridge.impl.AbstractBridge;
 import org.eclipse.emf.diffmerge.bridge.interactive.util.ResourceUtil;
 import org.eclipse.emf.diffmerge.bridge.traces.gen.bridgetraces.BridgetracesPackage;
 import org.eclipse.emf.diffmerge.impl.scopes.FragmentedModelScope;
@@ -47,12 +41,6 @@ import org.eclipse.ui.progress.IProgressConstants;
  * @author Olivier Constant
  */
 public abstract class BridgeJob<SD> extends Job {
-  
-  /**The bridge job logger */
-  protected static final Logger logger = Logger.getLogger(BridgeJob.class);
-  
-  /** The model size beyond which the logger shall be disabled */
-  protected static final long LOGGING_THRESHOLD =  20971520; //20MB
   
   /** The non-null source data set */
   protected final SD _sourceDataSet;
@@ -75,7 +63,6 @@ public abstract class BridgeJob<SD> extends Job {
 	  _targetURI = targetURI_p;
 	  _targetResourceSet = initializeTargetResourceSet();
 	  setUser(true);
-	  setupLogger();
   }
 
   /**
@@ -167,7 +154,9 @@ public abstract class BridgeJob<SD> extends Job {
   protected IStatus handleInteractivePart(IIncrementalBridge<?,?,?> bridge_p,
       IIncrementalBridgeExecution execution_p, SubMonitor monitor_p) {
     monitor_p.subTask(Messages.BridgeJob_Step_InteractiveUpdate);
-    logger.info(Messages.BridgeLogger_InteractiveMergeStepMessage);
+    if (bridge_p instanceof AbstractBridge<?,?>) {
+      ((AbstractBridge<?,?>)bridge_p).getLogger().info(Messages.BridgeLogger_InteractiveMergeStepMessage);
+    }
     // Interactive merge
     IStatus result = bridge_p.mergeInteractively(execution_p, monitor_p);
     if (execution_p instanceof IIncrementalBridgeExecution.Editable)
@@ -242,10 +231,11 @@ public abstract class BridgeJob<SD> extends Job {
     // Monitor usage
     final int workAmount = 10;
     SubMonitor monitor;
-    if (monitor_p instanceof SubMonitor)
+    if (monitor_p instanceof SubMonitor) {
       monitor = (SubMonitor)monitor_p;
-    else
+    } else {
       monitor = SubMonitor.convert(monitor_p, getName(), workAmount);
+    }
     monitor.subTask(Messages.BridgeJob_Step_SetUp);
     // Target data set definition
     final Resource targetResource = getCreateTargetResource(_targetURI);
@@ -302,34 +292,6 @@ public abstract class BridgeJob<SD> extends Job {
       traceResource_p.getContents().clear();
       traceResource_p.getContents().add((EObject)trace_p);
     }
-  }
-  
-  /**
-   * Enable/disable logging facility according to source data set size.
-   */
-  protected void setupLogger() {
-    long dataSetSize = 0;
-    if (_sourceDataSet instanceof Resource)
-      dataSetSize = ResourceUtil.getFileForResource((Resource) _sourceDataSet).getLocation().toFile().length();
-    else if (_sourceDataSet instanceof EObject) {
-      IFile fileForResource = ResourceUtil.getFileForResource(((EObject) _sourceDataSet).eResource());
-      if (fileForResource != null)
-        dataSetSize = fileForResource.getLocation().toFile().length();
-    }
-  	if (dataSetSize < LOGGING_THRESHOLD) {
-  		LogManager.resetConfiguration();
-  		Properties properties = new Properties();
-  		properties.setProperty(Messages.BridgeLoggerConfig_LoggerKey, Messages.BridgeLoggerConfig_LoggerValue);
-  		properties.setProperty(Messages.BridgeLoggerConfig_AppenderKey, Messages.BridgeLoggerConfig_AppenderValue);
-  		properties.setProperty(Messages.BridgeLoggerConfig_LayoutKey, Messages.BridgeLoggerConfig_LayoutValue);
-  		properties.setProperty(Messages.BridgeLoggerConfig_TresholdKey, Messages.BridgeLoggerConfig_TresholdValue);
-  		properties.setProperty(Messages.BridgeLoggerConfig_ConversionPatternKey,	Messages.BridgeLoggerConfig_ConversionPatternValue);
-  		PropertyConfigurator.configure(properties);
-  	} else {
-  		logger.warn(Messages.BridgeLoggerConfig_DisabledLoggerWarning);
-  		LogManager.resetConfiguration();
-  		LogManager.getRootLogger().setLevel(Level.OFF);
-  	}
   }
   
 }

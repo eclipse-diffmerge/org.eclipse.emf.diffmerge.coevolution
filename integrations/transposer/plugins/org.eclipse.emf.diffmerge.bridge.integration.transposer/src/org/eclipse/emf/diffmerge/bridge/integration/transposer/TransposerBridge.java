@@ -16,6 +16,7 @@ import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridge;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
+import org.eclipse.emf.diffmerge.bridge.impl.AbstractBridge;
 import org.polarsys.kitalpha.transposer.api.ITransposer;
 import org.polarsys.kitalpha.transposer.api.TransposerConfiguration;
 import org.polarsys.kitalpha.transposer.generic.GenericTransposer;
@@ -27,7 +28,7 @@ import org.polarsys.kitalpha.transposer.generic.GenericTransposer;
  * @see ITransposer
  * @param <SD> the type of the source data set
  */
-public class TransposerBridge<SD> implements IBridge<SD, IEditableModelScope> {
+public class TransposerBridge<SD> extends AbstractBridge<SD, IEditableModelScope> {
   
   /** The non-null Transposer transformation */
   private final ITransposer _transposer;
@@ -81,7 +82,7 @@ public class TransposerBridge<SD> implements IBridge<SD, IEditableModelScope> {
    * @see org.eclipse.emf.diffmerge.bridge.api.IBridge#createExecution(org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace.Editable)
    */
   public TransposerBridgeExecution createExecution(IBridgeTrace.Editable trace_p) {
-    return new TransposerBridgeExecution(trace_p);
+    return new TransposerBridgeExecution(trace_p, getLogger());
   }
   
   /**

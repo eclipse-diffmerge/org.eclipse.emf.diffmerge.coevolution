@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 import org.eclipse.emf.diffmerge.bridge.api.ICause;
 import org.eclipse.emf.diffmerge.bridge.impl.AbstractBridgeTraceExecution;
@@ -58,9 +59,10 @@ public class MappingExecution extends AbstractBridgeTraceExecution implements IM
   /**
    * Constructor
    * @param trace_p the optional trace that reflects this execution
+   * @param logger_p a non-null logger
    */
-  public MappingExecution(IBridgeTrace.Editable trace_p) {
-    super(trace_p);
+  public MappingExecution(IBridgeTrace.Editable trace_p, Logger logger_p) {
+    super(trace_p, logger_p);
     // LinkedHashMap to preserve rule order
     _content = new LinkedHashMap<Object, Map<IRule<?,?,?>, PendingDefinition>>();
     _ruleMap = new HashMap<IRuleIdentifier<?,?,?>, IRule<?,?,?>>();

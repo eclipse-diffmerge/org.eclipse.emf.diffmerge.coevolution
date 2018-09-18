@@ -86,23 +86,25 @@ public class UMLMappingBridgeOperation extends MappingBridgeOperation {
     // Root query execution definition
     QueryExecution rootQueryEnv = createQueryExecution();
     // First iteration: target creations
-    logger.info(org.eclipse.emf.diffmerge.bridge.mapping.Messages.BridgeLogger_TargetCreationStepMessage); 
+    getLogger().info(
+        org.eclipse.emf.diffmerge.bridge.mapping.Messages.BridgeLogger_TargetCreationStepMessage); 
     handleQueriesForTargetCreationRec(bridge_p.getQueries(), bridge_p,
         sourceDataSet_p, targetDataSet_p, rootQueryEnv, execution_p);
     // Second iteration: target definitions
-    logger.info(org.eclipse.emf.diffmerge.bridge.mapping.Messages.BridgeLogger_TargetDefinitionStepMessage);
+    getLogger().info(
+        org.eclipse.emf.diffmerge.bridge.mapping.Messages.BridgeLogger_TargetDefinitionStepMessage);
     handleTargetDefinitions(execution_p);
     // Third iteration: Profile applications
-    logger.info(Messages.BridgeLogger_ProfileApplicationStepMessage);
+    getLogger().info(Messages.BridgeLogger_ProfileApplicationStepMessage);
     handleProfileData(execution_p, targetDataSet_p, PROFILE_APPLICATION);
     getMonitor().worked(1);
     // Fourth iteration: Stereotype applications
-    logger.info(Messages.BridgeLogger_StereotypeApplicationStepMessage);
+    getLogger().info(Messages.BridgeLogger_StereotypeApplicationStepMessage);
     handleProfileData(execution_p, targetDataSet_p, STEREOTYPE_APPLICATION);
     ((IMappingBridge)bridge_p).targetsCreated(targetDataSet_p);
     getMonitor().worked(1);
     // Fifth iteration: Stereotype application definitions
-    logger.info(Messages.BridgeLogger_StereotypeApplicationDefinitionStepMessage);
+    getLogger().info(Messages.BridgeLogger_StereotypeApplicationDefinitionStepMessage);
     handleProfileData(execution_p, targetDataSet_p, STEREOTYPE_APPLICATION_DEFINITION);
     // Finishing
     if (targetDataSet_p instanceof INormalizableModelScope)

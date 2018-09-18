@@ -14,7 +14,6 @@ package org.eclipse.emf.diffmerge.bridge.integration.transposer;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
@@ -34,11 +33,6 @@ import org.polarsys.kitalpha.transposer.transformation.emf.resource.ResourceUtil
  * An operation that executes a Transposer bridge between data scopes.
  */
 public class TransposerBridgeOperation extends AbstractBridgeOperation {
-  
-  /**
-   * The logger associated to this class.
-   */
-  static final Logger logger = Logger.getLogger(TransposerBridgeOperation.class);
   
   /** The optional Transposer configuration */
   private final TransposerConfiguration _configuration;
@@ -81,11 +75,12 @@ public class TransposerBridgeOperation extends AbstractBridgeOperation {
       initializeContext(contextWrapper);
       // Transposer execution
       transposer.getRulesHandler().setContext(contextWrapper);
-      logger.info(Messages.BridgeLogger_TransposerRunStepMessage);  
+      getLogger().info(Messages.BridgeLogger_TransposerRunStepMessage);  
       transposer.transpose(sourceElements, configuration, null, getMonitor());
       // End
-      if (getTargetDataSet() instanceof INormalizableModelScope)
+      if (getTargetDataSet() instanceof INormalizableModelScope) {
         ((INormalizableModelScope)getTargetDataSet()).normalize();
+      }
       transposer.dispose();
       getMonitor().worked(1);
       result = Status.OK_STATUS;

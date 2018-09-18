@@ -14,6 +14,7 @@ package org.eclipse.emf.diffmerge.bridge.integration.transposer;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
@@ -46,9 +47,10 @@ implements INavigableBridgeExecution.Editable {
   /**
    * Constructor
    * @param trace_p the optional trace that reflects this execution
+   * @param logger_p a non-null logger
    */
-  public TransposerBridgeExecution(IBridgeTrace.Editable trace_p) {
-    super(trace_p);
+  public TransposerBridgeExecution(IBridgeTrace.Editable trace_p, Logger logger_p) {
+    super(trace_p, logger_p);
     _context = null;
     _targetScope = null;
   }

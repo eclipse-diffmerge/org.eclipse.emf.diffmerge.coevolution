@@ -17,6 +17,7 @@ import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 import org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridge;
 import org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridgeExecution;
+import org.eclipse.emf.diffmerge.bridge.impl.AbstractBridge;
 import org.eclipse.emf.diffmerge.bridge.impl.IncrementalWrappingBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.operations.IncrementalWrappingBridgeOperation;
 
@@ -29,7 +30,7 @@ import org.eclipse.emf.diffmerge.bridge.operations.IncrementalWrappingBridgeOper
  * @see IIncrementalBridge
  * @author Olivier Constant
  */
-public abstract class AbstractWrappingIncrementalBridge<SD, TD, ID>
+public abstract class AbstractWrappingIncrementalBridge<SD, TD, ID> extends AbstractBridge<SD, TD>
 implements IIncrementalBridge.Wrapping<SD, TD, ID> {
   
   /** The non-null non-incremental bridge */
@@ -51,7 +52,7 @@ implements IIncrementalBridge.Wrapping<SD, TD, ID> {
   public IIncrementalBridgeExecution.Editable createExecution(IBridgeTrace.Editable trace_p) {
     IBridgeTrace.Editable newTrace = trace_p != null? trace_p: createTrace();
     IBridgeExecution.Editable transformationExecution = getTransformationBridge().createExecution(newTrace);
-    return new IncrementalWrappingBridgeExecution(transformationExecution);
+    return new IncrementalWrappingBridgeExecution(transformationExecution, getLogger());
   }
   
   /**
@@ -75,12 +76,13 @@ implements IIncrementalBridge.Wrapping<SD, TD, ID> {
       IBridgeExecution execution_p, IBridgeTrace referenceTrace_p, boolean deferInteractiveMerge_p,
       IProgressMonitor monitor_p) {
     IIncrementalBridgeExecution.Editable execution;
-    if (execution_p instanceof IIncrementalBridgeExecution.Editable)
+    if (execution_p instanceof IIncrementalBridgeExecution.Editable) {
       execution = (IIncrementalBridgeExecution.Editable)execution_p;
-    else if (execution_p instanceof IBridgeExecution.Editable)
+    } else if (execution_p instanceof IBridgeExecution.Editable) {
       execution = createExecution(((IBridgeExecution.Editable)execution_p).getTrace());
-    else
+    } else {
       execution = createExecution(null);
+    }
     execution.setReferenceTrace(referenceTrace_p);
     execution.setDeferInteractiveMerge(deferInteractiveMerge_p);
     IncrementalWrappingBridgeOperation operation = new IncrementalWrappingBridgeOperation(

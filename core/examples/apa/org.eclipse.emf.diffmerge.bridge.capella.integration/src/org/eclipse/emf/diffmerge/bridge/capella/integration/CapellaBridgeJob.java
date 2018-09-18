@@ -16,7 +16,6 @@ import static org.eclipse.emf.diffmerge.impl.policies.ConfigurableMatchPolicy.CR
 import static org.eclipse.emf.diffmerge.impl.policies.ConfigurableMatchPolicy.MatchCriterionKind.SEMANTICS;
 import static org.eclipse.emf.diffmerge.impl.policies.ConfigurableMatchPolicy.MatchCriterionKind.STRUCTURE;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.common.util.URI;
@@ -64,11 +63,6 @@ import org.polarsys.capella.core.model.skeleton.impl.cmd.CreateCapellaProjectCmd
  * @param <SD> the source data set
  */
 public class CapellaBridgeJob<SD> extends BridgeJob<SD> {
-
-	/**
-	 * The Capella bridge job logger
-	 */
-	static final Logger logger = Logger.getLogger(CapellaBridgeJob.class);
 
 	/**
 	 * The default bridge job label

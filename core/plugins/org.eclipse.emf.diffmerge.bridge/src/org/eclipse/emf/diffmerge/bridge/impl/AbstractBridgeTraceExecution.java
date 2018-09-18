@@ -11,6 +11,7 @@
  **********************************************************************/
 package org.eclipse.emf.diffmerge.bridge.impl;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 
 
@@ -27,8 +28,11 @@ public abstract class AbstractBridgeTraceExecution extends AbstractBridgeExecuti
   /**
    * Constructor
    * @param trace_p the optional trace that reflects this execution
+   * @param logger_p a non-null logger
    */
-  public AbstractBridgeTraceExecution(IBridgeTrace.Editable trace_p) {
+  public AbstractBridgeTraceExecution(IBridgeTrace.Editable trace_p,
+      Logger logger_p) {
+    super(logger_p);
     _trace = trace_p;
   }
   

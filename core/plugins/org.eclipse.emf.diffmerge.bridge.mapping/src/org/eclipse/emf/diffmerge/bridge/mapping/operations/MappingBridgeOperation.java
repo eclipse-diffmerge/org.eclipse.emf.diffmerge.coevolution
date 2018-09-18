@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
@@ -42,10 +41,6 @@ import org.eclipse.emf.diffmerge.bridge.util.INormalizableModelScope;
  * @author Olivier Constant
  */
 public class MappingBridgeOperation extends AbstractBridgeOperation {
-  
-  /** The logger for this class */
-  protected static final Logger logger = Logger.getLogger(MappingBridgeOperation.class);
-  
   
   /**
    * Constructor
@@ -110,16 +105,17 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
     // Root query execution definition
     QueryExecution rootQueryEnv = createQueryExecution();
     // First iteration: target creations
-    logger.info(Messages.BridgeLogger_TargetCreationStepMessage); 
+    getLogger().info(Messages.BridgeLogger_TargetCreationStepMessage);
     handleQueriesForTargetCreationRec(bridge_p.getQueries(), bridge_p,
         sourceDataSet_p, targetDataSet_p, rootQueryEnv, execution_p);
     ((IMappingBridge)bridge_p).targetsCreated(targetDataSet_p);
     // Second iteration: target definitions
-    logger.info(Messages.BridgeLogger_TargetDefinitionStepMessage);
+    getLogger().info(Messages.BridgeLogger_TargetDefinitionStepMessage);
     handleTargetDefinitions(execution_p);
     // Finishing
-    if (targetDataSet_p instanceof INormalizableModelScope)
+    if (targetDataSet_p instanceof INormalizableModelScope) {
       ((INormalizableModelScope)targetDataSet_p).normalize();
+    }
     ((IMappingBridge)bridge_p).targetsDefined(targetDataSet_p);
     execution_p.setStatus(Status.OK_STATUS);
   }
@@ -194,7 +190,7 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
   protected void handleQueryForTargetCreation(IQuery<?, ?> query_p,
       IBridge<?, ?> bridge_p, Object source_p, Object targetDataSet_p,
       QueryExecution queryExecution_p, MappingExecution execution_p) {
-    logger.info(new QueryLoggingMessage(queryExecution_p));
+    getLogger().info(new QueryLoggingMessage(queryExecution_p));
     // Execution of local rules
     for (IRule<?,?,?> rule : query_p.getRules()) {
       handleRuleForTargetCreation(rule, bridge_p, source_p, targetDataSet_p,
@@ -222,7 +218,8 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
         queryExecution_p, source_p, (IRule<Object, Object, Object>)rule_p);
     if (!execution_p.isTolerantToDuplicates() || !execution_p.isRegistered(cause)) {
       // Target creation
-      logger.info(new RuleLoggingMessage(rule_p, RuleLoggingMessage.Step.TargetCreation, queryExecution_p)); 
+      getLogger().info(
+          new RuleLoggingMessage(rule_p, RuleLoggingMessage.Step.TargetCreation, queryExecution_p)); 
       Object target = ((IRule<Object, Object, Object>)rule_p).createTarget(source_p, queryExecution_p);
       // Target registration in bridge execution
       execution_p.put(cause, target);
@@ -274,8 +271,8 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
   protected void handleRuleForTargetDefinition(IRule<?,?,?> rule_p,
       PendingDefinition pendingDef_p, MappingExecution execution_p) {
     checkProgress();
-    logger.info(new RuleLoggingMessage(
-        rule_p, RuleLoggingMessage.Step.TargetDefinition,  pendingDef_p.getQueryExecution())); 
+    getLogger().info(new RuleLoggingMessage(
+        rule_p, RuleLoggingMessage.Step.TargetDefinition, pendingDef_p.getQueryExecution())); 
     ((IRule<Object,Object, Object>)rule_p).defineTarget(
         pendingDef_p.getQueryExecution().getLast(),
         pendingDef_p.getTarget(),

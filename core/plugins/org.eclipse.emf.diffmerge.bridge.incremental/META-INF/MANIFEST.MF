@@ -12,3 +12,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.emf.diffmerge.bridge.incremental
 Automatic-Module-Name: org.eclipse.emf.diffmerge.bridge.incremental
+Import-Package: org.apache.log4j

@@ -14,7 +14,9 @@ package org.eclipse.emf.diffmerge.bridge.examples.apa.operations;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Level;
 import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
+import org.eclipse.emf.diffmerge.bridge.api.IBridge;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.ABehavior;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.AExchange;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.AFunction;
@@ -23,6 +25,7 @@ import org.eclipse.emf.diffmerge.bridge.examples.apa.AScope;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.ApaFactory;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.ApaPackage;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.Messages;
+import org.eclipse.emf.diffmerge.bridge.impl.AbstractBridge;
 import org.eclipse.emf.diffmerge.bridge.interactive.BridgeJob;
 import org.eclipse.emf.diffmerge.bridge.interactive.EMFInteractiveBridge;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
@@ -34,6 +37,10 @@ import org.eclipse.emf.diffmerge.bridge.mapping.impl.Rule;
 import org.eclipse.emf.diffmerge.bridge.mapping.impl.emf.EMFMappingBridge;
 import org.eclipse.emf.diffmerge.impl.policies.ConfigurableDiffPolicy;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.polarsys.capella.core.data.capellacore.Type;
 import org.polarsys.capella.core.data.cs.DeployableElement;
 import org.polarsys.capella.core.data.cs.Part;
@@ -246,6 +253,7 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
     EMFInteractiveBridge<PhysicalArchitecture, IEditableModelScope> result = 
         new EMFInteractiveBridge<PhysicalArchitecture, IEditableModelScope>(
             mapping, diffPolicy, null, null);
+    setupLog(result);
     return result;
 	}
 	
@@ -269,4 +277,27 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
     }
   }
 	
+  /**
+   * Set up the log system of the given bridge if applicable
+   * @param bridge_p a non-null bridge
+   */
+  protected void setupLog(IBridge<?,?> bridge_p) {
+    if (bridge_p instanceof AbstractBridge<?,?>) {
+      AbstractBridge<?,?> bridge = (AbstractBridge<?,?>)bridge_p;
+      final boolean[] isLog = new boolean[1];
+      Display.getDefault().syncExec(new Runnable() {
+        /**
+         * @see java.lang.Runnable#run()
+         */
+        public void run() {
+          Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+          isLog[0] = MessageDialog.openQuestion(
+              shell, Messages.APABridgeJob_Name, Messages.APABridgeJob_Log);
+        }
+      });
+      Level logLevel = isLog[0]? Level.DEBUG: Level.OFF;
+      bridge.getLogger().setLevel(logLevel);
+    }
+  }
+  
 }

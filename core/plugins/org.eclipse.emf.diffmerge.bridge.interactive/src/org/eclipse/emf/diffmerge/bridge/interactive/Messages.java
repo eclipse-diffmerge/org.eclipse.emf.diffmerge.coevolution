@@ -25,17 +25,6 @@ public class Messages extends NLS {
   public static String BridgeJob_Step_InteractiveUpdate;
   public static String BridgeJob_Step_SetUp;
   public static String BridgeLogger_InteractiveMergeStepMessage;
-  public static String BridgeLoggerConfig_AppenderKey;
-  public static String BridgeLoggerConfig_AppenderValue;
-  public static String BridgeLoggerConfig_ConversionPatternKey;
-  public static String BridgeLoggerConfig_ConversionPatternValue;
-  public static String BridgeLoggerConfig_DisabledLoggerWarning;
-  public static String BridgeLoggerConfig_LayoutKey;
-  public static String BridgeLoggerConfig_LayoutValue;
-  public static String BridgeLoggerConfig_LoggerKey;
-  public static String BridgeLoggerConfig_LoggerValue;
-  public static String BridgeLoggerConfig_TresholdKey;
-  public static String BridgeLoggerConfig_TresholdValue;
   public static String InteractiveEMFBridge_DefaultDialogTitle;
   public static String UpdateDialog_OpenEditorButton;
   

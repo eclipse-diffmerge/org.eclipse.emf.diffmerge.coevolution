@@ -31,8 +31,8 @@ import org.eclipse.emf.diffmerge.bridge.util.structures.Tuple2;
  */
 public abstract class AbstractBridgeExecution implements IBridgeExecution.Editable {
   
-  /** The non-null logger associated to this class. */
-  protected static final Logger logger = Logger.getLogger(AbstractBridgeExecution.class);
+  /** The non-null logger */
+  private final Logger _logger;
   
   /** The potentially null status of the execution */
   private IStatus _status;
@@ -40,8 +40,10 @@ public abstract class AbstractBridgeExecution implements IBridgeExecution.Editab
   
   /**
    * Constructor
+   * @param logger_p a non-null logger
    */
-  public AbstractBridgeExecution() {
+  public AbstractBridgeExecution(Logger logger_p) {
+    _logger = logger_p;
     _status = Status.OK_STATUS; // Arbitrary
   }
   
@@ -54,6 +56,14 @@ public abstract class AbstractBridgeExecution implements IBridgeExecution.Editab
   protected AbstractLoggingMessage createTraceLoggingMessage(
       Object target_p, ICause<?> cause_p) {
     return new BaseTraceLoggingMessage(target_p, cause_p);
+  }
+  
+  /**
+   * Return the logger for the execution
+   * @return a non-null logger
+   */
+  protected Logger getLogger() {
+    return _logger;
   }
   
   /**
@@ -109,8 +119,9 @@ public abstract class AbstractBridgeExecution implements IBridgeExecution.Editab
     IBridgeTrace.Editable trace = getTrace();
     if (trace != null) {
       trace.putCause(cause_p, targetElement_p);
-      if (cause_p instanceof ICause.Symbolic<?>)
-        logger.info(createTraceLoggingMessage(targetElement_p, cause_p));
+      if (cause_p instanceof ICause.Symbolic<?>) {
+        getLogger().info(createTraceLoggingMessage(targetElement_p, cause_p));
+      }
     }
   }
   

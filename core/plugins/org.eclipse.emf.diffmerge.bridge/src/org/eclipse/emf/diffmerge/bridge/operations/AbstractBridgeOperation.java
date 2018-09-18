@@ -11,9 +11,11 @@
  **********************************************************************/
 package org.eclipse.emf.diffmerge.bridge.operations;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.diffmerge.bridge.Messages;
 import org.eclipse.emf.diffmerge.bridge.api.IBridge;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
+import org.eclipse.emf.diffmerge.bridge.impl.AbstractBridge;
 import org.eclipse.emf.diffmerge.impl.helpers.AbstractExpensiveOperation;
 
 
@@ -65,6 +67,21 @@ public abstract class AbstractBridgeOperation extends AbstractExpensiveOperation
    */
   public IBridgeExecution getBridgeExecution() {
     return _bridgeExecution;
+  }
+  
+  /**
+   * Return a logger for this operation
+   * @return a non-null logger
+   */
+  protected Logger getLogger() {
+    Logger result;
+    IBridge<?,?> bridge = getBridge();
+    if (bridge instanceof AbstractBridge<?,?>) {
+      result = ((AbstractBridge<?,?>)bridge).getLogger();
+    } else {
+      result = Logger.getLogger(AbstractBridge.class);
+    }
+    return result;
   }
   
   /**

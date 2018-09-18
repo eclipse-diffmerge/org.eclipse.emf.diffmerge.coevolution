@@ -11,6 +11,7 @@
  **********************************************************************/
 package org.eclipse.emf.diffmerge.bridge.impl;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 import org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridgeExecution;
@@ -43,9 +44,11 @@ implements IIncrementalBridgeExecution.Editable {
   /**
    * Constructor
    * @param transformationExecution_p a non-null bridge execution for the non-incremental transformation part of the execution
+   * @param logger_p a non-null logger
    */
-  public IncrementalWrappingBridgeExecution(IBridgeExecution.Editable transformationExecution_p) {
-    super();
+  public IncrementalWrappingBridgeExecution(IBridgeExecution.Editable transformationExecution_p,
+      Logger logger_p) {
+    super(logger_p);
     _transformationExecution = transformationExecution_p;
     _mustDeferInteractiveMerge = false;
     _referenceTrace = null;

@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
+import org.eclipse.emf.diffmerge.bridge.impl.AbstractBridge;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingBridge;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IMappingExecution;
 import org.eclipse.emf.diffmerge.bridge.mapping.api.IQuery;
@@ -33,7 +34,8 @@ import org.eclipse.emf.diffmerge.bridge.mapping.operations.MappingBridgeOperatio
  * @see IMappingBridge
  * @author Olivier Constant
  */
-public class MappingBridge<SD, TD> implements IMappingBridge<SD, TD> {
+public class MappingBridge<SD, TD> extends AbstractBridge<SD, TD>
+implements IMappingBridge<SD, TD> {
   
   /** The non-null ordered set of queries */
   private final Set<IQuery<? super SD, ?>> _rootQueries;
@@ -58,7 +60,7 @@ public class MappingBridge<SD, TD> implements IMappingBridge<SD, TD> {
    * @see org.eclipse.emf.diffmerge.bridge.api.IBridge#createExecution(org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace.Editable)
    */
   public MappingExecution createExecution(IBridgeTrace.Editable trace_p) {
-    return new MappingExecution(trace_p);
+    return new MappingExecution(trace_p, getLogger());
   }
   
   /**
