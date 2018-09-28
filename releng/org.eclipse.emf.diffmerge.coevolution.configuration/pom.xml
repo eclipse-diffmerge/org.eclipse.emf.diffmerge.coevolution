@@ -11,7 +11,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- Refresh URL with correct CI build -->
 		<core.repo.url>https://hudson.eclipse.org/diffmerge/job/emf-diffmerge-core-master/lastSuccessfulBuild/artifact/releng/org.eclipse.emf.diffmerge.update/target/repository/</core.repo.url>
-		<capella.repo.url>https://hudson.polarsys.org/capella/job/capella-master/546/artifact/result/publish/org.polarsys.capella/site.p2/</capella.repo.url>
 	</properties>
 
 	<repositories>
@@ -19,11 +18,6 @@
 			<id>diffmerge.core</id>
 			<layout>p2</layout>
 			<url>${core.repo.url}</url>
-		</repository>
-		<repository>
-			<id>kitalpha.runtime</id>
-			<layout>p2</layout>
-			<url>https://hudson.polarsys.org/kitalpha/job/Kitalpha_master/7/artifact/result/publish/kitalpha_runtime/site.p2</url>
 		</repository>
 	</repositories>
 

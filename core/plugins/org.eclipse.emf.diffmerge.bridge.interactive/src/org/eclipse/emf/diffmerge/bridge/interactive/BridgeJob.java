@@ -260,7 +260,7 @@ public abstract class BridgeJob<SD> extends Job {
   }
   
   /**
-   * Save and close the give resource according to the given execution
+   * Save and close the given resource according to the given execution
    * @param execution_p the non-null ongoing execution
    * @param targetResource_p the non-null target resource
    * @param traceResource_p the non-null trace resource
