@@ -16,7 +16,7 @@ import org.eclipse.emf.diffmerge.bridge.Messages;
 import org.eclipse.emf.diffmerge.bridge.api.IBridge;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.impl.AbstractBridge;
-import org.eclipse.emf.diffmerge.impl.helpers.AbstractExpensiveOperation;
+import org.eclipse.emf.diffmerge.generic.impl.helpers.AbstractExpensiveOperation;
 
 
 /**
@@ -85,7 +85,7 @@ public abstract class AbstractBridgeOperation extends AbstractExpensiveOperation
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.util.IExpensiveOperation#getOperationName()
+   * @see org.eclipse.emf.diffmerge.generic.util.IExpensiveOperation#getOperationName()
    */
   public String getOperationName() {
     return Messages.AbstractBridgeOperation_Name;

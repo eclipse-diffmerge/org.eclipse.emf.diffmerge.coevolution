@@ -18,13 +18,13 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.diffmerge.api.IComparison;
-import org.eclipse.emf.diffmerge.api.IMatch;
-import org.eclipse.emf.diffmerge.api.diff.IElementPresence;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 import org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridgeExecution;
 import org.eclipse.emf.diffmerge.bridge.interactive.Messages;
 import org.eclipse.emf.diffmerge.bridge.interactive.util.ResourceUtil;
+import org.eclipse.emf.diffmerge.generic.api.IComparison;
+import org.eclipse.emf.diffmerge.generic.api.IMatch;
+import org.eclipse.emf.diffmerge.generic.api.diff.IElementPresence;
 import org.eclipse.emf.diffmerge.ui.EMFDiffMergeUIPlugin;
 import org.eclipse.emf.diffmerge.ui.setup.EMFDiffMergeEditorInput;
 import org.eclipse.emf.diffmerge.ui.viewers.AbstractComparisonViewer;
@@ -143,7 +143,7 @@ public class BridgeCompareEditorInput extends EMFDiffMergeEditorInput {
   @Override
   public void saveChanges(IProgressMonitor monitor_p) throws CoreException {
     super.saveChanges(monitor_p);
-    IComparison comparison = getDiffNode().getActualComparison();
+    IComparison<?> comparison = getDiffNode().getActualComparison();
     try {
       IBridgeTrace currentTrace = _execution.getTrace();
       updateTrace(comparison, currentTrace, _execution.getReferenceTrace());
@@ -178,24 +178,24 @@ public class BridgeCompareEditorInput extends EMFDiffMergeEditorInput {
    * @param createdTrace_p a non-null object
    * @param existingTrace_p a non-null object
    */
-  protected void updateTrace(IComparison comparison_p,
+  protected void updateTrace(IComparison<?> comparison_p,
       IBridgeTrace createdTrace_p, IBridgeTrace existingTrace_p) {
     if (existingTrace_p instanceof IBridgeTrace.Editable) {
       IBridgeTrace.Editable existingTrace = (IBridgeTrace.Editable)existingTrace_p;
-      for (IMatch match : comparison_p.getMapping().getContents()) {
+      for (IMatch<?> match : comparison_p.getMapping().getContents()) {
         // Added/removed elements
-        IElementPresence presence = match.getElementPresenceDifference();
+        IElementPresence<?> presence = match.getElementPresenceDifference();
         if (presence != null && presence.isMerged()) {
           if (presence.getMergeDestination() == TARGET_DATA_ROLE) {
             if (presence.getPresenceRole() == TARGET_DATA_ROLE) {
-              EObject removedTarget = presence.getElement();
+              Object removedTarget = presence.getElement();
               existingTrace.removeTarget(removedTarget);
             } else {
               // Addition
-              EObject generated = presence.getElementMatch().get(TARGET_DATA_ROLE.opposite());
+              Object generated = presence.getElementMatch().get(TARGET_DATA_ROLE.opposite());
               Object cause = createdTrace_p.getCause(generated);
               if (cause != null) {
-                EObject addedTarget = presence.getElementMatch().get(TARGET_DATA_ROLE);
+                Object addedTarget = presence.getElementMatch().get(TARGET_DATA_ROLE);
                 existingTrace.putCause(cause, addedTarget);
               }
             }

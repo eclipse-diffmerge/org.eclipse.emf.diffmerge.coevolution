@@ -15,9 +15,6 @@ import org.eclipse.compare.CompareUI;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.diffmerge.api.IDiffPolicy;
-import org.eclipse.emf.diffmerge.api.IMergePolicy;
-import org.eclipse.emf.diffmerge.api.IMergeSelector;
 import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridge;
 import org.eclipse.emf.diffmerge.bridge.api.incremental.IIncrementalBridge;
@@ -26,7 +23,12 @@ import org.eclipse.emf.diffmerge.bridge.incremental.EMFIncrementalBridge;
 import org.eclipse.emf.diffmerge.bridge.interactive.editor.BridgeCompareEditorInput;
 import org.eclipse.emf.diffmerge.bridge.interactive.editor.BridgeComparisonMethod;
 import org.eclipse.emf.diffmerge.diffdata.EComparison;
+import org.eclipse.emf.diffmerge.generic.api.IDiffPolicy;
+import org.eclipse.emf.diffmerge.generic.api.IMergePolicy;
+import org.eclipse.emf.diffmerge.generic.api.IMergeSelector;
+import org.eclipse.emf.diffmerge.generic.api.scopes.ITreeDataScope;
 import org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -59,8 +61,8 @@ extends EMFIncrementalBridge<SD, TD> {
    *        (null for fully interactive) where (TARGET_DATA_ROLE: existing scope,
    *        TARGET_DATA_ROLE.opposite(): created scope)
    */
-  public EMFInteractiveBridge(IBridge<SD, TD> bridge_p, IDiffPolicy diffPolicy_p,
-      IMergePolicy mergePolicy_p, IMergeSelector merger_p) {
+  public EMFInteractiveBridge(IBridge<SD, TD> bridge_p, IDiffPolicy<EObject> diffPolicy_p,
+      IMergePolicy<EObject> mergePolicy_p, IMergeSelector<EObject> merger_p) {
     super(bridge_p, diffPolicy_p, mergePolicy_p, merger_p);
   }
   
@@ -114,10 +116,10 @@ extends EMFIncrementalBridge<SD, TD> {
     Object mergeData = execution_p.getInteractiveMergeData();
     if (mergeData instanceof EComparison) {
       EComparison comparison = (EComparison)mergeData;
-      IEditableModelScope targetScope = comparison.getTargetScope();
-      if (targetScope.getAllContents().hasNext())
+      ITreeDataScope<EObject> targetScope = comparison.getTargetScope();
+      if (targetScope.iterator().hasNext())
         domain = AdapterFactoryEditingDomain.getEditingDomainFor(
-            targetScope.getAllContents().next());
+            targetScope.iterator().next());
       final EMFDiffNode diffNode = createDiffNode(comparison, domain);
       final int[] returnCodeWrapper = new int[] {0};
       final IStructuredSelection[] selectionWrapper = new IStructuredSelection[] {null};

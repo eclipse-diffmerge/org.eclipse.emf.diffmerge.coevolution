@@ -11,15 +11,19 @@
  **********************************************************************/
 package org.eclipse.emf.diffmerge.bridge.interactive.editor;
 
-import org.eclipse.emf.diffmerge.api.IDiffPolicy;
-import org.eclipse.emf.diffmerge.api.IMatchPolicy;
-import org.eclipse.emf.diffmerge.api.IMergePolicy;
-import org.eclipse.emf.diffmerge.api.Role;
 import org.eclipse.emf.diffmerge.bridge.interactive.UpdateViewer;
+import org.eclipse.emf.diffmerge.diffdata.impl.EComparisonImpl;
+import org.eclipse.emf.diffmerge.generic.api.IDiffPolicy;
+import org.eclipse.emf.diffmerge.generic.api.IMatchPolicy;
+import org.eclipse.emf.diffmerge.generic.api.IMergePolicy;
+import org.eclipse.emf.diffmerge.generic.api.Role;
+import org.eclipse.emf.diffmerge.generic.api.scopes.IEditableTreeDataScope;
+import org.eclipse.emf.diffmerge.generic.gdiffdata.GComparison;
 import org.eclipse.emf.diffmerge.ui.specification.IModelScopeDefinition;
 import org.eclipse.emf.diffmerge.ui.specification.ext.AbstractComparisonMethod;
 import org.eclipse.emf.diffmerge.ui.viewers.AbstractComparisonViewer;
 import org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
@@ -31,7 +35,7 @@ import org.eclipse.ui.IActionBars;
  * @author Amine Lajmi
  * @author Olivier Constant
  */
-public class BridgeComparisonMethod extends AbstractComparisonMethod {
+public class BridgeComparisonMethod extends AbstractComparisonMethod<EObject> {
   
   /** The non-null diff node */
   private final EMFDiffNode _diffNode;
@@ -43,6 +47,16 @@ public class BridgeComparisonMethod extends AbstractComparisonMethod {
    */
   public BridgeComparisonMethod(EMFDiffNode diffNode_p) {
     _diffNode = diffNode_p;
+  }
+  
+  /**
+   * @see org.eclipse.emf.diffmerge.ui.specification.IComparisonMethod#createComparison(org.eclipse.emf.diffmerge.generic.api.scopes.IEditableTreeDataScope, org.eclipse.emf.diffmerge.generic.api.scopes.IEditableTreeDataScope, org.eclipse.emf.diffmerge.generic.api.scopes.IEditableTreeDataScope)
+   */
+  public GComparison<EObject, ?, ?> createComparison(
+      IEditableTreeDataScope<EObject> targetScope_p,
+      IEditableTreeDataScope<EObject> referenceScope_p,
+      IEditableTreeDataScope<EObject> ancestorScope_p) {
+    return new EComparisonImpl(targetScope_p, referenceScope_p, ancestorScope_p);
   }
   
   /**
@@ -73,26 +87,29 @@ public class BridgeComparisonMethod extends AbstractComparisonMethod {
   /**
    * @see org.eclipse.emf.diffmerge.ui.specification.IComparisonMethod#getDiffPolicy()
    */
-  public IDiffPolicy getDiffPolicy() {
+  @SuppressWarnings("unchecked")
+  public IDiffPolicy<EObject> getDiffPolicy() {
     return getDiffNode().getActualComparison().getLastDiffPolicy();
   }
   
   /**
    * @see org.eclipse.emf.diffmerge.ui.specification.IComparisonMethod#getMatchPolicy()
    */
-  public IMatchPolicy getMatchPolicy() {
+  @SuppressWarnings("unchecked")
+  public IMatchPolicy<EObject> getMatchPolicy() {
     return getDiffNode().getActualComparison().getLastMatchPolicy();
   }
   
   /**
    * @see org.eclipse.emf.diffmerge.ui.specification.IComparisonMethod#getMergePolicy()
    */
-  public IMergePolicy getMergePolicy() {
+  @SuppressWarnings("unchecked")
+  public IMergePolicy<EObject> getMergePolicy() {
     return getDiffNode().getActualComparison().getLastMergePolicy();
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.ui.specification.IComparisonMethod#getModelScopeDefinition(org.eclipse.emf.diffmerge.api.Role)
+   * @see org.eclipse.emf.diffmerge.ui.specification.IComparisonMethod#getModelScopeDefinition(org.eclipse.emf.diffmerge.generic.api.Role)
    */
   public IModelScopeDefinition getModelScopeDefinition(Role role_p) {
     return null; // No scope definitions since the diff node is already defined
@@ -106,14 +123,14 @@ public class BridgeComparisonMethod extends AbstractComparisonMethod {
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.ui.specification.IComparisonMethod#setTwoWayReferenceRole(org.eclipse.emf.diffmerge.api.Role)
+   * @see org.eclipse.emf.diffmerge.ui.specification.IComparisonMethod#setTwoWayReferenceRole(org.eclipse.emf.diffmerge.generic.api.Role)
    */
   public void setTwoWayReferenceRole(Role role_p) {
      getDiffNode().setReferenceRole(role_p);
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.ui.specification.IComparisonMethod#swapScopeDefinitions(org.eclipse.emf.diffmerge.api.Role, org.eclipse.emf.diffmerge.api.Role)
+   * @see org.eclipse.emf.diffmerge.ui.specification.IComparisonMethod#swapScopeDefinitions(org.eclipse.emf.diffmerge.generic.api.Role, org.eclipse.emf.diffmerge.generic.api.Role)
    */
   public boolean swapScopeDefinitions(Role role1_p, Role role2_p) {
     return false;

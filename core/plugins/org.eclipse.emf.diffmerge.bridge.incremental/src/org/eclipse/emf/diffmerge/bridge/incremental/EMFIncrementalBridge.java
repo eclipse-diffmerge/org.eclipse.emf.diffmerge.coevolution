@@ -14,14 +14,6 @@ package org.eclipse.emf.diffmerge.bridge.incremental;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.emf.diffmerge.api.IComparison;
-import org.eclipse.emf.diffmerge.api.IDiffPolicy;
-import org.eclipse.emf.diffmerge.api.IMatch;
-import org.eclipse.emf.diffmerge.api.IMatchPolicy;
-import org.eclipse.emf.diffmerge.api.IMergePolicy;
-import org.eclipse.emf.diffmerge.api.IMergeSelector;
-import org.eclipse.emf.diffmerge.api.Role;
-import org.eclipse.emf.diffmerge.api.diff.IElementPresence;
 import org.eclipse.emf.diffmerge.api.scopes.IEditableModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridge;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
@@ -31,6 +23,14 @@ import org.eclipse.emf.diffmerge.bridge.impl.emf.AbstractWrappingIncrementalEMFB
 import org.eclipse.emf.diffmerge.bridge.traces.gen.bridgetraces.BridgetracesFactory;
 import org.eclipse.emf.diffmerge.diffdata.EComparison;
 import org.eclipse.emf.diffmerge.diffdata.impl.EComparisonImpl;
+import org.eclipse.emf.diffmerge.generic.api.IComparison;
+import org.eclipse.emf.diffmerge.generic.api.IDiffPolicy;
+import org.eclipse.emf.diffmerge.generic.api.IMatch;
+import org.eclipse.emf.diffmerge.generic.api.IMatchPolicy;
+import org.eclipse.emf.diffmerge.generic.api.IMergePolicy;
+import org.eclipse.emf.diffmerge.generic.api.IMergeSelector;
+import org.eclipse.emf.diffmerge.generic.api.Role;
+import org.eclipse.emf.diffmerge.generic.api.diff.IElementPresence;
 import org.eclipse.emf.ecore.EObject;
 
 
@@ -50,13 +50,13 @@ extends AbstractWrappingIncrementalEMFBridge<SD, TD> {
   public static final Role TARGET_DATA_ROLE = Role.TARGET;
   
   /** The optional diff policy for updates (null for default) */
-  private final IDiffPolicy _diffPolicy;
+  private final IDiffPolicy<EObject> _diffPolicy;
   
   /** The optional merge policy for updates (null for default) */
-  private final IMergePolicy _mergePolicy;
+  private final IMergePolicy<EObject> _mergePolicy;
   
   /** The optional merge selector for non-interactive updates (null for fully interactive) */
-  private final IMergeSelector _mergeSelector;
+  private final IMergeSelector<EObject> _mergeSelector;
   
   
   /**
@@ -67,8 +67,8 @@ extends AbstractWrappingIncrementalEMFBridge<SD, TD> {
    * @param merger_p an optional merge selector for non-interactive updates
    *        (null for fully interactive) where (REFERENCE: created scope, TARGET: existing scope)
    */
-  public EMFIncrementalBridge(IBridge<SD, TD> bridge_p, IDiffPolicy diffPolicy_p,
-      IMergePolicy mergePolicy_p, IMergeSelector merger_p) {
+  public EMFIncrementalBridge(IBridge<SD, TD> bridge_p, IDiffPolicy<EObject> diffPolicy_p,
+      IMergePolicy<EObject> mergePolicy_p, IMergeSelector<EObject> merger_p) {
     super(bridge_p);
     _diffPolicy = diffPolicy_p;
     _mergePolicy = mergePolicy_p;
@@ -88,7 +88,7 @@ extends AbstractWrappingIncrementalEMFBridge<SD, TD> {
   protected EComparison compare(IEditableModelScope created_p, IEditableModelScope existing_p,
       IBridgeTrace createdTrace_p, IBridgeTrace existingTrace_p, IProgressMonitor monitor_p) {
     EComparison result = new EComparisonImpl(existing_p, created_p);
-    IMatchPolicy matchPolicy = createMatchPolicy(
+    IMatchPolicy<EObject> matchPolicy = createMatchPolicy(
     		created_p, existing_p, createdTrace_p, existingTrace_p);
     result.compute(matchPolicy, getDiffPolicy(), getMergePolicy(), monitor_p);
     return result;
@@ -110,9 +110,9 @@ extends AbstractWrappingIncrementalEMFBridge<SD, TD> {
    * @param existingTrace_p a non-null trace
    * @return a non-null object
    */
-  protected IMatchPolicy createMatchPolicy(IEditableModelScope created_p, IEditableModelScope existing_p,
-		  IBridgeTrace createdTrace_p, IBridgeTrace existingTrace_p) {
-	  return new BridgeTraceBasedMatchPolicy(created_p, createdTrace_p, existingTrace_p);
+  protected IMatchPolicy<EObject> createMatchPolicy(IEditableModelScope created_p,
+      IEditableModelScope existing_p, IBridgeTrace createdTrace_p, IBridgeTrace existingTrace_p) {
+	  return new BridgeTraceBasedMatchPolicy<EObject>(created_p, createdTrace_p, existingTrace_p);
   }
   
   /**
@@ -127,7 +127,7 @@ extends AbstractWrappingIncrementalEMFBridge<SD, TD> {
    * Return the optional diff policy used to achieve updates
    * @return a potentially null diff policy
    */
-  protected IDiffPolicy getDiffPolicy() {
+  protected IDiffPolicy<EObject> getDiffPolicy() {
     return _diffPolicy;
   }
   
@@ -135,7 +135,7 @@ extends AbstractWrappingIncrementalEMFBridge<SD, TD> {
    * Return the optional merge policy used to achieve updates
    * @return a potentially null merge policy
    */
-  protected IMergePolicy getMergePolicy() {
+  protected IMergePolicy<EObject> getMergePolicy() {
     return _mergePolicy;
   }
   
@@ -143,7 +143,7 @@ extends AbstractWrappingIncrementalEMFBridge<SD, TD> {
    * Return the optional merge selector for non-interactive updates (null for fully interactive)
    * @return a potentially null merge selector
    */
-  protected IMergeSelector getMergeSelector() {
+  protected IMergeSelector<EObject> getMergeSelector() {
     return _mergeSelector;
   }
   
@@ -163,13 +163,13 @@ extends AbstractWrappingIncrementalEMFBridge<SD, TD> {
    * @param createdTrace_p a non-null object
    * @param existingTrace_p a non-null object
    */
-  protected void handleMergedDifferences(IComparison comparison_p,
+  protected void handleMergedDifferences(IComparison<EObject> comparison_p,
       IBridgeTrace createdTrace_p, IBridgeTrace existingTrace_p) {
     if (existingTrace_p instanceof IBridgeTrace.Editable) {
       IBridgeTrace.Editable existingTrace = (IBridgeTrace.Editable)existingTrace_p;
-      for (IMatch match : comparison_p.getMapping().getContents()) {
+      for (IMatch<EObject> match : comparison_p.getMapping().getContents()) {
         // Added/removed elements
-        IElementPresence presence = match.getElementPresenceDifference();
+        IElementPresence<EObject> presence = match.getElementPresenceDifference();
         if (presence != null && presence.isMerged()) {
           if (presence.getMergeDestination() == TARGET_DATA_ROLE) {
             if (presence.getPresenceRole() == TARGET_DATA_ROLE) {
@@ -234,7 +234,7 @@ extends AbstractWrappingIncrementalEMFBridge<SD, TD> {
    */
   protected IStatus mergeAutomatically(
       EComparison comparison_p, IProgressMonitor monitor_p) {
-    IMergeSelector merger = getMergeSelector();
+    IMergeSelector<EObject> merger = getMergeSelector();
     if (merger != null)
       comparison_p.merge(merger, true, monitor_p);
     return Status.OK_STATUS;

@@ -11,8 +11,8 @@
  **********************************************************************/
 package org.eclipse.emf.diffmerge.bridge.interactive;
 
-import org.eclipse.emf.diffmerge.api.Role;
-import org.eclipse.emf.diffmerge.api.scopes.IModelScope;
+import org.eclipse.emf.diffmerge.generic.api.Role;
+import org.eclipse.emf.diffmerge.generic.api.scopes.ITreeDataScope;
 import org.eclipse.emf.diffmerge.ui.viewers.ComparisonViewer;
 import org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode;
 import org.eclipse.emf.diffmerge.ui.viewers.EnhancedComparisonSideViewer;
@@ -103,25 +103,25 @@ public class UpdateViewer extends ComparisonViewer {
       return Messages.BridgeComparisonViewer_TargetLabel;
     }
     /**
-     * @see org.eclipse.emf.diffmerge.ui.viewers.EnhancedComparisonSideViewer#updateHeaderImage(org.eclipse.swt.widgets.Label, org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode, org.eclipse.emf.diffmerge.api.scopes.IModelScope)
+     * @see org.eclipse.emf.diffmerge.ui.viewers.EnhancedComparisonSideViewer#updateHeaderImage(org.eclipse.swt.widgets.Label, org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode, org.eclipse.emf.diffmerge.generic.api.scopes.ITreeDataScope)
      */
     @Override
     protected void updateHeaderImage(Label headerImageWidget_p,
-        EMFDiffNode input_p, IModelScope scope_p) {
+        EMFDiffNode input_p, ITreeDataScope<?> scope_p) {
       Image image = null;
       // Always use the default image for the TARGET side
       if (input_p != null) {
-        IModelScope referenceScope = input_p.getActualComparison().getTargetScope();
+        ITreeDataScope<?> referenceScope = input_p.getActualComparison().getTargetScope();
         image = getHeaderLabelProvider().getImage(referenceScope);
       }
       headerImageWidget_p.setImage(image);
     }
     /**
-     * @see org.eclipse.emf.diffmerge.ui.viewers.EnhancedComparisonSideViewer#updateHeaderText(org.eclipse.swt.widgets.Label, org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode, org.eclipse.emf.diffmerge.api.scopes.IModelScope)
+     * @see org.eclipse.emf.diffmerge.ui.viewers.EnhancedComparisonSideViewer#updateHeaderText(org.eclipse.swt.widgets.Label, org.eclipse.emf.diffmerge.ui.viewers.EMFDiffNode, org.eclipse.emf.diffmerge.generic.api.scopes.ITreeDataScope)
      */
     @Override
     protected void updateHeaderText(Label headerTextWidget_p,
-        EMFDiffNode input_p, IModelScope scope_p) {
+        EMFDiffNode input_p, ITreeDataScope<?> scope_p) {
       String text = null;
       if (input_p != null) {
         Role leftRole = input_p.getRoleForSide(true);

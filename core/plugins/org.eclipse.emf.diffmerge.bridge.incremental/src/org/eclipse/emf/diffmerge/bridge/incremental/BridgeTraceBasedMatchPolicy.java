@@ -13,20 +13,20 @@ package org.eclipse.emf.diffmerge.bridge.incremental;
 
 import java.util.Comparator;
 
-import org.eclipse.emf.diffmerge.api.IMatchPolicy;
-import org.eclipse.emf.diffmerge.api.scopes.IModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
-import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.diffmerge.generic.api.IMatchPolicy;
+import org.eclipse.emf.diffmerge.generic.api.scopes.ITreeDataScope;
 
 
 /**
  * A match policy which is based on bridge traces.
+ * @param <E> The type of data elements.
  * @author Olivier Constant
  */
-public class BridgeTraceBasedMatchPolicy implements IMatchPolicy {
+public class BridgeTraceBasedMatchPolicy<E> implements IMatchPolicy<E> {
   
   /** The non-null newly-created scope */
-  protected final IModelScope _createdScope;
+  protected final ITreeDataScope<E> _createdScope;
   
   /** The non-null newly-created trace */
   protected final IBridgeTrace _createdTrace;
@@ -41,7 +41,7 @@ public class BridgeTraceBasedMatchPolicy implements IMatchPolicy {
    * @param createdTrace_p a non-null trace
    * @param existingTrace_p a non-null trace
    */
-  public BridgeTraceBasedMatchPolicy(IModelScope createdScope_p, IBridgeTrace createdTrace_p,
+  public BridgeTraceBasedMatchPolicy(ITreeDataScope<E> createdScope_p, IBridgeTrace createdTrace_p,
       IBridgeTrace existingTrace_p) {
     _createdScope = createdScope_p;
     _createdTrace = createdTrace_p;
@@ -49,23 +49,23 @@ public class BridgeTraceBasedMatchPolicy implements IMatchPolicy {
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.api.IMatchPolicy#getMatchID(org.eclipse.emf.ecore.EObject, org.eclipse.emf.diffmerge.api.scopes.IModelScope)
+   * @see org.eclipse.emf.diffmerge.generic.api.IMatchPolicy#getMatchID(java.lang.Object, org.eclipse.emf.diffmerge.generic.api.scopes.ITreeDataScope)
    */
-  public Object getMatchID(EObject element_p, IModelScope scope_p) {
+  public Object getMatchID(E element_p, ITreeDataScope<E> scope_p) {
     IBridgeTrace trace = scope_p == _createdScope? _createdTrace: _existingTrace;
     Object result = trace.getCause(element_p);
     return result;
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.api.IMatchPolicy#getMatchIDComparator()
+   * @see org.eclipse.emf.diffmerge.generic.api.IMatchPolicy#getMatchIDComparator()
    */
   public Comparator<?> getMatchIDComparator() {
     return null; // Lower performance but works on non-comparable objects
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.api.IMatchPolicy#keepMatchIDs()
+   * @see org.eclipse.emf.diffmerge.generic.api.IMatchPolicy#keepMatchIDs()
    */
   public boolean keepMatchIDs() {
     return false;

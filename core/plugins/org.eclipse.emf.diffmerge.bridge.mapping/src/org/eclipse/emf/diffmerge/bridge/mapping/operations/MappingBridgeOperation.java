@@ -80,7 +80,7 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.impl.helpers.AbstractExpensiveOperation#getWorkAmount()
+   * @see org.eclipse.emf.diffmerge.generic.impl.helpers.AbstractExpensiveOperation#getWorkAmount()
    */
   @Override
   @SuppressWarnings("unchecked")
@@ -298,7 +298,7 @@ public class MappingBridgeOperation extends AbstractBridgeOperation {
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.util.IExpensiveOperation#run()
+   * @see org.eclipse.emf.diffmerge.generic.util.IExpensiveOperation#run()
    */
   public IStatus run() {
     getMonitor().worked(1);

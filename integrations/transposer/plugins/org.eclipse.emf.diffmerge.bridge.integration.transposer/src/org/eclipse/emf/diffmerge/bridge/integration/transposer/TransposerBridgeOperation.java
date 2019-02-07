@@ -55,7 +55,7 @@ public class TransposerBridgeOperation extends AbstractBridgeOperation {
   }
   
   /**
-   * @see org.eclipse.emf.diffmerge.util.IExpensiveOperation#run()
+   * @see org.eclipse.emf.diffmerge.generic.util.IExpensiveOperation#run()
    */
   public IStatus run() {
     IStatus result;
