@@ -56,7 +56,7 @@ public class CapellaUtil {
             EList<PhysicalArchitecture> containedPhysicalArchitectures = ((SystemEngineering) modelRoot)
                 .getContainedPhysicalArchitectures();
             for (PhysicalArchitecture arch : containedPhysicalArchitectures) {
-              return arch.getOwnedPhysicalComponent();
+              return (PhysicalComponent)arch.getSystem();
             }
           }
         }

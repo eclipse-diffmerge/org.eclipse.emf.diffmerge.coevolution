@@ -47,7 +47,6 @@ import org.polarsys.capella.core.data.cs.Part;
 import org.polarsys.capella.core.data.fa.AbstractFunction;
 import org.polarsys.capella.core.data.fa.ComponentFunctionalAllocation;
 import org.polarsys.capella.core.data.fa.FunctionalExchange;
-import org.polarsys.capella.core.data.information.Partition;
 import org.polarsys.capella.core.data.pa.PhysicalArchitecture;
 import org.polarsys.capella.core.data.pa.PhysicalComponent;
 import org.polarsys.capella.core.data.pa.PhysicalComponentNature;
@@ -86,7 +85,7 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
           public Iterable<PhysicalComponent> evaluate(
               PhysicalArchitecture source_p, IQueryExecution environment_p) {
             pause(PAUSE);
-            return newIterable(source_p.getOwnedPhysicalComponent());
+            return newIterable((PhysicalComponent)source_p.getSystem());
           }
         };
     // Nodes query
@@ -96,12 +95,12 @@ public class APABridgeJob extends BridgeJob<PhysicalArchitecture> {
               PhysicalComponent source_p, IQueryExecution environment_p) {
             pause(PAUSE);
             Collection<Part> result = newIterable();
-            for (Partition partition : source_p.getOwnedPartitions()) {
+            for (Part partition : source_p.getContainedParts()) {
               Type type = partition.getType();
               if (type instanceof PhysicalComponent &&
                   ((PhysicalComponent)type).getNature() ==
                   PhysicalComponentNature.NODE)
-                result.add((Part)partition);
+                result.add(partition);
             }
             return result;
           }

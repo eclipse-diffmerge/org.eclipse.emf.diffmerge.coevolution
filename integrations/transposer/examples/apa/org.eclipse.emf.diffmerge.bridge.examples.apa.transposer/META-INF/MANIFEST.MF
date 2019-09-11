@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.emf.diffmerge.bridge.examples.apa.transposer.Trans
 Bundle-Vendor: Eclipse Modeling Project
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.polarsys.capella.core.data.gen;visibility:=reexport,
+ org.polarsys.capella.core.data.gen;bundle-version="1.4.0";visibility:=reexport,
  org.eclipse.emf.diffmerge.bridge.examples.apa.gen;visibility:=reexport,
  org.polarsys.kitalpha.transposer.transformation.emf,
  org.polarsys.kitalpha.transposer.emf.toolbox

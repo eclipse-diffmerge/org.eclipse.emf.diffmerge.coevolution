@@ -19,7 +19,7 @@ import org.eclipse.emf.diffmerge.bridge.examples.apa.ApaFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.polarsys.capella.core.data.pa.PaPackage;
+import org.polarsys.capella.core.data.cs.CsPackage;
 import org.polarsys.capella.core.data.pa.PhysicalComponent;
 import org.polarsys.kitalpha.transposer.rules.handler.rules.api.IContext;
 import org.polarsys.kitalpha.transposer.rules.handler.rules.api.IPremise;
@@ -62,7 +62,7 @@ public class PC2AScope extends AbstractTransformationRule<PhysicalComponent> {
    * @see org.polarsys.kitalpha.transposer.rules.handler.rules.api.IRule#isApplicableOn(java.lang.Object)
    */
   public boolean isApplicableOn(PhysicalComponent element_p) {
-    return PaPackage.eINSTANCE.getPhysicalArchitecture_OwnedPhysicalComponent() ==
+    return CsPackage.eINSTANCE.getBlockArchitecture_System() ==
         element_p.eContainingFeature();
   }
   

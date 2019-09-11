@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.gef,
  org.eclipse.gmf.runtime.notation,
  org.eclipse.sirius,
- org.polarsys.capella.core.data.gen,
+ org.polarsys.capella.core.data.gen;bundle-version="1.4.0",
  org.eclipse.emf.diffmerge.bridge.examples.apa.gen,
  org.eclipse.emf.diffmerge.bridge.interactive,
  org.eclipse.emf.diffmerge.bridge.mapping

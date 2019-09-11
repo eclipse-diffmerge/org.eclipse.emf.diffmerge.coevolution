@@ -45,7 +45,7 @@ public class FE2AExchange extends AbstractTransformationRule<FunctionalExchange>
     result.setName(element_p.getName());
     // Container
     PhysicalArchitecture archi = getOwningPhysicalArchitecture(element_p); // Should not be null because of premises
-    PhysicalComponent mainComponent = archi.getOwnedPhysicalComponent();
+    PhysicalComponent mainComponent = (PhysicalComponent)archi.getSystem();
     AScope container = (AScope)ContextHelper.getMainTarget(context_p, mainComponent);
     result.setOwningScope(container);
     // Source
