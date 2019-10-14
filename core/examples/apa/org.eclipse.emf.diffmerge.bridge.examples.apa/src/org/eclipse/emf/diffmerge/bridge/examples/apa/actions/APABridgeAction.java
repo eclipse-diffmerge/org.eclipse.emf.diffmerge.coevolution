@@ -14,6 +14,7 @@ package org.eclipse.emf.diffmerge.bridge.examples.apa.actions;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.APAExampleActivator;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.Messages;
 import org.eclipse.emf.diffmerge.bridge.examples.apa.operations.APABridgeJob;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.action.IAction;
@@ -25,6 +26,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.polarsys.capella.core.data.pa.PhysicalArchitecture;
 import org.polarsys.capella.core.data.pa.PhysicalComponent;
+import org.polarsys.capella.core.data.pa.PhysicalComponentPkg;
 
 
 /**
@@ -66,6 +68,8 @@ public class APABridgeAction implements IObjectActionDelegate {
       if (selected instanceof PhysicalComponent)
         while (selected instanceof PhysicalComponent)
           selected = ((PhysicalComponent)selected).eContainer();
+      if (selected instanceof PhysicalComponentPkg)
+        selected = ((EObject) selected).eContainer();
       if (selected instanceof PhysicalArchitecture)
         result = (PhysicalArchitecture)selected;
     }
