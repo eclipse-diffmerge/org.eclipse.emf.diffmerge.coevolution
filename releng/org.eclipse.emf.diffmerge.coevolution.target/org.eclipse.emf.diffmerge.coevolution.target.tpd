@@ -4,7 +4,7 @@ location "http://download.eclipse.org/cbi/updates/license/" {
 	org.eclipse.license.feature.group [2.0.2.v20181016-2210,2.0.2.v20181016-2210]
 }
 
-location "http://download.eclipse.org/releases/2019-06" {
+location "http://download.eclipse.org/releases/2020-06" {
 	com.google.guava lazy
 	org.apache.log4j lazy
 	org.eclipse.equinox.executable.feature.group lazy
