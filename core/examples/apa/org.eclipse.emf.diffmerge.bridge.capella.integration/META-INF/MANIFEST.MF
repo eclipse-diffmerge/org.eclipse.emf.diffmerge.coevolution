@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Bridge Mapping Capella Scopes
 Bundle-SymbolicName: org.eclipse.emf.diffmerge.bridge.capella.integration
-Bundle-Version: 0.12.0.qualifier
+Bundle-Version: 0.13.0.qualifier
 Bundle-Activator: org.eclipse.emf.diffmerge.bridge.capella.integration.internal.Activator
 Require-Bundle: org.eclipse.emf.diffmerge.bridge.interactive,
  org.eclipse.emf.diffmerge.bridge.mapping,
