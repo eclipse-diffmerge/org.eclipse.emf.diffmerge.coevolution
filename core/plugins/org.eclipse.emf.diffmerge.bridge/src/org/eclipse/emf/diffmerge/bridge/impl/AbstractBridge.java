@@ -90,14 +90,15 @@ public abstract class AbstractBridge<SD, TD> implements IBridge<SD, TD> {
    * Set up the log system
    */
   protected void setupLogger() {
-    LogManager.resetConfiguration();
-    Properties properties = new Properties();
-    properties.setProperty(LOGGER_CONFIG_KEY_LOGGER, "DEBUG, coevolution"); //$NON-NLS-1$
-    properties.setProperty(LOGGER_CONFIG_KEY_APPENDER, LOGGER_CONFIG_VALUE_APPENDER);
-    properties.setProperty(LOGGER_CONFIG_KEY_LAYOUT, PatternLayout.class.getName());
-    properties.setProperty(LOGGER_CONFIG_KEY_THRESHOLD, "DEBUG"); //$NON-NLS-1$
-    properties.setProperty(LOGGER_CONFIG_KEY_CONVERSIONPATTERN, "%-5p [%t]: %m%n"); //$NON-NLS-1$
-    PropertyConfigurator.configure(properties);
+    if (LogManager.exists(LOGGER_CONFIG_KEY_LOGGER) == null) {
+      Properties properties = new Properties();
+      properties.setProperty(LOGGER_CONFIG_KEY_LOGGER, "DEBUG, coevolution"); //$NON-NLS-1$
+      properties.setProperty(LOGGER_CONFIG_KEY_APPENDER, LOGGER_CONFIG_VALUE_APPENDER);
+      properties.setProperty(LOGGER_CONFIG_KEY_LAYOUT, PatternLayout.class.getName());
+      properties.setProperty(LOGGER_CONFIG_KEY_THRESHOLD, "DEBUG"); //$NON-NLS-1$
+      properties.setProperty(LOGGER_CONFIG_KEY_CONVERSIONPATTERN, "%-5p [%t]: %m%n"); //$NON-NLS-1$
+      PropertyConfigurator.configure(properties);
+    }
   }
   
 }
