@@ -14,6 +14,7 @@ pipeline {
     SSH_ACCOUNT = "genie.diffmerge@projects-storage.eclipse.org"
     BUILD_DIR = "/home/data/httpd/download.eclipse.org/diffmerge/nightly/${BUILD_KEY}"    
   }
+  //test
   stages {
     stage('Package') {
       steps {
