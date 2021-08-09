@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.emf.diffmerge.bridge.interactive,
  org.polarsys.capella.core.model.skeleton;bundle-version="1.4.0",
  org.polarsys.capella.core.model.handler;bundle-version="1.4.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.emf.diffmerge.bridge.capella.integration,
  org.eclipse.emf.diffmerge.bridge.capella.integration.policies,
  org.eclipse.emf.diffmerge.bridge.capella.integration.scopes,
