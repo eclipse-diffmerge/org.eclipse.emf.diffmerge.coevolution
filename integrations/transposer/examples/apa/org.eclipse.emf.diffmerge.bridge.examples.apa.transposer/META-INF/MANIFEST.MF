@@ -11,6 +11,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.diffmerge.bridge.examples.apa.gen;visibility:=reexport,
  org.polarsys.kitalpha.transposer.transformation.emf,
  org.polarsys.kitalpha.transposer.emf.toolbox
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.emf.diffmerge.bridge.examples.apa.transposer

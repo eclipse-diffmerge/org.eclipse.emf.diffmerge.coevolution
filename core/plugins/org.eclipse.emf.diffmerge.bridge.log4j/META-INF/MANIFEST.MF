@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.emf.diffmerge.bridge.log4j;singleton:=true
 Bundle-Version: 0.12.0.qualifier
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: %providerName
 Bundle-ClassPath: .
 Export-Package: org.eclipse.emf.diffmerge.bridge.log4j
