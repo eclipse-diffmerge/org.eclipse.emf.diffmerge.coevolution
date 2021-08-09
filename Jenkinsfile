@@ -12,12 +12,13 @@ pipeline {
     BUILD_KEY = "${params.CORE_BRANCH}-${BRANCH_NAME}-${BUILD_ID}-coevolution".replaceFirst(/^v/, "").replaceAll('/','-');
     
     SSH_ACCOUNT = "genie.diffmerge@projects-storage.eclipse.org"
-    BUILD_DIR = "/home/data/httpd/download.eclipse.org/diffmerge/nightly/${BUILD_KEY}"    
+    BUILD_DIR = "/home/data/httpd/download.eclipse.org/diffmerge/nightly/${BUILD_KEY}"
+    CORE_PR_BRANCH = "PR-224-13"
   }
   stages {
     stage('Package') {
       steps {
-        sh "mvn -Dcore.repo.url=https://download.eclipse.org/diffmerge/nightly/${params.CORE_BRANCH}/emf-diffmerge-site/ clean install -t ${WORKSPACE}/releng/org.eclipse.emf.diffmerge.coevolution.configuration/toolchains-hipp.xml -Psign"
+        sh "mvn -Dcore.repo.url=https://download.eclipse.org/diffmerge/nightly/${CORE_PR_BRANCH}/emf-diffmerge-site/ clean install -t ${WORKSPACE}/releng/org.eclipse.emf.diffmerge.coevolution.configuration/toolchains-hipp.xml -Psign"
       }
     }
     stage('Publish artifacts') {
