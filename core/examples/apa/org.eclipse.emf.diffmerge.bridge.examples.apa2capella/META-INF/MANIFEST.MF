@@ -17,7 +17,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.diffmerge.bridge.mapping,
  org.eclipse.emf.diffmerge.bridge.examples.apa.gen,
  org.eclipse.emf.diffmerge.bridge.capella.integration
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.emf.diffmerge.bridge.examples.apa2capella,
  org.eclipse.emf.diffmerge.bridge.examples.apa2capella.util

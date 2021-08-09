@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.emf.diffmerge.bridge.BridgePlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.diffmerge;visibility:=reexport,
  org.eclipse.emf.ecore.xmi
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.emf.diffmerge.bridge,
