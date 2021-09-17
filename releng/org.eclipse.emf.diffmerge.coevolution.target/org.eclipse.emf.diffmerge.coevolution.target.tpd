@@ -1,5 +1,7 @@
 target "org.eclipse.emf.diffmerge.coevolution"
 
+include "https://download.eclipse.org/sirius/updates/stable/7.0.0-S20210908-102403/2021-06/targets/modules/gmf-runtime-1.14.tpd"
+
 location "https://download.eclipse.org/cbi/updates/license/" {
 	org.eclipse.license.feature.group [2.0.2.v20181016-2210,2.0.2.v20181016-2210]
 }
@@ -23,15 +25,18 @@ location "https://download.eclipse.org/releases/2021-06" {
 	org.eclipse.emf.transaction.feature.group lazy
 	org.eclipse.emf.validation.feature.group lazy
 	org.eclipse.emf.edit.feature.group lazy
-  	org.eclipse.gmf.feature.group lazy
-  	org.eclipse.gmf.runtime.notation.sdk.feature.group lazy
   	org.eclipse.gef.feature.group lazy
 	org.eclipse.uml2.sdk.feature.group lazy
 }
 
-location "https://download.eclipse.org/sirius/updates/stable/7.0.0-S20210722-123507/2021-06" {
-	org.eclipse.sirius.runtime.feature.group lazy
+location "https://download.eclipse.org/sirius/updates/stable/7.0.0-S20210908-102403/2021-06" {
+	org.eclipse.sirius.specifier.feature.group lazy
 	org.eclipse.sirius.runtime.ide.ui.feature.group lazy
+}
+
+location Orbit "https://download.eclipse.org/tools/orbit/downloads/drops/R20210602031627/repository" {
+	org.apache.batik.bridge.source lazy
+	org.apache.batik.script.source lazy
 }
 
 location "https://download.eclipse.org/kitalpha/updates/release/runtime/1.4.0/" {
