@@ -32,6 +32,7 @@ import org.eclipse.uml2.uml.UMLFactory;
 import org.polarsys.capella.core.data.fa.AbstractFunction;
 import org.polarsys.capella.core.data.fa.FunctionalExchange;
 import org.polarsys.capella.core.data.pa.PhysicalArchitecture;
+import org.polarsys.capella.core.data.pa.PhysicalComponent;
 
 
 /**
@@ -83,7 +84,7 @@ extends QueryAndRule<AbstractFunction, FunctionalExchange, Association> {
     target_p.setName(source_p.getName());
     // Container
     PhysicalArchitecture archi = (PhysicalArchitecture)source_p.eContainer().eContainer().eContainer();
-    Model container = mappingExecution_p.get(archi.getOwnedPhysicalComponent(), MainComponent2ModelQueryAndRule.ID);
+    Model container = mappingExecution_p.get((PhysicalComponent)archi.getSystem(), MainComponent2ModelQueryAndRule.ID);
     container.getOwnedTypes().add(target_p);
     // Create source Property
     Property srcEnd = UMLFactory.eINSTANCE.createProperty();

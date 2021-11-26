@@ -13,7 +13,6 @@ package org.eclipse.emf.diffmerge.bridge.examples.apa2capella.messages;
 
 import org.eclipse.osgi.util.NLS;
 
-@SuppressWarnings("javadoc")
 public class Messages extends NLS {
 	
 	private static final String BUNDLE_NAME = "org.eclipse.emf.diffmerge.bridge.examples.apa2capella.messages.messages"; //$NON-NLS-1$

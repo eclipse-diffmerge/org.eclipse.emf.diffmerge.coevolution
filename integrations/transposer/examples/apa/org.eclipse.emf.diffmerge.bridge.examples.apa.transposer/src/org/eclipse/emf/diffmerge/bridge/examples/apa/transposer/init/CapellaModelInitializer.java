@@ -63,7 +63,7 @@ public class CapellaModelInitializer extends ModelInitializer {
    * @see org.polarsys.kitalpha.transposer.emf.toolbox.activities.ModelInitializer#run(org.polarsys.kitalpha.cadence.core.api.parameter.ActivityParameters)
    */
   @Override
-  @SuppressWarnings({ "unchecked", "cast" })
+  @SuppressWarnings("unchecked")
   public IStatus run(ActivityParameters activityParams_p) {
     // Selection
     Collection<Object> selection = (Collection<Object>) activityParams_p.getParameter(TRANSPOSER_SELECTION).getValue();

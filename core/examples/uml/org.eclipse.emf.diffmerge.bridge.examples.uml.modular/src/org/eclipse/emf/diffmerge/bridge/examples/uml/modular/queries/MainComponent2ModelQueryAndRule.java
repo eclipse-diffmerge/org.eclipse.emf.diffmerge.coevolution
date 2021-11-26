@@ -48,7 +48,7 @@ extends QueryAndRule<PhysicalArchitecture, PhysicalComponent, Model> {
    */
   public Iterable<PhysicalComponent> evaluate(PhysicalArchitecture input_p,
       IQueryExecution queryExecution_p) {
-    return newIterable(input_p.getOwnedPhysicalComponent());
+    return newIterable((PhysicalComponent)input_p.getSystem());
   }
   
   /**

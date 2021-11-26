@@ -24,10 +24,10 @@ import org.eclipse.uml2.uml.Component;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.Property;
 import org.eclipse.uml2.uml.UMLFactory;
+import org.polarsys.capella.core.data.capellacore.Feature;
 import org.polarsys.capella.core.data.cs.Part;
 import org.polarsys.capella.core.data.fa.ComponentExchange;
 import org.polarsys.capella.core.data.fa.ComponentPort;
-import org.polarsys.capella.core.data.information.Partition;
 import org.polarsys.capella.core.data.pa.PhysicalArchitecture;
 import org.polarsys.capella.core.data.pa.PhysicalComponent;
 import org.polarsys.capella.core.data.pa.deployment.PartDeploymentLink;
@@ -63,9 +63,9 @@ extends QueryAndRule<PartDeploymentLink, ComponentExchange, Tuple3<Association, 
     PhysicalComponent component =
         (PhysicalComponent)((Part)input_p.getDeployedElement()).getType();
     List<ComponentExchange> result = newIterable();
-    for (Partition partition : component.getOwnedPartitions()) {
-      if (partition instanceof ComponentPort)
-        result.addAll(((ComponentPort)partition).getComponentExchanges());
+    for (Feature feature : component.getOwnedFeatures()) {
+      if (feature instanceof ComponentPort)
+        result.addAll(((ComponentPort)feature).getComponentExchanges());
     }
     return result;
   }
@@ -92,7 +92,7 @@ extends QueryAndRule<PartDeploymentLink, ComponentExchange, Tuple3<Association, 
     // Association
     target_p.get1().setName(source_p.getName());
     PhysicalArchitecture archi = (PhysicalArchitecture)source_p.eContainer().eContainer();
-    Model container = mappingExecution_p.get(archi.getOwnedPhysicalComponent(), MainComponent2ModelQueryAndRule.ID);
+    Model container = mappingExecution_p.get((PhysicalComponent)archi.getSystem(), MainComponent2ModelQueryAndRule.ID);
     container.getOwnedTypes().add(target_p.get1());
     // Source Property
     target_p.get1().getNavigableOwnedEnds().add(target_p.get2());

@@ -77,7 +77,7 @@ extends Rule<ComponentExchange, EnumStruct<AssocElements>> {
     assoc.setName("(Variant 2) " + source_p.getName()); //$NON-NLS-1$
     PhysicalArchitecture archi = (PhysicalArchitecture)source_p.eContainer().eContainer();
     Model container = ruleEnv_p.get(
-        archi.getOwnedPhysicalComponent(), MainComponent2ModelQueryAndRule.ID);
+        (PhysicalComponent)archi.getSystem(), MainComponent2ModelQueryAndRule.ID);
     container.getOwnedTypes().add(assoc);
     // Source Property
     Property srcProperty = target_p.get(AssocElements.SRC_PROP);

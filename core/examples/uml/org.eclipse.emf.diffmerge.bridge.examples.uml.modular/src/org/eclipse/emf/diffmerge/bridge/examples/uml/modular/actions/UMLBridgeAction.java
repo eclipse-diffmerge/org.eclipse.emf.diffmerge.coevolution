@@ -14,6 +14,7 @@ package org.eclipse.emf.diffmerge.bridge.examples.uml.modular.actions;
 import org.eclipse.emf.diffmerge.bridge.examples.uml.modular.Messages;
 import org.eclipse.emf.diffmerge.bridge.examples.uml.modular.ModularUMLExampleActivator;
 import org.eclipse.emf.diffmerge.bridge.examples.uml.modular.main.UMLBridgeJob;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gmf.runtime.notation.View;
 import org.eclipse.jface.action.IAction;
@@ -25,6 +26,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.polarsys.capella.core.data.pa.PhysicalArchitecture;
 import org.polarsys.capella.core.data.pa.PhysicalComponent;
+import org.polarsys.capella.core.data.pa.PhysicalComponentPkg;
 
 
 /**
@@ -63,9 +65,9 @@ public class UMLBridgeAction implements IObjectActionDelegate {
         selected = ((View)selected).getElement();
       if (selected instanceof DSemanticDecorator)
         selected = ((DSemanticDecorator)selected).getTarget();
-      if (selected instanceof PhysicalComponent)
-        while (selected instanceof PhysicalComponent)
-          selected = ((PhysicalComponent)selected).eContainer();
+      while (selected instanceof PhysicalComponent || selected instanceof PhysicalComponentPkg) {
+        selected = ((EObject)selected).eContainer();
+      }
       if (selected instanceof PhysicalArchitecture)
         result = (PhysicalArchitecture)selected;
     }
