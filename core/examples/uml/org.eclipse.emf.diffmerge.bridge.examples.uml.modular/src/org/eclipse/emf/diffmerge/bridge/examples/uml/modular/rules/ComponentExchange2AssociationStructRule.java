@@ -87,7 +87,7 @@ public class ComponentExchange2AssociationStructRule extends Rule<ComponentExcha
     // Association
     target_p.get(F_ASSOC).setName("(Variant) " + source_p.getName()); //$NON-NLS-1$
     PhysicalArchitecture archi = (PhysicalArchitecture)source_p.eContainer().eContainer();
-    Model container = ruleEnv_p.get(archi.getOwnedPhysicalComponent(), MainComponent2ModelQueryAndRule.ID);
+    Model container = ruleEnv_p.get((PhysicalComponent)archi.getSystem(), MainComponent2ModelQueryAndRule.ID);
     container.getOwnedTypes().add(target_p.get(F_ASSOC));
     // Source Property
     target_p.get(F_ASSOC).getNavigableOwnedEnds().add(target_p.get(F_SRC_PROPERTY));

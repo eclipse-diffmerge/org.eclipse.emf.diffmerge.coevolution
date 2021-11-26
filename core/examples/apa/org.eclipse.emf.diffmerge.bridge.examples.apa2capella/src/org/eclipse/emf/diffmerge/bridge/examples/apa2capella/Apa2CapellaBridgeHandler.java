@@ -62,8 +62,8 @@ public class Apa2CapellaBridgeHandler extends AbstractHandler {
 
 			AScope context = (AScope) resource.getContents().get(0);
 			if (context != null) {
-				IPath targetPath = file.getLocation().removeFileExtension().addFileExtension(CapellaResourceHelper.CAPELLA_MODEL_FILE_EXTENSION);
-				if (targetPath.toFile().exists()) {
+				IPath targetPath = sourcePath.removeFileExtension().addFileExtension(CapellaResourceHelper.CAPELLA_MODEL_FILE_EXTENSION);
+				if (EcorePlugin.getWorkspaceRoot().exists(targetPath)) {
 					IPath rootLocationPath = EcorePlugin.getWorkspaceRoot().getLocation();
 					IPath workspaceRelativePath = targetPath.makeRelativeTo(rootLocationPath);
 					URI targetURI = URI.createPlatformResourceURI(workspaceRelativePath.toString(), false);

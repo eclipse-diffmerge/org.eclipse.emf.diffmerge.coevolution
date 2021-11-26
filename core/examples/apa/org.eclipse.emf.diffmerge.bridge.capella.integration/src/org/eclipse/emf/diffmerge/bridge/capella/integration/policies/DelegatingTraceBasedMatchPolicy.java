@@ -11,10 +11,10 @@
  **********************************************************************/
 package org.eclipse.emf.diffmerge.bridge.capella.integration.policies;
 
-import org.eclipse.emf.diffmerge.api.IMatchPolicy;
-import org.eclipse.emf.diffmerge.api.scopes.IModelScope;
 import org.eclipse.emf.diffmerge.bridge.api.IBridgeTrace;
 import org.eclipse.emf.diffmerge.bridge.incremental.BridgeTraceBasedMatchPolicy;
+import org.eclipse.emf.diffmerge.generic.api.IMatchPolicy;
+import org.eclipse.emf.diffmerge.generic.api.scopes.ITreeDataScope;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -23,12 +23,12 @@ import org.eclipse.emf.ecore.EObject;
  * 
  */
 public class DelegatingTraceBasedMatchPolicy extends
-    BridgeTraceBasedMatchPolicy {
+    BridgeTraceBasedMatchPolicy<EObject> {
 
   /**
    * The second match policy to delegate to
    */
-  private final IMatchPolicy delegate;
+  private final IMatchPolicy<EObject> delegate;
 
   /**
    * Default constructor
@@ -42,19 +42,18 @@ public class DelegatingTraceBasedMatchPolicy extends
    * @param delegate_p
    *          the non-null match policy to delegate to
    */
-  public DelegatingTraceBasedMatchPolicy(IModelScope createdScope_p,
+  public DelegatingTraceBasedMatchPolicy(ITreeDataScope<EObject> createdScope_p,
       IBridgeTrace createdTrace_p, IBridgeTrace existingTrace_p,
-      IMatchPolicy delegate_p) {
+      IMatchPolicy<EObject> delegate_p) {
     super(createdScope_p, createdTrace_p, existingTrace_p);
     this.delegate = delegate_p;
   }
 
   /**
-   * @see org.eclipse.emf.diffmerge.bridge.incremental.BridgeTraceBasedMatchPolicy#getMatchID(org.eclipse.emf.ecore.EObject,
-   *      org.eclipse.emf.diffmerge.api.scopes.IModelScope)
+   * @see org.eclipse.emf.diffmerge.bridge.incremental.BridgeTraceBasedMatchPolicy#getMatchID(java.lang.Object, org.eclipse.emf.diffmerge.generic.api.scopes.ITreeDataScope)
    */
   @Override
-  public Object getMatchID(EObject element_p, IModelScope scope_p) {
+  public Object getMatchID(EObject element_p, ITreeDataScope<EObject> scope_p) {
     IBridgeTrace trace = scope_p == _createdScope ? _createdTrace
         : _existingTrace;
     Object result = trace.getCause(element_p);
@@ -68,7 +67,7 @@ public class DelegatingTraceBasedMatchPolicy extends
    * 
    * @return the match policy delegate.
    */
-  protected IMatchPolicy getDelegate() {
+  protected IMatchPolicy<EObject> getDelegate() {
     return delegate;
   }
 }

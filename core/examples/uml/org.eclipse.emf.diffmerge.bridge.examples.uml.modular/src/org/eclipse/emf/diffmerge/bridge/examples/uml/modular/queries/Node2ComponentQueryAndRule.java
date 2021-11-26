@@ -20,9 +20,10 @@ import org.eclipse.emf.diffmerge.bridge.mapping.impl.QueryAndRule;
 import org.eclipse.uml2.uml.Component;
 import org.eclipse.uml2.uml.Model;
 import org.eclipse.uml2.uml.UMLFactory;
+import org.polarsys.capella.core.data.capellacore.Feature;
 import org.polarsys.capella.core.data.capellacore.Type;
+import org.polarsys.capella.core.data.capellacore.TypedElement;
 import org.polarsys.capella.core.data.cs.Part;
-import org.polarsys.capella.core.data.information.Partition;
 import org.polarsys.capella.core.data.pa.PhysicalComponent;
 import org.polarsys.capella.core.data.pa.PhysicalComponentNature;
 
@@ -52,12 +53,15 @@ public class Node2ComponentQueryAndRule extends QueryAndRule<PhysicalComponent, 
   public Iterable<Part> evaluate(PhysicalComponent input_p,
       IQueryExecution queryExecution_p) {
     Collection<Part> result = newIterable();
-    for (Partition partition : input_p.getOwnedPartitions()) {
-      Type type = partition.getType();
-      if (type instanceof PhysicalComponent &&
-          ((PhysicalComponent)type).getNature() ==
-          PhysicalComponentNature.NODE)
-        result.add((Part)partition);
+    for (Feature feature : input_p.getOwnedFeatures()) {
+      if (feature instanceof TypedElement) {
+        Type type = ((TypedElement) feature).getType();
+        if (type instanceof PhysicalComponent &&
+            ((PhysicalComponent)type).getNature() ==
+            PhysicalComponentNature.NODE) {
+          result.add((Part)feature);
+        }
+      }
     }
     return result;
   }
