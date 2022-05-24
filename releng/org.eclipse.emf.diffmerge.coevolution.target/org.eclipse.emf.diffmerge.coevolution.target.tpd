@@ -1,6 +1,6 @@
 target "org.eclipse.emf.diffmerge.coevolution"
 
-include "https://download.eclipse.org/sirius/updates/stable/7.0.0-S20210908-102403/2021-06/targets/modules/gmf-runtime-1.14.tpd"
+include "https://download.eclipse.org/sirius/updates/stable/7.0.1-S20220519-115310/2021-06/targets/modules/gmf-runtime-1.14.tpd"
 
 location "https://download.eclipse.org/cbi/updates/license/" {
 	org.eclipse.license.feature.group [2.0.2.v20181016-2210,2.0.2.v20181016-2210]
@@ -29,17 +29,14 @@ location "https://download.eclipse.org/releases/2021-06" {
 	org.eclipse.uml2.sdk.feature.group lazy
 }
 
-location "https://download.eclipse.org/sirius/updates/stable/7.0.0-S20210908-102403/2021-06" {
+location "https://download.eclipse.org/sirius/updates/stable/7.0.1-S20220519-115310/2021-06" {
 	org.eclipse.sirius.specifier.feature.group lazy
 	org.eclipse.sirius.runtime.ide.ui.feature.group lazy
 }
 
-location Orbit "https://download.eclipse.org/tools/orbit/downloads/drops/R20210602031627/repository" {
-	org.apache.batik.bridge.source lazy
-	org.apache.batik.script.source lazy
-}
+// For examples
 
-location "https://download.eclipse.org/kitalpha/updates/release/runtime/1.4.0/" {
+location "https://download.eclipse.org/kitalpha/updates/stable/runtime/6.0.0.S202203161338/" {
 	org.polarsys.kitalpha.ad.metadata.feature.feature.group lazy
 	org.polarsys.kitalpha.cadence.feature.feature.group lazy
 	org.polarsys.kitalpha.emde.feature.feature.group lazy
@@ -47,7 +44,7 @@ location "https://download.eclipse.org/kitalpha/updates/release/runtime/1.4.0/" 
 	org.polarsys.kitalpha.transposer.feature.feature.group lazy
 }
 
-location "https://download.eclipse.org/capella/core/updates/releases/1.4.0-R20191121-173601/org.polarsys.capella.rcp.site/" {
+location "https://download.eclipse.org/capella/core/updates/stable/6.0.0-S20220505-151601/org.polarsys.capella.rcp.site/" {
 	org.polarsys.capella.core.common.feature.feature.group lazy
 	org.polarsys.capella.common.feature.feature.group lazy
 }

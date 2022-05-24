@@ -32,4 +32,9 @@ pipeline {
       }
     }
   }
+  post {
+    always {
+      archiveArtifacts artifacts: '**/*.log, *.log, *.exec', allowEmptyArchive: true
+    }
+  }
 }
