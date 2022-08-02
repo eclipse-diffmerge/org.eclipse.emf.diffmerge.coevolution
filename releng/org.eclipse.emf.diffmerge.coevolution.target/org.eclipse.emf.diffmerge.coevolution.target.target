@@ -50,12 +50,12 @@
       <unit id="org.polarsys.kitalpha.emde.feature.feature.group" version="0.0.0"/>
       <unit id="org.polarsys.kitalpha.report.feature.feature.group" version="0.0.0"/>
       <unit id="org.polarsys.kitalpha.transposer.feature.feature.group" version="0.0.0"/>
-      <repository location="https://download.eclipse.org/kitalpha/updates/stable/runtime/6.0.0.S202203161338/"/>
+      <repository location="https://download.eclipse.org/kitalpha/updates/stable/runtime/6.0.0.S202207261909/"/>
     </location>
     <location includeMode="slicer" includeAllPlatforms="false" includeSource="false" includeConfigurePhase="false" type="InstallableUnit">
       <unit id="org.polarsys.capella.core.common.feature.feature.group" version="0.0.0"/>
       <unit id="org.polarsys.capella.common.feature.feature.group" version="0.0.0"/>
-      <repository location="https://download.eclipse.org/capella/core/updates/stable/6.0.0-S20220505-151601/org.polarsys.capella.rcp.site/"/>
+      <repository location="https://download.eclipse.org/capella/core/updates/stable/6.0.0-S20220727-123803/org.polarsys.capella.rcp.site/"/>
     </location>
   </locations>
 </target>

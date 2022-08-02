@@ -36,7 +36,7 @@ location "https://download.eclipse.org/sirius/updates/stable/7.0.1-S20220519-115
 
 // For examples
 
-location "https://download.eclipse.org/kitalpha/updates/stable/runtime/6.0.0.S202203161338/" {
+location "https://download.eclipse.org/kitalpha/updates/stable/runtime/6.0.0.S202207261909/" {
 	org.polarsys.kitalpha.ad.metadata.feature.feature.group lazy
 	org.polarsys.kitalpha.cadence.feature.feature.group lazy
 	org.polarsys.kitalpha.emde.feature.feature.group lazy
@@ -44,7 +44,7 @@ location "https://download.eclipse.org/kitalpha/updates/stable/runtime/6.0.0.S20
 	org.polarsys.kitalpha.transposer.feature.feature.group lazy
 }
 
-location "https://download.eclipse.org/capella/core/updates/stable/6.0.0-S20220505-151601/org.polarsys.capella.rcp.site/" {
+location "https://download.eclipse.org/capella/core/updates/stable/6.0.0-S20220727-123803/org.polarsys.capella.rcp.site/" {
 	org.polarsys.capella.core.common.feature.feature.group lazy
 	org.polarsys.capella.common.feature.feature.group lazy
 }
