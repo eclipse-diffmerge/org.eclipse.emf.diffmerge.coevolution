@@ -1,12 +1,19 @@
-target "org.eclipse.emf.diffmerge.coevolution"
+target "org.eclipse.emf.diffmerge.coevolution" with source, requirements
 
-include "https://download.eclipse.org/sirius/updates/releases/7.0.4/2021-06/targets/modules/gmf-runtime-1.14.tpd"
+location GMF-Notation-1.13.1 "https://download.eclipse.org/modeling/gmp/gmf-notation/updates/releases/R202211151334" {
+    org.eclipse.gmf.runtime.notation.sdk.feature.group lazy
+}
+
+location GMF-Runtime-1.15.3 "https://download.eclipse.org/modeling/gmp/gmf-runtime/updates/releases/R202211041032/" {
+    org.eclipse.gmf.runtime.sdk.feature.group lazy
+    org.eclipse.gmf.runtime.thirdparty.feature.group lazy
+}
 
 location "https://download.eclipse.org/cbi/updates/license/" {
 	org.eclipse.license.feature.group [2.0.2.v20181016-2210,2.0.2.v20181016-2210]
 }
 
-location "https://download.eclipse.org/releases/2021-06" {
+location "https://download.eclipse.org/releases/2023-03" {
 	com.google.guava lazy
 	org.apache.log4j lazy
 	org.apache.commons.lang lazy
@@ -29,7 +36,11 @@ location "https://download.eclipse.org/releases/2021-06" {
 	org.eclipse.uml2.sdk.feature.group lazy
 }
 
-location "https://download.eclipse.org/sirius/updates/releases/7.0.4/2021-06" {
+location sirius "https://download.eclipse.org/sirius/updates/stable/7.2.0-S20230411-075209/2023-03" {
 	org.eclipse.sirius.specifier.feature.group lazy
-	org.eclipse.sirius.runtime.ide.ui.feature.group lazy
+    org.eclipse.sirius.specifier.ide.ui.feature.group lazy	
+}
+
+location EEF-1.5 "https://download.eclipse.org/modeling/emft/eef/updates/releases/1.5/R201601141612" {
+        org.eclipse.emf.eef.runtime lazy
 }
