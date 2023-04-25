@@ -33,18 +33,3 @@ location "https://download.eclipse.org/sirius/updates/releases/7.0.4/2021-06" {
 	org.eclipse.sirius.specifier.feature.group lazy
 	org.eclipse.sirius.runtime.ide.ui.feature.group lazy
 }
-
-// For examples
-
-location "https://download.eclipse.org/kitalpha/updates/releases/runtime/6.0.0/" {
-	org.polarsys.kitalpha.ad.metadata.feature.feature.group lazy
-	org.polarsys.kitalpha.cadence.feature.feature.group lazy
-	org.polarsys.kitalpha.emde.feature.feature.group lazy
-	org.polarsys.kitalpha.report.feature.feature.group lazy
-	org.polarsys.kitalpha.transposer.feature.feature.group lazy
-}
-
-location "https://download.eclipse.org/capella/core/updates/releases/6.0.0/org.polarsys.capella.rcp.site/" {
-	org.polarsys.capella.core.common.feature.feature.group lazy
-	org.polarsys.capella.common.feature.feature.group lazy
-}
