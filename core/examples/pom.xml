@@ -9,6 +9,5 @@
 	</parent>
 	<modules>
 		<!-- <module>uml</module>  -->
-		<module>apa</module>
 	</modules>
 </project>
